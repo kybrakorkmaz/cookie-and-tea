@@ -26,12 +26,7 @@ const SearchBar= ()=>{
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!query.trim()) {
-            console.log("empty user");
-            return;
-        }
-
-        console.log("search:",query);
+        console.log("search:", query);
     };
     return (
         <div className="w-full md:max-w-2xs">

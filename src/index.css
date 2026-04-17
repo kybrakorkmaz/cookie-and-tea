@@ -59,8 +59,7 @@
     height: 45px;
 }
 #search{
-    background-color: #9B0F06;
-    opacity: 65%;
+    background-color: color-mix(in oklab, var(--color-primary) 65%, transparent);
 }
 #hero{
     background-color: #5E0006;

@@ -1,7 +1,6 @@
 import Logo from "./Logo.jsx";
 import SearchBar from "./SearchBar.jsx";
-import {PrimaryButton} from "./Buttons.jsx";
-import {BrowserRouter, NavLink} from "react-router";
+import {NavLink} from "react-router";
 
 const Navbar = () => {
     return (
@@ -23,7 +22,12 @@ const Navbar = () => {
                 <div className="navbar-item order-2 md:order-3 flex flex-col md:flex-row items-stretch md:items-center  gap-4 md:gap-20">
                     <SearchBar />
                     <NavLink to={"/login"} className="w-full md:w-auto pl-1">Login</NavLink>
-                    <NavLink to={"/sign-up"} className="w-full md:w-auto "><PrimaryButton text={"Sign Up"}/></NavLink>
+                    <NavLink
+                        to="/sign-up"
+                        className="w-full md:w-32 h-12 flex items-center justify-center pl-1 md:pl-0 bg-cream rounded-lg md:rounded-button text-black"
+                    >
+                        Sign Up
+                    </NavLink>
                 </div>
 
             </div>
