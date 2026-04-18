@@ -3,7 +3,7 @@ import Banner from "./Banner.jsx";
 
 const Hero = () => {
     return (
-        <header id="hero" className="min-h-[58vh] flex flex-col">
+        <header id="hero" className="lg:min-h-[58vh] flex flex-col">
             <Navbar />
             <Banner />
         </header>
