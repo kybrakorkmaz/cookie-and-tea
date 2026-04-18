@@ -2,65 +2,73 @@
 @import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@200..900&display=swap');
 @import "tailwindcss";
+
 @theme {
-    /* 🎨 Primary red system */
+    /* Renk Paleti */
     --color-primary-dark: #5E0006;
     --color-primary: #9B0F06;
     --color-primary-light: #D53E0F;
-
-    /* 🟡 Cream */
     --color-cream: #EED9B9;
-
-    /* ⚪ Base */
     --color-white: #FFFFFF;
     --color-black: #000000;
 
-    /* 🌫 Shadows */
+    /* Gölgeler */
     --shadow-primary: 0 10px 25px rgba(0, 0, 0, 0.2);
     --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.1);
     --shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.3);
 
-    /* Fonts */
+    /* Yazı Tipleri */
     --font-logo: "Delicious Handrawn", cursive;
-    --font-header:"Chiron GoRound TC", sans-serif;
+    --font-header: "Chiron GoRound TC", sans-serif;
     --font-paragraph: "National Park", sans-serif;
 
-    /* Font size */
+    /* Font Boyutları (Clamp değerleri korunmuştur) */
     --text-logo: 3.5rem;
-    --text-h-1:13.5rem;
-    --text-h-2: 3.5rem;
+    --text-h1-xl: clamp(12.5rem, 6vw, 13.5rem);
+    --text-h1-lg: clamp(9rem, 6vw, 12.5rem);
+    --text-h-2: clamp(2rem, 3vw, 3.5rem);
+    --text-p: clamp(0.9rem, 1.2vw, 1.1rem);
     --text-sh: 1.5rem;
-    --text-p:1.1rem;
 
-    /* border radius */
+    /* Border Radius */
     --radius-button: 1.5rem;
 }
 
-
-#navbar{
+/* Component bazlı stiller ve ID seçiciler */
+#navbar {
     font-optical-sizing: auto;
     font-weight: normal;
     font-style: normal;
-    color: white
+    color: var(--color-white);
+
+    & .navbar-item:hover {
+        color: var(--color-primary);
+    }
+
+    & #logo:hover {
+        color: var(--color-white);
+    }
 }
-#navbar .navbar-item :hover{
-    color:var(--color-primary)
-}
-#navbar #logo:hover{
-    color: white;
-}
-#logo{
+
+#logo {
     font-weight: 400;
     font-style: normal;
     font-size: 3.4rem;
 }
-#logo-img{
+
+#logo-img {
     width: 48px;
     height: 45px;
 }
-#search{
+
+#search {
     background-color: color-mix(in oklab, var(--color-primary) 65%, transparent);
 }
-#hero{
-    background-color: #5E0006;
+
+#hero {
+    background-color: var(--color-primary-dark);
+}
+
+#main-hero {
+    margin-left: 20%;
 }
