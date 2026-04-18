@@ -8,6 +8,6 @@ export const PrimaryButton = ({ text }) => {
 
 export const SecondaryButton=({text})=>{
     return(
-        <button className="bg-primary-dark w-64 h-10">{text}</button>
+        <button className=" bg-primary-dark md:min-w-64 md:min-h-16 rounded-3xl text-white font-paragraph font-bold mx-auto my-10">{text}</button>
     )
 }
