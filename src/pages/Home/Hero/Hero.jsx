@@ -1,11 +1,13 @@
 import Navbar from "../../../components/Navbar.jsx";
+import Banner from "./Banner.jsx";
 
-const Hero = ()=>{
-    return(
-        <div id="hero" className="min-h-64">
-            <Navbar/>
-        </div>
-    )
-}
+const Hero = () => {
+    return (
+        <header id="hero" className="min-h-[58vh] flex flex-col">
+            <Navbar />
+            <Banner />
+        </header>
+    );
+};
 
 export default Hero;

@@ -29,7 +29,7 @@ const SearchBar= ()=>{
         console.log("search:", query);
     };
     return (
-        <div className="w-full md:max-w-2xs">
+        <div className="w-full lg:max-w-2xs">
             <form onSubmit={handleSubmit}>
                 <label htmlFor="search" className="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
                 <div className="relative">
