@@ -8,9 +8,9 @@ const Navbar = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
                 {/* LEFT */}
-                <div className="navbar-item order-3 lg:order-1 flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-20">
-                    <NavLink to="/faq" className="w-full md:w-auto pl-1 md:pl-0">FAQ</NavLink>
-                    <NavLink to="/your-passions" className="w-full md:w-auto pl-1 md:pl-0 ">Your Passions</NavLink>
+                <div className="order-3 lg:order-1 flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-20">
+                    <NavLink to="/faq" className="navbar-item  w-full md:w-auto pl-1 md:pl-0">FAQ</NavLink>
+                    <NavLink to="/your-passions" className=" navbar-item w-full md:w-auto pl-1 md:pl-0 ">Your Passions</NavLink>
                 </div>
 
                 {/* CENTER */}
@@ -19,12 +19,12 @@ const Navbar = () => {
                 </div>
 
                 {/* RIGHT */}
-                <div className="navbar-item order-2 lg:order-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-4 lg:gap-20">
-                    <SearchBar />
-                    <NavLink to={"/login"} className="w-full lg:w-1/3 pl-1 lg:pl-0">Login</NavLink>
+                <div className="order-2 lg:order-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-4 lg:gap-20">
+                    <SearchBar/>
+                    <NavLink  to={"/login"} className="navbar-item w-full lg:w-1/3 pl-1 lg:pl-0">Login</NavLink>
                     <NavLink
                         to="/sign-up"
-                        className="w-full lg:w-48 h-12 flex items-center lg:justify-center pl-1 lg:pl-0 bg-cream rounded-lg lg:rounded-button shadow-sm shadow-black font-bold"
+                        className="navbar-item w-full lg:w-48 h-12 flex items-center lg:justify-center pl-1 lg:pl-0 bg-cream rounded-lg lg:rounded-button shadow-sm shadow-black font-bold"
                         style={{
                             WebkitTextStroke: "0.7px black",
                             textShadow: "0 1px 2px rgba(0,0,0,0.3)"

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {users} from "../constants/users.js";
+import {index} from "../constants/index.js";
 
 const SearchBar= ()=>{
     const [query, setQuery]= useState("");
@@ -14,7 +14,7 @@ const SearchBar= ()=>{
             return;
         }
 
-        const filteredUsers = users.filter(user=>user.name.toLowerCase()
+        const filteredUsers = index.filter(user=>user.name.toLowerCase()
             .includes(value.toLowerCase()));
 
         setResults(filteredUsers);
@@ -29,7 +29,7 @@ const SearchBar= ()=>{
         console.log("search:", query);
     };
     return (
-        <div className="w-full lg:max-w-2xs">
+        <div className="navbar-item w-full lg:max-w-2xs">
             <form onSubmit={handleSubmit}>
                 <label htmlFor="search" className="block mb-2.5 text-sm font-medium text-heading sr-only ">Search</label>
                 <div className="relative">
