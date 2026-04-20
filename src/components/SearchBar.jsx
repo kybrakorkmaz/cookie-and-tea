@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {index} from "../constants/index.js";
 
-const SearchBar= ()=>{
+const SearchBar= ({bgSearchColor})=>{
     const [query, setQuery]= useState("");
     const [results, setResults]=useState([]);
 
@@ -41,7 +41,7 @@ const SearchBar= ()=>{
                         </svg>
                     </div>
                     <input type="search" id="search"
-                           className="block w-full p-3 ps-9 rounded-3xl border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                           className={`${bgSearchColor} block w-full p-3 ps-9 rounded-3xl border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body`}
                            placeholder="Search People's Work" required
                            value={query}
                            onChange={handleChange}

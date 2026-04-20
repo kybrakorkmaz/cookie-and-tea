@@ -45,9 +45,9 @@
         color: var(--color-primary);
     }
 
-    & #logo:hover {
+    /**& #logo:hover {
         color: var(--color-white);
-    }
+    }***/
 }
 
 #logo {
@@ -61,9 +61,9 @@
     height: 45px;
 }
 
-#search {
+/*#search {
     background-color: color-mix(in oklab, var(--color-primary) 65%, transparent);
-}
+}**/
 
 #hero {
     background-color: var(--color-primary-dark);
