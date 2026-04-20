@@ -21,6 +21,7 @@ const Faq = () => {
                     {frequentlyAskedQuestions.map(fq => (
                         <Questions
                             key={fq.id}
+                            id={fq.id}
                             question={fq.question}
                             answer={fq.answer}
                         />
