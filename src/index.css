@@ -29,7 +29,7 @@
     --text-h-2: clamp(2rem, 3vw, 3.5rem);
     --text-p: clamp(1rem, 1.2vw, 1.5rem);
     --text-sh: clamp(1.2rem, 1vw, 1.7rem);
-    --text-b:Ç clamp(0.5rem, 1vw, 1rem);
+    --text-b: clamp(0.5rem, 1vw, 1rem);
 
     /* Border Radius */
     --radius-button: 1.5rem;

@@ -78,6 +78,7 @@ export const yourPassionReviews =[
         social_platform_id:1,
         name:"angel",
         username:"angelscorner",
+        account_url:"https://x.com/",
         image_url:"/images/your-passions-icons/woman.jpg",
         review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
             "Hey, I’m Angel (@angelscorner). As a woman building my own content, " +
@@ -91,6 +92,7 @@ export const yourPassionReviews =[
         social_platform_id:1,
         name:"john",
         username:"johnscorner",
+        account_url:"https://x.com/",
         image_url:"/images/your-passions-icons/man.jpg",
         review:"I’m John (@Johnscorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
             "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
@@ -102,23 +104,25 @@ export const yourPassionReviews =[
         social_platform_id:2,
         name:"kate",
         username:"katescorner",
+        account_url: "https://www.instagram.com/",
         image_url:"/images/your-passions-icons/woman.jpg",
         review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
             "Hey, I’m Kate (@katescorner). As a woman building my own content, " +
             "I didn’t expect support to come this easily. The platform is super " +
             "simple — no friction, just genuine support from people who enjoy what you do. " +
-            "Who knew strangers would send you cookies and tea?" +
+            "Who knew strangers would send you cookies and tea?\n" +
             "Check out @cookieandtea and share the warmth!"
     },
     {
-        id:2,
+        id:4,
         social_platform_id:2,
         name:"mike",
         username:"mikescorner",
+        account_url: "https://www.instagram.com/",
         image_url:"/images/your-passions-icons/man.jpg",
         review:"I’m Mike (@mikescorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
             "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
-            "It’s a small thing, but it really makes a difference when you’re building something. " +
+            "It’s a small thing, but it really makes a difference when you’re building something.\n" +
             "Check out @cookieandtea"
     },
 ]

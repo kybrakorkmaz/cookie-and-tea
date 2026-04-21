@@ -1,4 +1,4 @@
-const FromYouReviews = ({ name, username, image, review }) => {
+const FromYouReviews = ({ name, username, accountUrl, image, review }) => {
     return (
         <div className="flex flex-col bg-white rounded-3xl p-8 shadow-sm border border-primary-dark/5">
             <div className="flex items-center gap-4 mb-6">
@@ -12,7 +12,7 @@ const FromYouReviews = ({ name, username, image, review }) => {
                 </div>
                 <div className="flex flex-col">
                     <span className="font-bold text-lg capitalize">{name}</span>
-                    <a href="#" className="text-primary text-sm hover:underline">
+                    <a href={accountUrl} className="text-primary text-sm hover:underline">
                         @{username}
                     </a>
                 </div>

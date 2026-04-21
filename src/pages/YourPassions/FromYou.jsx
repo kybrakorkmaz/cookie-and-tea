@@ -33,6 +33,7 @@ const FromYou = () => {
                                         key={review.id}
                                         name={review.name}
                                         username={review.username}
+                                        accountUrl={review.account_url}
                                         image={review.image_url}
                                         review={review.review}
                                     />
