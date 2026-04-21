@@ -1,8 +1,12 @@
 import {Navigate, useNavigate} from "react-router";
 
-export const PrimaryButton = ({ text }) => {
+export const PrimaryButton = ({ text, textPosition="text-left", textColor, bgColor, onClick }) => {
     return (
-        <button className="w-full md:w-32 h-12 text-left md:text-center pl-1 md:pl-0 bg-cream rounded-lg md:rounded-button text-black">
+        <button
+            type="button"
+            onClick={onClick}
+            className={`w-full md:w-32 h-12 ${textPosition} md:text-center pl-1 md:pl-0 ${bgColor} rounded-lg md:rounded-button ${textColor}`}
+        >
             {text}
         </button>
     );
