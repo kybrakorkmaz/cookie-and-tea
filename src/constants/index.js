@@ -61,3 +61,64 @@ export const frequentlyAskedQuestions=[
             "The platform runs over secure connections (SSL) and follows standard best practices to protect your data.\n"
     }
 ];
+
+export const yourPassionSocialPlatforms=[
+    {
+        id:1,
+        name:"X"
+    },
+    {
+        id:2,
+        name: "Instagram"
+    }
+]
+export const yourPassionReviews =[
+    {
+        id:1,
+        social_platform_id:1,
+        name:"angel",
+        username:"angelscorner",
+        image_url:"/images/your-passions-icons/woman.jpg",
+        review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
+            "Hey, I’m Angel (@angelscorner). As a woman building my own content, " +
+            "I didn’t expect support to come this easily. The platform is super " +
+            "simple — no friction, just genuine support from people who enjoy what you do. " +
+            "Who knew strangers would send you cookies and tea?" +
+            "Check out @cookieandtea and share the warmth!"
+    },
+    {
+        id:2,
+        social_platform_id:1,
+        name:"john",
+        username:"johnscorner",
+        image_url:"/images/your-passions-icons/man.jpg",
+        review:"I’m John (@Johnscorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
+            "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
+            "It’s a small thing, but it really makes a difference when you’re building something. " +
+            "Check out @cookieandtea"
+    },
+    {
+        id:3,
+        social_platform_id:2,
+        name:"kate",
+        username:"katescorner",
+        image_url:"/images/your-passions-icons/woman.jpg",
+        review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
+            "Hey, I’m Kate (@katescorner). As a woman building my own content, " +
+            "I didn’t expect support to come this easily. The platform is super " +
+            "simple — no friction, just genuine support from people who enjoy what you do. " +
+            "Who knew strangers would send you cookies and tea?" +
+            "Check out @cookieandtea and share the warmth!"
+    },
+    {
+        id:2,
+        social_platform_id:2,
+        name:"mike",
+        username:"mikescorner",
+        image_url:"/images/your-passions-icons/man.jpg",
+        review:"I’m Mike (@mikescorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
+            "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
+            "It’s a small thing, but it really makes a difference when you’re building something. " +
+            "Check out @cookieandtea"
+    },
+]
