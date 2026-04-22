@@ -1,16 +1,14 @@
 import {Navigate, useNavigate} from "react-router";
 
-export const PrimaryButton = ({
-                                  text, type = "button",
-                                  textPosition = "text-left",
-                                  textColor = "text-black",
-                                  bgColor = "bg-cream",
-                                  onClick}) => {
+export const PrimaryButton = ({ text, type, onClick, disabled, bgColor, textColor, textPosition }) => {
     return (
         <button
             type={type}
             onClick={onClick}
-            className={`w-full md:w-32 h-12 ${textPosition} md:text-center pl-1 md:pl-0 ${bgColor} rounded-lg md:rounded-button ${textColor}`}        >
+            disabled={disabled}
+            className={`${bgColor} ${textColor} ${textPosition} px-8 py-3 rounded-lg transition-all 
+                ${disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-90 active:scale-95"}`}
+        >
             {text}
         </button>
     );
