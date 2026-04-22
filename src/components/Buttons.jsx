@@ -1,13 +1,20 @@
 import {Navigate, useNavigate} from "react-router";
 
-export const PrimaryButton = ({ text }) => {
+export const PrimaryButton = ({
+                                  text, type = "button",
+                                  textPosition = "text-left",
+                                  textColor = "text-black",
+                                  bgColor = "bg-cream",
+                                  onClick}) => {
     return (
-        <button className="w-full md:w-32 h-12 text-left md:text-center pl-1 md:pl-0 bg-cream rounded-lg md:rounded-button text-black">
+        <button
+            type={type}
+            onClick={onClick}
+            className={`w-full md:w-32 h-12 ${textPosition} md:text-center pl-1 md:pl-0 ${bgColor} rounded-lg md:rounded-button ${textColor}`}        >
             {text}
         </button>
     );
 };
-
 export const SecondaryButton = ({ text, type = "button", path, ...buttonProps }) => {
     const navigate = useNavigate();
     return(
