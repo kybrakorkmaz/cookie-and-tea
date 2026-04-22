@@ -4,7 +4,7 @@ import Input from "../components/Input.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
 import Footer from "../components/Footer.jsx";
 import sendEmailSchema from "../validations/sendEmailValidation.jsx";
-import {z} from "zod";
+
 const SendEmail = () => {
     const [formData, setFormData]=useState({
         name:"",
@@ -13,6 +13,14 @@ const SendEmail = () => {
         message:""
     });
     const [errors, setErrors]=useState({});
+
+    const handleChange=(e)=>{
+        const {name, value}= e.target;
+        setFormData(prev=>({...prev, [name]:value}));
+
+        // when users start to write clean the error of the area
+        if(errors[name]) setErrors(prev=>({...prev, [name]:null}));
+    }
 
     const handleSubmit=(e)=>{
         e.preventDefault();
@@ -31,11 +39,6 @@ const SendEmail = () => {
         // todo send email
     }
 
-    const handleChange=(e)=>{
-        const {name, value}= e.target;
-        setFormData(prev=>({...prev, [name]:value}));
-    }
-
     return (
         <div className="bg-cream min-h-screen flex flex-col">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
@@ -49,6 +52,8 @@ const SendEmail = () => {
                         <Input
                             label="Name"
                             name="name"
+                            value={formData.name}
+                            error={errors.name?.[0]} // render error
                             placeholder="Your Name"
                             onChange={handleChange}
                         />
@@ -56,12 +61,16 @@ const SendEmail = () => {
                             label="Email"
                             name="email"
                             type="email"
+                            value={formData.email}
+                            error={errors.email?.[0]}
                             placeholder="email@example.com"
                             onChange={handleChange}
                         />
                         <Input
                             label="Subject"
                             name="subject"
+                            value={formData.subject}
+                            error={errors.subject?.[0]}
                             placeholder="How can we help?"
                             onChange={handleChange}
                         />
@@ -70,14 +79,25 @@ const SendEmail = () => {
                         <div className="flex flex-col gap-2 mt-6">
                             <label className="font-header text-sm text-primary-dark ml-1">Message</label>
                             <textarea
+                                id="message"
                                 name="message"
                                 rows="6"
+                                value={formData.message}
                                 onChange={handleChange}
-                                className="w-full p-4 rounded-lg border border-primary-dark bg-white
-                                           placeholder-primary/50 focus:outline-none focus:ring-2
-                                           focus:ring-primary-dark/20 resize-none"
+                                aria-invalid={errors.message ? "true" : "false"}
+                                aria-describedby={errors.message ? "message-error" : undefined}
+                                className={`w-full p-4 rounded-lg border bg-white focus:outline-none focus:ring-2 resize-none transition-all
+                                           ${errors.message
+                                    ? "border-primary-light focus:ring-primary"
+                                    : "border-primary-dark focus:ring-primary-dark/20"}`}
                                 placeholder="Write your thoughts here..."
                             ></textarea>
+                            <label className="font-header text-sm text-primary-dark ml-1">{formData.message.length}/500</label>
+                            {errors.message && (
+                                <span id="message-error" className="text-primary-light text-xs mt-1 ml-1" role="alert">
+                                    {errors.message[0]}
+                                </span>
+                            )}
                         </div>
 
                         {/* Button Alignment */}

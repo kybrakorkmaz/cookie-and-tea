@@ -5,7 +5,7 @@ const About = ()=>{
     return(
         <div className="bg-cream min-h-screen">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
-            <div className="px-72 py-52">
+            <div className="px-6 py-16 md:px-16 md:py-24 lg:px-72 lg:py-52">
                 <h2 className="font-header text-h-2 text-primary-dark text-center">Our Story</h2>
                 <h3 className="font-header text-sh text-center py-10">Where Creativity Meets Real Support</h3>
                 <p className="font-paragraph text-p ">

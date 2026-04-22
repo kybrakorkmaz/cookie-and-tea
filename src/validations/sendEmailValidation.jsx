@@ -5,7 +5,7 @@ const sendEmailSchema = z.object({
     email: z.email("Invalid email address!"),
     subject: z.string().min(1, "Subject is required!"),
     message: z.string()
-        .min(30, "Message is too short!")
+        .min(30, "Message is too short! Minimum 30")
         .max(500, "Message is too long!")
 });
 
