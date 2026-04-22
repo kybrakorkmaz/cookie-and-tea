@@ -17,6 +17,8 @@ const SendEmail = () => {
     const [errors, setErrors] = useState({});
     const [messageState, setMessageState] = useState(false);
     const [informUser, setInformUser] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,6 +28,8 @@ const SendEmail = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
         const result = sendEmailSchema.safeParse(formData);
 
         if (!result.success) {
@@ -34,6 +38,7 @@ const SendEmail = () => {
         }
 
         try {
+            setIsSubmitting(true);
             const templateParams = {
                 from_name: formData.name,
                 from_email: formData.email,
@@ -57,6 +62,8 @@ const SendEmail = () => {
             console.error("Sending message failed", err);
             setMessageState(false);
             setInformUser("Message couldn't be sent!");
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -109,7 +116,14 @@ const SendEmail = () => {
                         )}
 
                         <div className="flex justify-end mt-10">
-                            <PrimaryButton type="submit" text="Send!" bgColor="bg-primary-dark" textColor="text-white" textPosition="text-center" />
+                            <PrimaryButton
+                                type="submit"
+                                text={isSubmitting ? "Sending..." : "Send!"}
+                                bgColor="bg-primary-dark"
+                                textColor="text-white"
+                                textPosition="text-center"
+                                disabled={isSubmitting} // reactivate the button
+                            />
                         </div>
                     </form>
                 </div>
