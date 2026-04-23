@@ -4,6 +4,7 @@ import {Link} from "react-router";
 import {useState} from "react";
 import Input from "../components/Input.jsx";
 import {loginSchema} from "../validations/userRegisterLoginValidation.js";
+import Footer from "../components/Footer.jsx";
 
 const Login = () =>{
     const [formData, setFormData] = useState({
@@ -79,6 +80,7 @@ const Login = () =>{
                     </div>
                 </form>
             </div>
+            <Footer/>
         </div>
     )
 }
