@@ -38,7 +38,7 @@ const SignUp = ()=>{
             email: result.data.email
         }
 
-        console.log("successfully registered: ", payload);
+        console.log("successfully registered: ", payload.username);
         setFormData({username: "", email: "", password: "",  passwordConfirm:""});
     }
     return(
