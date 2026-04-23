@@ -90,7 +90,7 @@ const SignUp = ()=>{
                             textColor="text-white"
                             textPosition="text-center"
                         />
-                        <p className="font-paragraph text-b pt-5">Already have an account? Log in <span className="underline cursor-pointer"><Link to={"/login"}>here.</Link></span></p>
+                        <p className="font-paragraph text-p pt-5">Already have an account? Log in <span className="underline cursor-pointer"><Link to={"/login"}>here.</Link></span></p>
                     </div>
 
                 </form>

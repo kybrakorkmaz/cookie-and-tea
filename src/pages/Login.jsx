@@ -16,7 +16,7 @@ const Login = () =>{
         const {name, value}=e.target;
 
         setFormData(prev=>({...prev, [name]:value}));
-        if(errors.name) setErrors(prev=>({...prev, [name]:null}));
+        if(errors[name]) setErrors(prev=>({...prev, [name]:null}));
     }
 
     const handleSubmit= async (e)=>{
@@ -29,15 +29,18 @@ const Login = () =>{
             return;
         }
 
-        const payload = {
-            username: result.data.username,
-            password: result.data.password
+        const payload = result.data;
+
+        console.log("Login attempt for user:", payload.username);
+
+        try {
+            //todo login payload API call
+            setFormData({username: "", password: ""});
+            console.log("Login form cleared.");
+
+        } catch (error) {
+            console.error("Login failed:", error.message);
         }
-
-        setFormData({username: "", password: ""});
-
-        console.log("login payload: ", payload);
-        //todo login payload API call
     }
 
 
@@ -72,7 +75,7 @@ const Login = () =>{
                             textColor="text-white"
                             textPosition="text-center"
                         />
-                        <p className="font-paragraph text-b pt-5">Don't have an account? Sign up <span className="underline cursor-pointer"><Link to={"/sign-up"}>here.</Link></span></p>
+                        <p className="font-paragraph text-p pt-5">Don't have an account? Sign up <span className="underline cursor-pointer"><Link to={"/sign-up"}>here.</Link></span></p>
                     </div>
                 </form>
             </div>
