@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar.jsx";
 
 const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor = "bg-primary/65", textOutline = "black" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const closeMenu = () => setIsMenuOpen(false);
 
     const navLinks = [
         { to: "/faq", label: "FAQ" },
@@ -33,8 +34,10 @@ const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor
                     <div className={`lg:hidden order-2 ${textColor}`}>
                         <button
                             onClick={toggleMenu}
-                            className="p-2 focus:outline-none"
+                            aria-expanded={isMenuOpen}
+                            aria-controls="mobile-menu"
                             aria-label="Toggle Menu"
+                            className={`p-2 transition-all rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-dark ${textColor}`}
                         >
                             <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {isMenuOpen ? (
@@ -49,9 +52,15 @@ const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor
 
                 {/* MOBILE MENU (State-driven) */}
                 {isMenuOpen && (
-                    <div className={`flex flex-col lg:hidden gap-4 animate-fadeIn ${textColor}`}>
+                    <div
+                        id="mobile-menu"
+                        className={`flex flex-col lg:hidden gap-4 animate-fadeIn ${textColor}`}>
                         {navLinks.map(link => (
-                            <NavLink key={link.to} to={link.to} className="navbar-item pl-1">{link.label}</NavLink>
+                            <NavLink
+                                key={link.to}
+                                to={link.to}
+                                className="navbar-item pl-1"
+                            >{link.label}</NavLink>
                         ))}
                         <NavLink to="/login" className="navbar-item pl-1">Login</NavLink>
                         <NavLink
@@ -70,16 +79,25 @@ const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor
                 {/* DESKTOP LEFT */}
                 <div className={`hidden lg:flex order-1 items-center gap-10 ${textColor}`}>
                     {navLinks.map(link => (
-                        <NavLink key={link.to} to={link.to} className="navbar-item">{link.label}</NavLink>
+                        <NavLink
+                            key={link.to}
+                            to={link.to}
+                            onClick={closeMenu}
+                            className="navbar-item"
+                        >{link.label}</NavLink>
                     ))}
                 </div>
 
                 {/* DESKTOP RIGHT */}
                 <div className={`hidden lg:flex order-3 items-center gap-10 ${textColor}`}>
                     <SearchBar bgSearchColor={searchBarColor}/>
-                    <NavLink to="/login" className="navbar-item">Login</NavLink>
+                    <NavLink
+                        to="/login"
+                        onClick={closeMenu}
+                        className="navbar-item">Login</NavLink>
                     <NavLink
                         to="/sign-up"
+                        onClick={closeMenu}
                         className={`navbar-item w-48 h-12 flex items-center justify-center ${bgColor} rounded-button text-white shadow-sm shadow-black font-bold transition-transform hover:scale-105`}
                         style={signUpStyles}
                     >
