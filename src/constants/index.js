@@ -126,3 +126,59 @@ export const yourPassionReviews =[
             "Check out @cookieandtea"
     },
 ]
+
+export const profile = [
+    {
+        id: 1,
+        name: "angel",
+        username: "angelscorner",
+        about: "Hi, I’m Angel, a 25-year-old who loves capturing little moments through my camera. " +
+            "Photography is just a hobby for me, but it’s something that brings me a lot of joy. " +
+            "When I’m not taking photos, I’m usually spending time with dogs or exploring new places. " +
+            "If you enjoy what I share, you can support me here on Cookie and Tea ☕",
+        socials:[
+            {twitter:"link"},
+            {instagram:"link"}
+        ],
+        earnings:85
+    }
+];
+
+export const latestPosts = [
+    {
+        id:1,
+        user_id:1,
+        posts:[
+            {
+                post_id:1,
+                post_date: "23.04.2026",
+                post_header: "First Day of Spring",
+                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿"
+            },
+            {
+                post_id:2,
+                post_date: "23.04.2026",
+                post_header: "First Day of Spring",
+                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿"
+            }
+        ]
+    }
+]
+
+export const followedPeople = [
+    {
+        id:1,
+        img:"/images/your-passions-icons/man.jpg",
+        name:"John",
+        username:"@johnscorner"
+    }
+]
+
+export const followers = [
+    {
+        id:1,
+        img:"/images/your-passions-icons/man.jpg",
+        name:"John",
+        username:"@johnscorner"
+    }
+]
