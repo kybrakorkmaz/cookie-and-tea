@@ -83,7 +83,7 @@ const UserNavbar = () =>{
                         className="flex flex-col gap-4 mt-4 animate-fadeIn text-primary-dark"
                     >
                         <NavLink className="navbar-item pl-1" to={"/profile"}>Profile</NavLink>
-                        <NavLink  className="navbar-item pl-1" to={"/home"}>Feed</NavLink>
+                        <NavLink  className="navbar-item pl-1" to={"/feed"}>Feed</NavLink>
                         <NavLink  className="navbar-item pl-1" to={"/settings"}>Settings</NavLink>
                     </div>
                 )}

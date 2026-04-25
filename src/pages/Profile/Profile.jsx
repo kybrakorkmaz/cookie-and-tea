@@ -89,13 +89,22 @@ const Profile = () =>{
                             <h3>Earnings</h3>
                             <div>
                                 <div className="w-48 bg-white border border-primary-dark rounded-2xl">
-                                    <button className="flex w-full justify-center items-center gap-4">Last 30 days <IoIosArrowForward /></button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEarningActive(v => !v)}
+                                        aria-expanded={isEarningActive}
+                                        className="flex w-full justify-center items-center gap-4"
+                                    >
+                                        Last 30 days <IoIosArrowForward/>
+                                    </button>
                                 </div>
-                                <div className="flex flex-col w-full">
-                                    <span className="font-paragraph text-b">Last 30 days</span>
-                                    <span className="font-paragraph text-b">Last 90 days</span>
-                                    <span className="font-paragraph text-b">All</span>
-                                </div>
+                                {isEarningActive && (
+                                    <div className="flex flex-col w-full">
+                                        <span className="font-paragraph text-b">Last 30 days</span>
+                                        <span className="font-paragraph text-b">Last 90 days</span>
+                                        <span className="font-paragraph text-b">All</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

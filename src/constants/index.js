@@ -168,7 +168,7 @@ export const latestPosts = [
 export const followedPeople = [
     {
         id:1,
-        img:"/images/your-passions-icon/man.jpg",
+        img:"/images/your-passions-icons/man.jpg",
         name:"John",
         username:"@johnscorner"
     }
@@ -177,7 +177,7 @@ export const followedPeople = [
 export const followers = [
     {
         id:1,
-        img:"/images/your-passions-icon/man.jpg",
+        img:"/images/your-passions-icons/man.jpg",
         name:"John",
         username:"@johnscorner"
     }
