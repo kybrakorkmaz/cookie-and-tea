@@ -33,6 +33,17 @@
 
     /* Border Radius */
     --radius-button: 1.5rem;
+
+    --animate-fadeIn: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Component bazlı stiller ve ID seçiciler */
@@ -73,3 +84,4 @@
 #main-hero {
     margin-left: 20%;
 }
+

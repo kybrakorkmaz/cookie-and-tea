@@ -9,14 +9,14 @@ import {RiListSettingsFill} from "react-icons/ri";
 import {NavLink} from "react-router";
 const image = "/images/your-passions-icons/woman.jpg";
 const name = "Angel"
-const NavBarRegisteredUsers = () =>{
+const UserNavbar = () =>{
     const [isMenuOpen, setIsMenuOpen]=useState(false);
 
     const toggleMenu = ()=>{
         setIsMenuOpen(!isMenuOpen);
     }
     return(
-        <nav id="navbar-registered-users" className="w-full px-4 md:px-8 lg:px-10 py-4 md:py-6 font-paragraph text-p">
+        <nav id="navbar-registered-users" className="w-full px-4  py-4 md:px-8 md:py-6 lg:px-28  font-paragraph text-p">
             {/* Desktop */}
             <div className="hidden lg:flex flex-row justify-between items-center gap-6 ">
                 <div className="flex-1/3 justify-start text-primary-dark ">
@@ -37,9 +37,9 @@ const NavBarRegisteredUsers = () =>{
                             />
                         </div>
                         <div className="flex">
-                            <a href="#" className="text-primary-dark text-sm font-bold">
-                                Your Page
-                            </a>
+                            <NavLink to="/profile" className="text-primary-dark text-sm font-bold">
+                                                             Your Page
+                                                         </NavLink>
                         </div>
                     </div>
                     {/* Notification Icon*/}
@@ -48,42 +48,43 @@ const NavBarRegisteredUsers = () =>{
                             <NotificationsIcon sx={{ minWidth: '2.5rem', minHeight: '2.5rem' }} />
                         </Badge>
                     </Box>
-                    <FaHome style={{width:"2.5rem", height:"2.5rem"}} />
-                    <RiListSettingsFill style={{width:"2.5rem", height:"2.5rem"}} />
+                    <NavLink to={"/feed"}> <FaHome style={{width:"2.5rem", height:"2.5rem"}} /></NavLink>
+                    <NavLink to={"/settings"}> <RiListSettingsFill style={{width:"2.5rem", height:"2.5rem"}} /></NavLink>
                 </div>
             </div>
             {/* Mobile */}
-            <div className="lg:hidden flex justify-between items-center">
-                <div className="flex justify-center text-primary-dark ">
-                    <Logo/>
-                </div>
-                {/* Hamburger Button (Mobile/Tablet Only) */}
-                <div>
-                    <button
-                        onClick={toggleMenu}
-                        aria-expanded={isMenuOpen}
-                        aria-controls="mobile-menu"
-                        aria-label="Toggle Menu"
-                        className="p-2 transition-all rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-dark">
-                        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            {isMenuOpen ? (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            ) : (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                            )}
-                        </svg>
-                    </button>
+            <div className="lg:hidden">
+                <div className="flex justify-between items-center">
+                    <div className="flex justify-center text-primary-dark ">
+                        <Logo/>
+                    </div>
+                    {/* Hamburger Button (Mobile/Tablet Only) */}
+                    <div>
+                        <button
+                            onClick={toggleMenu}
+                            aria-expanded={isMenuOpen}
+                            aria-controls="mobile-menu"
+                            aria-label="Toggle Menu"
+                            className="p-2 transition-all rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-dark">
+                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {isMenuOpen ? (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                ) : (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                                )}
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 {/* MOBILE MENU (State-driven) */}
                 {isMenuOpen && (
                     <div
                         id="mobile-menu"
-                        className="flex flex-col lg:hidden gap-4 animate-fadeIn"
+                        className="flex flex-col gap-4 mt-4 animate-fadeIn text-primary-dark"
                     >
                         <NavLink className="navbar-item pl-1" to={"/profile"}>Profile</NavLink>
-                        <NavLink  className="navbar-item pl-1" to={"/home"}>Home</NavLink>
+                        <NavLink  className="navbar-item pl-1" to={"/home"}>Feed</NavLink>
                         <NavLink  className="navbar-item pl-1" to={"/settings"}>Settings</NavLink>
-                        <NavLink  className="navbar-item pl-1" to={"/faq"}>FAQ</NavLink>
                     </div>
                 )}
             </div>
@@ -91,4 +92,4 @@ const NavBarRegisteredUsers = () =>{
     )
 }
 
-export default NavBarRegisteredUsers;
+export default UserNavbar;
