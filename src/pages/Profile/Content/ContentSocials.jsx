@@ -2,7 +2,7 @@ import {FaPenToSquare} from "react-icons/fa6";
 import ContentSocial from "./ContentSocial.jsx";
 
 const ContentSocials = ({socials}) =>{
-    console.log("contentSocials component socials:", socials);
+
     return(
         <div className="bg-white p-10 rounded-2xl shadow-soft text-primary-dark">
             <div className="flex justify-between items-center mb-4">

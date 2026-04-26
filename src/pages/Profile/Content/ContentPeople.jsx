@@ -17,7 +17,12 @@ const ContentPeople = () =>{
                         className={`font-header text-sh transition-all ${!peopleHeaderState ? "text-primary-dark font-bold border-b-2 border-primary-dark" : "text-gray-400"}`}
                     >Following</button>
                 </div>
-                <FaPenToSquare className="w-5 h-5 text-gray-500 cursor-pointer hover:text-primary-dark transition-colors"/>
+                <button
+                    aria-label="Edit people"
+                    className="text-gray-500 hover:text-primary-dark transition-colors"
+                >
+                    <FaPenToSquare className="w-5 h-5"/>
+                </button>
             </div>
             <hr className="border-gray-200 mb-6"/>
             <div className="min-h-25">

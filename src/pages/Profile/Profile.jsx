@@ -18,23 +18,18 @@ const Profile = () => {
     });
 
     // todo API call
-    const renderedValue = ()=>{
-        useEffect(() => {
-            setUser({
-                name: profile[0].name,
-                username: profile[0].username,
-                backgroundImage: profile[0].backgroundImage,
-                backgroundAlt: profile[0].backgroundAlt,
-                profileImage: profile[0].profileImage,
-                profileAlt: profile[0].profileAlt,
-                about: profile[0].about,
-                socials : profile[0].socials.filter(social=>{
-                    if(social.url)return social;
-                }),
-            });
-        }, []);
-    }
-    renderedValue();
+    useEffect(() => {
+        setUser({
+            name: profile[0].name,
+            username: profile[0].username,
+            backgroundImage: profile[0].backgroundImage,
+            backgroundAlt: profile[0].backgroundAlt,
+            profileImage: profile[0].profileImage,
+            profileAlt: profile[0].profileAlt,
+            about: profile[0].about,
+            socials: profile[0].socials.filter(social => Boolean(social.url)),
+        });
+    }, []);
     //console.log("user:",user);
     //console.log("socials:",user.socials);
     return (

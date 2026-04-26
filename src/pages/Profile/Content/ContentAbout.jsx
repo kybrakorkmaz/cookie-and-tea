@@ -1,5 +1,4 @@
 import {FaPenToSquare} from "react-icons/fa6";
-import {profile} from "../../../constants/index.js";
 
 const ContentAbout = ({about}) => {
     return(

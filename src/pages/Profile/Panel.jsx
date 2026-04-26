@@ -32,11 +32,15 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                 <div className="absolute bottom-16 left-12 flex items-end gap-6">
                     {/* profile image*/}
                     <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden shrink-0 border border-white shadow-heavy bg-white">
-                        <img
-                            className="w-full h-full object-cover object-top"
-                            src={profileImage || null}
-                            alt={profileAlt || "profile"}
-                        />
+                        {profileImage ? (
+                            <img
+                                className="w-full h-full object-cover object-top"
+                                src={profileImage}
+                                alt={profileAlt || "profile"}
+                            />
+                            ) : (
+                                <div className="w-full h-full bg-primary-dark/10" />
+                            )}
                     </div>
                     {/* user's name and account name*/}
                     <div className="flex flex-col mb-4 md:mb-8">
