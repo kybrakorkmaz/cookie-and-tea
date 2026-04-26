@@ -79,7 +79,7 @@ export const yourPassionReviews =[
         name:"angel",
         username:"angelscorner",
         account_url:"https://x.com/",
-        image_url:"/images/your-passions-icons/woman.jpg",
+        image_url:"/images/people/angel.jpg",
         review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
             "Hey, I’m Angel (@angelscorner). As a woman building my own content, " +
             "I didn’t expect support to come this easily. The platform is super " +
@@ -93,7 +93,7 @@ export const yourPassionReviews =[
         name:"john",
         username:"johnscorner",
         account_url:"https://x.com/",
-        image_url:"/images/your-passions-icons/man.jpg",
+        image_url:"/images/people/john.jpg",
         review:"I’m John (@Johnscorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
             "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
             "It’s a small thing, but it really makes a difference when you’re building something. " +
@@ -105,7 +105,7 @@ export const yourPassionReviews =[
         name:"kate",
         username:"katescorner",
         account_url: "https://www.instagram.com/",
-        image_url:"/images/your-passions-icons/woman.jpg",
+        image_url:"/images/people/kate.jpg",
         review:"Used #CookieAndTea as a creator, and in just 2 weeks, made $95! 🍪🍵\n"+
             "Hey, I’m Kate (@katescorner). As a woman building my own content, " +
             "I didn’t expect support to come this easily. The platform is super " +
@@ -119,7 +119,7 @@ export const yourPassionReviews =[
         name:"mike",
         username:"mikescorner",
         account_url: "https://www.instagram.com/",
-        image_url:"/images/your-passions-icons/man.jpg",
+        image_url:"/images/people/mike.jpg",
         review:"I’m Mike (@mikescorner). Gave #CookieAndTea a shot and ended up making $130 in 2 weeks 🍪🍵\n" +
             "What I like most is how simple it is — no pressure, just genuine support from your audience. " +
             "It’s a small thing, but it really makes a difference when you’re building something.\n" +
@@ -136,11 +136,29 @@ export const profile = [
             "Photography is just a hobby for me, but it’s something that brings me a lot of joy. " +
             "When I’m not taking photos, I’m usually spending time with dogs or exploring new places. " +
             "If you enjoy what I share, you can support me here on Cookie and Tea ☕",
+        backgroundImage:"/images/profile/angels-background.jpg",
+        backgroundAlt:"angels-background-img",
+        profileImage:"/images/people/angel.jpg",
+        profileAlt: "angels-profile-image",
+        earnings:85,
         socials:[
-            {twitter:"link"},
-            {instagram:"link"}
+            {
+                name:"twitter",
+                url:"https://x.com/"
+            },
+            {
+                name:"instagram",
+                url:"https://www.instagram.com/"
+            },
+            {
+                name:"pinterest",
+                url:""
+            },
+            {
+                name:"youtube",
+                url:""
+            }
         ],
-        earnings:85
     }
 ];
 
@@ -168,16 +186,22 @@ export const latestPosts = [
 export const followedPeople = [
     {
         id:1,
-        img:"/images/your-passions-icons/man.jpg",
+        img:"/images/people/john.jpg",
         name:"John",
         username:"@johnscorner"
+    },
+    {
+        id: 2,
+        img: "/images/people/mike.jpg",
+        name: "Mike",
+        username: "@mikescorner"
     }
 ]
 
 export const followers = [
     {
         id:1,
-        img:"/images/your-passions-icons/man.jpg",
+        img:"/images/people/john.jpg",
         name:"John",
         username:"@johnscorner"
     }
