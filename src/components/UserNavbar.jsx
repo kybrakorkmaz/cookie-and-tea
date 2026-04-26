@@ -7,7 +7,7 @@ import {FaHome} from "react-icons/fa";
 import {useState} from "react";
 import {RiListSettingsFill} from "react-icons/ri";
 import {NavLink} from "react-router";
-const image = "/images/your-passions-icons/woman.jpg";
+const image = "/images/people/angel.jpg";
 const name = "Angel"
 const UserNavbar = () =>{
     const [isMenuOpen, setIsMenuOpen]=useState(false);
