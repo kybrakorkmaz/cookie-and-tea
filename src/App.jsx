@@ -7,6 +7,7 @@ import SendEmail from "./pages/SendEmail.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
+import ContentSocialEdit from "./pages/Profile/Content/Socials/ContentSocialEdit.jsx";
 
 const App = ()=>{
   return(
@@ -20,7 +21,9 @@ const App = ()=>{
               <Route path={"/sign-up"} element={<SignUp/>}/>
               <Route path={"/login"} element={<Login/>}/>
               <Route path={"/profile"} element={<Profile/>}/>
+
               {/*
+              <Route path={"/profile/socials/edit"} element={<ContentSocialEdit/>}/>
               <Route path={"/feed"} element={<Feed/>}/>
           <Route path={"*"} element={<NotFound/>}/>*/}
           </Routes>

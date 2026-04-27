@@ -1,5 +1,5 @@
 import ContentAbout from "./Content/ContentAbout.jsx";
-import ContentSocials from "./Content/ContentSocials.jsx";
+import ContentSocials from "./Content/Socials/ContentSocials.jsx";
 import ContentEarnings from "./Content/ContentEarnings.jsx";
 import ContentLatestPosts from "./Content/ContentLatestPosts.jsx";
 import ContentPeople from "./Content/ContentPeople.jsx";
