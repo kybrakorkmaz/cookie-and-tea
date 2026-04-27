@@ -6,14 +6,12 @@ import { useState, useEffect } from "react";
 const ContentSocials = ({ socials }) => {
     const [isEditClicked, setIsEditClicked] = useState(false);
     // 1. to update datas from prop, we store them into state
-    const [currentSocials, setCurrentSocials] = useState(socials);
+    const [currentSocials, setCurrentSocials] = useState(socials || []);
 
 
     // if data comes late or info changes (API or useEffect) update state
     useEffect(() => {
-        if (socials && socials.length > 0) {
-            setCurrentSocials(socials);
-        }
+        setCurrentSocials(socials || []);
     }, [socials]);
 
     // if edit icon clicked prevent scrolling
@@ -24,8 +22,12 @@ const ContentSocials = ({ socials }) => {
 
     // 2. updates social media account data list
     const handleSaveSocials = async (updatedList) => {
+        // store old data for using again if error occurred
+        const previousSocials = currentSocials;
+        // Sanity check: prevent tto send empty URLs
+        const finalData = updatedList.filter(item => item.url && item.url.trim() !== "");
         // 1. Update frontend immediately so the user don't wait to see the updated data
-        setCurrentSocials(updatedList);
+        setCurrentSocials(finalData);
 
         try {
             // 2. send changes to backend
@@ -35,19 +37,24 @@ const ContentSocials = ({ socials }) => {
                     'Content-Type': 'application/json',
                     // 'Authorization': `Bearer ${token}` // if user authenticated
                 },
-                body: JSON.stringify(updatedList)
+                body: JSON.stringify(finalData)
             });
 
             if (!response.ok) throw new Error('Error occurred!');
 
+            //close modal
+            setIsEditClicked(false);
+
         } catch (error) {
-                console.error("Error:", error);
-            // todo give an alert or load old data
+            // if error occur rollback to previous data
+            setCurrentSocials(previousSocials);
+            console.error("Error:", error);
+            // NOTE: do not call setIsEditClicked(false)
+            // so if anything occurs, window stays open and the user does not lose its url(s)
             alert("Changes couldn't be saved. Please try again!");
         }
     };
-    // if currentSocials is empty yet
-    if (!currentSocials) return null;
+
     return (
         <div className="bg-white p-10 rounded-2xl shadow-soft text-primary-dark">
             <div className="flex justify-between items-center mb-4">

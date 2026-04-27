@@ -1,5 +1,5 @@
 import { FaXTwitter, FaSquarePinterest, FaYoutube, FaInstagram } from "react-icons/fa6";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
 const ICON_MAP = {
     twitter: FaXTwitter,
@@ -10,14 +10,31 @@ const ICON_MAP = {
 
 const ContentSocialEdit = ({ socials, onClose, onSave }) => {
     // to store all data as state only store selected one's name. With name pick its url
-    const [accountList, setAccountList] = useState(socials);
+    const [accountList, setAccountList] = useState(socials ?? []); // add fallback tto initialize
     const [selectedName, setSelectedName] = useState("");
+
+
+    useEffect(() => {
+        setAccountList(socials || []);
+    }, [socials]);
+
 
     // update the list when input changes
     const handleUrlChange = (newUrl) => {
         setAccountList(prev => {
+            const trimmedUrl = newUrl.trim();
             // if account already added only update the url
             const exists = prev.find(acc => acc.name === selectedName);
+
+            // 1. Durum: URL boşaltıldıysa ve listede bu hesap varsa -> Hesabı SİL
+            if (trimmedUrl === "") {
+                if (exists) {
+                    return prev.filter(acc => acc.name !== selectedName);
+                }
+                // Listede zaten yoksa ve boş gelmişse hiçbir şey yapma
+                return prev;
+            }
+            // 2. Durum: URL doluysa ve listede varsa -> GÜNCELLE
             if (exists) {
                 return prev.map(acc =>
                     acc.name === selectedName ? { ...acc, url: newUrl } : acc
@@ -61,24 +78,33 @@ const ContentSocialEdit = ({ socials, onClose, onSave }) => {
                     </div>
 
                     {/* when one icon is selected, input is pop up */}
-                    <div className={`transition-all duration-300 ${selectedName ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
-                        <label className="text-xs font-bold text-primary-dark uppercase mb-2 block tracking-wider">
-                            {selectedName} Profile Link
-                        </label>
-                        <input
-                            type="text"
-                            className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-dark outline-none transition-colors font-paragraph text-sm"
-                            placeholder="https://..."
-                            value={currentUrl}
-                            onChange={(e) => handleUrlChange(e.target.value)}
-                        />
-                    </div>
+                    {selectedName && (
+                        <div className="animate-in fade-in slide-in-from-top-2">
+                            <label className="text-xs font-bold text-primary-dark uppercase mb-2 block">
+                                {selectedName} Profile Link
+                            </label>
+                            <input
+                                type="text"
+                                className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-dark outline-none"
+                                value={currentUrl}
+                                onChange={(e) => handleUrlChange(e.target.value)}
+                                placeholder="https://..."
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-10 flex justify-end gap-3 font-paragraph">
                     <button onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-gray-600 font-bold transition-colors">Cancel</button>
                     <button
-                        onClick={() => { onSave(accountList); onClose(); }}
+                        onClick={() => {
+                            const cleaned = accountList
+                                .map(a => ({ ...a, url: a.url.trim() }))
+                                .filter(a => a.url !== "");
+                            onSave(cleaned);
+                            onClose();
+                        }
+                    }
                         className="bg-primary-dark text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md active:scale-95 transition-all hover:bg-opacity-90"
                     >
                         Save Changes
