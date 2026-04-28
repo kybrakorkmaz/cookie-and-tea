@@ -1,4 +1,4 @@
-import ContentAbout from "./Content/ContentAbout.jsx";
+import ContentAbout from "./Content/About/ContentAbout.jsx";
 import ContentSocials from "./Content/Socials/ContentSocials.jsx";
 import ContentEarnings from "./Content/ContentEarnings.jsx";
 import ContentLatestPosts from "./Content/ContentLatestPosts.jsx";

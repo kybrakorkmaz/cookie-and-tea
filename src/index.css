@@ -45,7 +45,26 @@
         opacity: 1;
     }
 }
+@layer utilities {
+    .scrollbar::-webkit-scrollbar {
+        width: 8px;
+    }
 
+    .scrollbar::-webkit-scrollbar-track {
+        border-radius: 100vh;
+        background: var(--color-primary-dark);
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        background: var(--color-primary-light);
+        border-radius: 100vh;
+        border: 1px solid var(--color-primary);;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+        background: var(--color-cream);
+    }
+}
 /* Component bazlı stiller ve ID seçiciler */
 #navbar {
     font-optical-sizing: auto;
@@ -72,10 +91,6 @@
     width: 48px;
     height: 45px;
 }
-
-/*#search {
-    background-color: color-mix(in oklab, var(--color-primary) 65%, transparent);
-}**/
 
 #hero {
     background-color: var(--color-primary-dark);

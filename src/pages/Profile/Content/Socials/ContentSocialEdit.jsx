@@ -26,15 +26,15 @@ const ContentSocialEdit = ({ socials, onClose, onSave }) => {
             // if account already added only update the url
             const exists = prev.find(acc => acc.name === selectedName);
 
-            // 1. Durum: URL boşaltıldıysa ve listede bu hesap varsa -> Hesabı SİL
+            // 1. If url is empty and the list has this account, remove the account
             if (trimmedUrl === "") {
                 if (exists) {
                     return prev.filter(acc => acc.name !== selectedName);
                 }
-                // Listede zaten yoksa ve boş gelmişse hiçbir şey yapma
+                // if the account not in the list do nothing
                 return prev;
             }
-            // 2. Durum: URL doluysa ve listede varsa -> GÜNCELLE
+            // if url is filled and in the list, update url
             if (exists) {
                 return prev.map(acc =>
                     acc.name === selectedName ? { ...acc, url: newUrl } : acc
@@ -95,7 +95,15 @@ const ContentSocialEdit = ({ socials, onClose, onSave }) => {
                 </div>
 
                 <div className="mt-10 flex justify-end gap-3 font-paragraph">
-                    <button onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-gray-600 font-bold transition-colors">Cancel</button>
+                    <button
+                        onClick={()=>{
+                            if (!selectedName) return;
+                            const updatedList = accountList.filter(acc => acc.name !== selectedName);
+                            onSave(updatedList);
+                        }}
+                        className="px-4 py-2 text-gray-400 hover:text-gray-600 font-bold transition-colors"
+                    >Remove
+                    </button>
                     <button
                         onClick={() => {
                             const cleaned = accountList
