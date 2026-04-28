@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import { IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
-import {profile} from "../../../constants/index.js";
+
 const ContentEarnings = ({earnings})=>{
     const [earningDays, setEarningDays] = useState("Last 30 days");
-    const earned = profile[0]?.earnings ?? 0;
+    const earned = earnings ?? {};
     const handleEarningSelect = (days) => {
         setEarningDays(days);
         setIsEarningActive(false);
@@ -69,7 +69,7 @@ const ContentEarnings = ({earnings})=>{
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-20 overflow-hidden"
                             >
-                                {Object.entries(earnings || {}).map(([key, value]) => (
+                                {Object.entries(earnings || {}).map(([key]) => (
                                     <button
                                         key={key}
                                         onClick={() => handleEarningSelect(key)}
@@ -85,7 +85,7 @@ const ContentEarnings = ({earnings})=>{
             </div>
             <div className="flex w-full justify-center items-center gap-2 mt-6">
                 <span className="font-header text-h-2  font-bold">$</span>
-                <span className="font-paragraph text-sh font-bold">{earned[earningDays]}</span>
+                <span className="font-paragraph text-sh font-bold">{earned[earningDays] ?? 0}</span>
             </div>
         </div>
     )

@@ -142,8 +142,8 @@ export const profile = [
         profileAlt: "angels-profile-image",
         earnings:{
             "Last 30 days":85,
-            "Lat 90 days":500,
-            "All days":200
+            "Last 90 days":500,
+            "Yearly":2000,
         },
         socials:[
             {
