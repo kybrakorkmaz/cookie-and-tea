@@ -24,7 +24,7 @@ const ContentSocials = ({ socials }) => {
     const handleSaveSocials = async (updatedList) => {
         // store old data for using again if error occurred
         const previousSocials = currentSocials;
-        // Sanity check: prevent tto send empty URLs
+        // Sanity check: prevent to send empty URLs
         const finalData = updatedList.filter(item => item.url && item.url.trim() !== "");
         // 1. Update frontend immediately so the user don't wait to see the updated data
         setCurrentSocials(finalData);
@@ -46,7 +46,7 @@ const ContentSocials = ({ socials }) => {
             setIsEditClicked(false);
 
         } catch (error) {
-            // if error occur rollback to previous data
+            // if error occurs rollback to previous data
             setCurrentSocials(previousSocials);
             console.error("Error:", error);
             // NOTE: do not call setIsEditClicked(false)
