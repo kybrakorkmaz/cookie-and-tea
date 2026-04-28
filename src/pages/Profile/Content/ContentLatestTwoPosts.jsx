@@ -32,7 +32,7 @@ const ContentLatestTwoPosts = ({userLatestTwoPosts}) => {
                                     post.post_detail.length > 100 ? post.post_detail.slice(0, 100) + "..." : post.post_detail
                             )}
                         </p>
-                        <NavLink to={`/post/${post.post_id}`} className="flex items-center justify-end text-primary-dark hover:text-opacity-70 transition-all gap-1">
+                        <NavLink to={`/post/${post.post_id}`} className="flex items-center justify-end text-primary-dark hover:text-primary-dark/70 transition-all gap-1">
                             <span className="text-xs font-bold uppercase tracking-wider">See details</span>
                             <IoIosArrowForward className="w-3 h-3" />
                         </NavLink>
