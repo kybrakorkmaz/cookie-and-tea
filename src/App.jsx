@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import ContentSocialEdit from "./pages/Profile/Content/Socials/ContentSocialEdit.jsx";
+import Posts from "./pages/Posts.jsx";
 
 const App = ()=>{
   return(
@@ -21,6 +22,7 @@ const App = ()=>{
               <Route path={"/sign-up"} element={<SignUp/>}/>
               <Route path={"/login"} element={<Login/>}/>
               <Route path={"/profile"} element={<Profile/>}/>
+              <Route path={"/user/latest-posts"} element={<Posts/>}/>
 
               {/*
               <Route path={"/profile/socials/edit"} element={<ContentSocialEdit/>}/>
