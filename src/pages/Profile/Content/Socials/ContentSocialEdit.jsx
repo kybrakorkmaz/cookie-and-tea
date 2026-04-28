@@ -97,9 +97,9 @@ const ContentSocialEdit = ({ socials, onClose, onSave }) => {
                 <div className="mt-10 flex justify-end gap-3 font-paragraph">
                     <button
                         onClick={()=>{
+                            if (!selectedName) return;
                             const updatedList = accountList.filter(acc => acc.name !== selectedName);
                             onSave(updatedList);
-                            onClose();
                         }}
                         className="px-4 py-2 text-gray-400 hover:text-gray-600 font-bold transition-colors"
                     >Remove
