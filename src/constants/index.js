@@ -140,7 +140,11 @@ export const profile = [
         backgroundAlt:"angels-background-img",
         profileImage:"/images/people/angel.jpg",
         profileAlt: "angels-profile-image",
-        earnings:85,
+        earnings:{
+            "Last 30 days":85,
+            "Lat 90 days":500,
+            "All days":200
+        },
         socials:[
             {
                 name:"twitter",

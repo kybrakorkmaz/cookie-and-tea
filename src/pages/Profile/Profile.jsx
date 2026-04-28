@@ -14,7 +14,8 @@ const Profile = () => {
         profileImage:"",
         profileAlt:"",
         about:"",
-        socials:[]
+        socials:[],
+        earnings:{}
     });
 
     // todo API call
@@ -28,6 +29,7 @@ const Profile = () => {
             profileAlt: profile[0].profileAlt,
             about: profile[0].about,
             socials: profile[0].socials.filter(social => Boolean(social.url)),
+            earnings: profile[0].earnings
         });
     }, []);
     //console.log("user:",user);
@@ -45,7 +47,7 @@ const Profile = () => {
                 profileAlt={user.profileAlt}
             />
             {/* Main Content */}
-            <Content about={user.about} socials={user.socials}/>
+            <Content about={user.about} socials={user.socials} earnings={user.earnings}/>
         </div>
     );
 };
