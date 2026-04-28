@@ -173,40 +173,71 @@ export const latestPosts = [
         posts:[
             {
                 post_id:1,
-                post_date: "23.04.2026",
+                post_type:"text",
+                post_date: "23/04/2026",
                 post_header: "First Day of Spring",
-                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿"
+                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿",
+                post_image:"",
+                post_video:""
             },
             {
                 post_id:2,
-                post_date: "23.04.2026",
-                post_header: "First Day of Spring",
-                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿"
+                post_type:"text",
+                post_date: "28/04/2026",
+                post_header: "Golden Hour Walk",
+                post_detail: "Warm light, quiet streets, and a moment worth keeping.",
+                post_image:"",
+                post_video:""
+            },
+            {
+                post_id:3,
+                post_type:"image",
+                post_date: "24/04/2026",
+                post_header: "My Cat and I",
+                post_detail: "She loves cuddling",
+                post_image:"/images/posts/my_cat_and_i.jpg",
+                post_video:""
+            },
+            {
+                post_id:4,
+                post_type:"video",
+                post_date: "25/04/2026",
+                post_header: "Nowadays Favorite Song",
+                post_detail: "",
+                post_image:"",
+                post_video: "https://www.youtube.com/watch?v=9E6b3swbnWg&list=RD9E6b3swbnWg&start_radio=1"
             }
         ]
     }
 ]
 
-export const followedPeople = [
-    {
-        id:1,
-        img:"/images/people/john.jpg",
-        name:"John",
-        username:"@johnscorner"
-    },
-    {
-        id: 2,
-        img: "/images/people/mike.jpg",
-        name: "Mike",
-        username: "@mikescorner"
-    }
-]
 
 export const followers = [
     {
-        id:1,
-        img:"/images/people/john.jpg",
-        name:"John",
-        username:"@johnscorner"
+        user_id: 1,
+        followers:[
+            {
+                id:1,
+                follower_user_id:2,
+                img:"/images/people/john.jpg",
+                name:"John",
+                username:"@johnscorner"
+            }
+        ]
+    }
+]
+
+export const following = [
+    {
+        user_id: 1,
+        following:[
+            {
+                id: 1,
+                following_user_id: 3,
+                img: "/images/people/mike.jpg",
+                name: "Mike",
+                username: "@mikescorner"
+            }
+        ]
     }
 ]

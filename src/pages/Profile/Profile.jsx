@@ -1,9 +1,8 @@
 import UserNavbar from "../../components/UserNavbar.jsx";
-
 import Panel from "./Panel.jsx";
 import Content from "./Content.jsx";
 import {useEffect, useState} from "react";
-import {profile} from "../../constants/index.js";
+import {latestPosts, profile} from "../../constants/index.js";
 
 const Profile = () => {
     const [user, setUser] = useState({
@@ -17,6 +16,8 @@ const Profile = () => {
         socials:[],
         earnings:{}
     });
+    const [userLatestTwoPosts, setUserLatestTwoPosts]= useState([]);
+    const [followedPeople, setFollowedPeople]=useState([]);
 
     // todo API call
     useEffect(() => {
@@ -31,9 +32,12 @@ const Profile = () => {
             socials: profile[0].socials.filter(social => Boolean(social.url)),
             earnings: profile[0].earnings
         });
+
+        setUserLatestTwoPosts(latestPosts[0].posts || []);
+
+        setFollowedPeople(followedPeople)
     }, []);
-    //console.log("user:",user);
-    //console.log("socials:",user.socials);
+
     return (
         <div className="bg-cream/50 min-h-screen pb-20">
             <UserNavbar />
@@ -47,7 +51,12 @@ const Profile = () => {
                 profileAlt={user.profileAlt}
             />
             {/* Main Content */}
-            <Content about={user.about} socials={user.socials} earnings={user.earnings}/>
+            <Content
+                about={user.about}
+                socials={user.socials}
+                earnings={user.earnings}
+                userLatestTwoPosts={userLatestTwoPosts}
+            />
         </div>
     );
 };
