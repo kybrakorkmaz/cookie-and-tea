@@ -2,7 +2,7 @@ import UserNavbar from "../../components/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Content from "./Content.jsx";
 import {useEffect, useState} from "react";
-import {latestPosts, profile} from "../../constants/index.js";
+import {followers, following, latestPosts, profile} from "../../constants/index.js";
 
 const Profile = () => {
     const [user, setUser] = useState({
@@ -17,8 +17,8 @@ const Profile = () => {
         earnings:{}
     });
     const [userLatestTwoPosts, setUserLatestTwoPosts]= useState([]);
-    const [followedPeople, setFollowedPeople]=useState([]);
-
+    const [followsUs, setFollowsUs]=useState([]);
+    const [weFollow, setWeFollow]=useState([]);
     // todo API call
     useEffect(() => {
         setUser({
@@ -34,10 +34,10 @@ const Profile = () => {
         });
 
         setUserLatestTwoPosts(latestPosts[0].posts || []);
-
-        setFollowedPeople(followedPeople)
+        //Angel's id=1
+        setFollowsUs(followers[0].followers);
+        setWeFollow(following[0].following);
     }, []);
-
     return (
         <div className="bg-cream/50 min-h-screen pb-20">
             <UserNavbar />
@@ -56,6 +56,8 @@ const Profile = () => {
                 socials={user.socials}
                 earnings={user.earnings}
                 userLatestTwoPosts={userLatestTwoPosts}
+                followers={followsUs}
+                following={weFollow}
             />
         </div>
     );
