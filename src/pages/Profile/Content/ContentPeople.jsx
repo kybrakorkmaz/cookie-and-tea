@@ -35,9 +35,9 @@ const ContentPeople = ({followers, following}) =>{
                         className="flex flex-col gap-6"
                     >
                         {(peopleHeaderState ? people[0].peopleFollowers : people[1].peopleFollowing).map(person => (
-                            <div key={person.id} className="flex items-center gap-4">
+                            <div key={person.id} className="group flex items-center gap-4">
                                 {/* image */}
-                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-cream shadow-sm ransition-transform group-hover:scale-105">
+                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-cream shadow-sm transition-transform group-hover:scale-105">
                                     <img
                                         className="w-full h-full object-cover"
                                         src={person.img}
