@@ -4,7 +4,7 @@ import ContentEarnings from "./Content/ContentEarnings.jsx";
 import ContentLatestTwoPosts from "./Content/ContentLatestTwoPosts.jsx";
 import ContentPeople from "./Content/ContentPeople.jsx";
 
-const Content = ({about, socials, earnings, userLatestTwoPosts}) =>{
+const Content = ({about, socials, earnings, userLatestTwoPosts, followers, following}) =>{
     //console.log("content component socials:",socials);
     return(
         <div className="flex flex-col lg:flex-row w-5/6 mx-auto gap-28 mt-16">
@@ -23,7 +23,7 @@ const Content = ({about, socials, earnings, userLatestTwoPosts}) =>{
                 {/* Latest Posts*/}
                 <ContentLatestTwoPosts userLatestTwoPosts={userLatestTwoPosts}/>
                 {/* People */}
-                <ContentPeople/>
+                <ContentPeople followers={followers} following={following}/>
             </div>
 
         </div>
