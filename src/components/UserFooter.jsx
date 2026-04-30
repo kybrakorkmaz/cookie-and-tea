@@ -12,7 +12,7 @@ const UserFooter = () => {
         <>
             <div className="w-full flex flex-wrap items-center justify-between px-8 md:px-10 lg:px-60 pt-10 pb-16 font-paragraph text-p font-medium text-primary-dark gap-4">
 
-                <NavLink to="/email" className={linkStyle}>
+                <NavLink to="/send-email" className={linkStyle}>
                     cookie.tea@mail.com
                 </NavLink>
 

@@ -1,4 +1,3 @@
-import {FaPenToSquare} from "react-icons/fa6";
 import {motion, AnimatePresence} from "framer-motion";
 import {useState} from "react";
 import {NavLink} from "react-router";
@@ -35,7 +34,7 @@ const ContentPeople = ({followers, following}) =>{
                         className="flex flex-col gap-6"
                     >
                         {(peopleHeaderState ? people[0].peopleFollowers : people[1].peopleFollowing).map(person => (
-                            <NavLink key={person.id} className="group flex items-center gap-4" to={`/user=?${person.username}/profile`}>
+                            <NavLink key={person.id} className="group flex items-center gap-4" to={`/profile?user=${encodeURIComponent(person.username)}`}>
                                 {/* image */}
                                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-cream shadow-sm transition-transform group-hover:scale-105">
                                     <img

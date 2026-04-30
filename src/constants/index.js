@@ -234,15 +234,15 @@ export const followers = [
                 id:3,
                 follower_user_id:2,
                 img:"/images/people/john.jpg",
-                name:"John",
-                username:"@johnscorner"
+                name:"River",
+                username:"@riverscorner"
             },
             {
                 id:4,
                 follower_user_id:3,
                 img:"/images/people/kate.jpg",
-                name:"Kate",
-                username:"@katescorner"
+                name:"Alice",
+                username:"@alicescorner"
             },
         ]
     }
