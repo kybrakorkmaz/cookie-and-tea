@@ -3,6 +3,7 @@ import Panel from "./Panel.jsx";
 import Content from "./Content.jsx";
 import {useEffect, useState} from "react";
 import {followers, following, latestPosts, profile} from "../../constants/index.js";
+import UserFooter from "../../components/UserFooter.jsx";
 
 const Profile = () => {
     const [user, setUser] = useState({
@@ -59,6 +60,7 @@ const Profile = () => {
                 followers={followsUs}
                 following={weFollow}
             />
+            <UserFooter/>
         </div>
     );
 };

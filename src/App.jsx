@@ -7,9 +7,8 @@ import SendEmail from "./pages/SendEmail.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
-import ContentSocialEdit from "./pages/Profile/Content/Socials/ContentSocialEdit.jsx";
 import Posts from "./pages/Posts.jsx";
-
+import People from "./pages//People.jsx"
 const App = ()=>{
   return(
       <BrowserRouter>
@@ -23,6 +22,7 @@ const App = ()=>{
               <Route path={"/login"} element={<Login/>}/>
               <Route path={"/profile"} element={<Profile/>}/>
               <Route path={"/user/latest-posts"} element={<Posts/>}/>
+              <Route path={"/user/people"} element={<People/>}/>
 
               {/*
               <Route path={"/profile/socials/edit"} element={<ContentSocialEdit/>}/>
