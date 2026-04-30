@@ -7,12 +7,13 @@ import SendEmail from "./pages/SendEmail.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
-import Posts from "./pages/Posts.jsx";
+import Posts from "./pages/Posts/Posts.jsx";
 import People from "./pages//People.jsx"
 const App = ()=>{
   return(
       <BrowserRouter>
           <Routes>
+              {/* Public Routes */}
               <Route path={"/"} element={<Home/>}/>
               <Route path={"/faq"} element={<Faq/>}/>
               <Route path={"/your-passions"} element={<YourPassions/>}/>
@@ -20,9 +21,10 @@ const App = ()=>{
               <Route path={"/send-email"} element={<SendEmail/>}/>
               <Route path={"/sign-up"} element={<SignUp/>}/>
               <Route path={"/login"} element={<Login/>}/>
-              <Route path={"/profile"} element={<Profile/>}/>
-              <Route path={"/user/latest-posts"} element={<Posts/>}/>
-              <Route path={"/user/people"} element={<People/>}/>
+              {/* User & Profile Routes */}
+              <Route path={"/profile/:userId?"} element={<Profile/>}/>
+              <Route path={"/people"} element={<People/>}/>
+              <Route path={"/posts/:userId?"} element={<Posts/>}/>
 
               {/*
               <Route path={"/profile/socials/edit"} element={<ContentSocialEdit/>}/>

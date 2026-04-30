@@ -166,7 +166,7 @@ export const profile = [
     }
 ];
 
-export const latestPosts = [
+export const posts = [
     {
         id:1,
         user_id:1,
@@ -176,7 +176,20 @@ export const latestPosts = [
                 post_type:"text",
                 post_date: "23/04/2026",
                 post_header: "First Day of Spring",
-                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿",
+                post_detail: "Soft light, fresh air, and a quiet reminder that new beginnings are here 🌿.Soft light spills " +
+                    "gently across everything, turning even the simplest corners into something a little more special. The air feels lighter, " +
+                    "fresher—like the world has quietly reset itself overnight. There’s a calm kind of energy in these " +
+                    "first days of spring, where nothing is rushed but everything feels possible.\n" +
+                    "\n" +
+                    "Walking outside, you start to notice the small changes—the way the sunlight lingers a bit longer, " +
+                    "the subtle colors returning to trees and streets, the quiet sounds of life coming back. It’s not loud or " +
+                    "dramatic, just a soft shift that you feel more than you see. Moments like this make you slow down without even trying.\n" +
+                    "\n" +
+                    "There’s something comforting about new beginnings arriving so gently. No pressure, no expectations—just a " +
+                    "reminder that change doesn’t always have to be overwhelming. Sometimes it’s as simple as a new season, a breath of " +
+                    "fresh air, or a peaceful moment you didn’t plan for.\n" +
+                    "\n" +
+                    "Spring always feels like a quiet invitation to start again, in your own way, at your own pace.",
                 post_image:"",
                 post_video:""
             },
@@ -202,7 +215,7 @@ export const latestPosts = [
                 post_id:4,
                 post_type:"video",
                 post_date: "25/04/2026",
-                post_header: "Nowadays Favorite Song",
+                post_header: "Music I Working On Nowadays",
                 post_detail: "",
                 post_image:"",
                 post_video: "https://www.youtube.com/watch?v=9E6b3swbnWg&list=RD9E6b3swbnWg&start_radio=1"
