@@ -18,7 +18,7 @@ const Posts = () => {
     const [highlightedId, setHighlightedId] = useState(null);
     const allPosts = posts[0].posts;
     const [isEditClicked, setIsEditClicked] = useState(false);
-    const sortedPostsByDate = allPosts.sort((a, b) => {
+    const sortedPostsByDate =[...allPosts].sort((a, b) => {
 
         const formatDate = (dateStr) => {
             const [day, month, year] = dateStr.split("/");
@@ -29,8 +29,7 @@ const Posts = () => {
 
         return bDate - aDate;
     });
-    const [showComments, setShowComments] = useState(false);
-    const [showDonations, setShowDonations] = useState(false);
+    const [activeSupport, setActiveSupport] = useState({ postId: null, type: null });
     const [visibleCount, setVisibleCount] = useState(5); // show 5 posts when the page loaded at the first time
 
     // total post number
@@ -79,6 +78,9 @@ const Posts = () => {
                 {visiblePosts.map((post) => {
                     const isFocused = highlightedId === `post-${post.post_id}`;
                     // find all comments for the post
+                    const isCommentsOpen = activeSupport.postId === post.post_id && activeSupport.type === 'comments';
+                    const isDonationsOpen = activeSupport.postId === post.post_id && activeSupport.type === 'donations';
+
                     const postComments = comments.filter(c => c.commented_to_post_id === post.post_id);
                     // if there is at least a comment the find the latest commented person
                     let previewComment = null;
@@ -109,13 +111,9 @@ const Posts = () => {
                                 </div>
 
                                 { /* Header + Date*/}
-                                <div className="flex justify-between">
-                                    <h3 className="text-2xl font-header font-bold text-primary-dark">
-                                        {post.post_header}
-                                    </h3>
-                                    <div className="flex items-center gap-4">
-                                        <span className="font-paragraph text-sm text-gray-400">{post.post_date}</span>
-                                    </div>
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-2xl font-header font-bold text-primary-dark">{post.post_header}</h3>
+                                    <span className="font-paragraph text-sm text-gray-400">{post.post_date}</span>
                                 </div>
 
                                 {post.post_detail && (
@@ -126,31 +124,24 @@ const Posts = () => {
 
                                 {/* Media Section */}
                                 <div className="mt-4">
-                                    {post.post_type === "video" && (
-                                        <VideoPost video={post.post_video}/>
-                                    )}
-
-                                    {post.post_type === "image" && (
-                                        <ImagePost images={post.post_image}/>
-                                    )}
-
-                                    {post.post_type === "hybrid" && (
-                                        <HybridPost
-                                            videos={post.post_video}
-                                            images={post.post_image}
-                                        />
-                                    )}
+                                    {post.post_type === "video" && <VideoPost video={post.post_video}/>}
+                                    {post.post_type === "image" && <ImagePost images={post.post_image}/>}
+                                    {post.post_type === "hybrid" && <HybridPost videos={post.post_video} images={post.post_image} />}
                                 </div>
 
                                 {/* Comment and donation number*/}
                                 <div className="flex justify-end mt-1 gap-4">
-                                    <button onClick={() => setShowComments(true)}
-                                            className="flex items-center gap-1 cursor-pointer">
+                                    <button
+                                        onClick={() => setActiveSupport({ postId: post.post_id, type: 'comments' })}
+                                        className="flex items-center gap-1 cursor-pointer hover:text-primary-dark transition-colors"
+                                    >
                                         <FaMessage className="text-primary-dark w-4 h-4"/>
                                         <span className="text-sm font-bold">{post.comment}</span>
                                     </button>
-                                    <button onClick={() => setShowDonations(true)}
-                                            className="flex items-center gap-1 cursor-pointer">
+                                    <button
+                                        onClick={() => setActiveSupport({ postId: post.post_id, type: 'donations' })}
+                                        className="flex items-center gap-1 cursor-pointer hover:text-primary-dark transition-colors"
+                                    >
                                         <GiTwoCoins className="w-5 h-5 text-amber-500"/>
                                         <span className="text-sm font-bold">${post.donation}</span>
                                     </button>
@@ -164,10 +155,12 @@ const Posts = () => {
                                         comment={previewComment.comment}
                                     />
                                 )}
-                                <ShowSupporters donation={showDonations} comments={showComments} onClose={() => {
-                                    setShowDonations(false);
-                                    setShowComments(false);
-                                }}/>
+                                <ShowSupporters
+                                    donation={isDonationsOpen}
+                                    comments={isCommentsOpen}
+                                    postId={post.post_id} // Hangi postun destekçilerini göstereceğini bilmesi için
+                                    onClose={() => setActiveSupport({ postId: null, type: null })}
+                                />
                             </div>
                         </motion.div>
                     );
