@@ -57,7 +57,7 @@ const ContentPeople = ({followers, following}) =>{
                     </motion.div>
                 </AnimatePresence>
             </div>
-            <NavLink className="flex items-center justify-end font-paragraph text-sm text-primary-dark" to={"/user/people"}>See All <IoIosArrowForward/></NavLink>
+            <NavLink className="flex items-center justify-end font-paragraph text-sm text-primary-dark" to={"/people"}>See All <IoIosArrowForward/></NavLink>
         </div>
     )
 }
