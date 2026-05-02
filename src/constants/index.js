@@ -307,6 +307,7 @@ export const posts = [
                 donation:0
             },
             {
+                user_id:1,
                 post_id:3,
                 post_type:"image",
                 post_date: "24/04/2026",
@@ -339,7 +340,7 @@ export const posts = [
             {
                 user_id:1,
                 post_id:5,
-                post_type:"text",
+                post_type:"image",
                 post_date: "12/03/2026",
                 post_header: "Morning Light",
                 post_detail: "The day begins quietly, with soft light slowly filling the room. " +

@@ -32,22 +32,23 @@ const Posts = () => {
         setVisibleCount((prev) => prev + 5);
     };
 
-    // 🔒 Disable browser scroll restoration
-    useEffect(() => {
-        if ("scrollRestoration" in window.history) {
-            window.history.scrollRestoration = "manual";
-        }
-    }, []);
-
-    // 🎯 Stable hash handling
     useEffect(() => {
         if (!hash) return;
 
         // same hash → ignore
         if (lastHandledHashRef.current === hash) return;
-        lastHandledHashRef.current = hash;
 
         const targetId = hash.replace("#", "");
+        const targetPostId = Number(targetId.replace("post-", ""));
+        const targetIndex = sortedPostsByDate.findIndex((post) => post.post_id === targetPostId);
+
+        if (targetIndex >= visibleCount) {
+            setVisibleCount(targetIndex + 1);
+            return;
+        }
+
+        lastHandledHashRef.current = hash;
+
         setHighlightedId(targetId);
 
         const element = document.getElementById(targetId);
@@ -69,7 +70,7 @@ const Posts = () => {
             clearTimeout(scrollTimer);
             clearTimeout(highlightTimer);
         };
-    }, [hash]);
+    }, [hash, sortedPostsByDate, visibleCount]);
 
     return (
         <div className="min-h-screen bg-cream/20">

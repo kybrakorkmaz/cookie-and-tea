@@ -50,7 +50,9 @@ const PostCard = ({ post, highlightedId }) => {
                 </div>
 
                 {post.post_detail && (
-                    <p className="font-paragraph text-gray-700 mt-2 leading-relaxed">{post.post_detail}</p>
+                    <p className="font-paragraph text-gray-700 mt-2 leading-relaxed whitespace-pre-line">
+                        {post.post_detail}
+                    </p>
                 )}
 
                 <div className="mt-4">
