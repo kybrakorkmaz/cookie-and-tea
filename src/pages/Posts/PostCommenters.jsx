@@ -1,23 +1,63 @@
-const PostCommenters = ({imgSrc, name, username, date,comment})=>{
-    return(
-        <div className="mt-4 p-3 bg-gray-50 rounded-xl border-l-4 border-primary-dark/30">
-            <div className="flex items-center gap-2 mb-1">
-                <img
-                    src={imgSrc}
-                    className="w-5 h-5 rounded-full object-cover"
-                    alt="commenter"
-                />
-                <div className="flex flex-col">
-                    <span className="text-xs font-bold text-gray-800">{name}</span>
-                    <span className="text-xs text-gray-800">@{username}</span>
-                </div>
-                <span className="text-[10px] text-gray-400">{date}</span>
+import UserNavbar from "../../components/UserNavbar.jsx";
+import { useEffect, useState } from "react";
+import { posts } from "../../constants/index.js";
+import { useLocation } from "react-router";
+import PostCard from "./PostCard.jsx"; // Yeni bileşeni import et
+
+const Posts = () => {
+    const { hash } = useLocation();
+    const [highlightedId, setHighlightedId] = useState(null);
+    const allPosts = posts[0].posts;
+
+    // Sıralama Mantığı
+    const sortedPostsByDate = [...allPosts].sort((a, b) => {
+        const formatDate = (dateStr) => {
+            const [day, month, year] = dateStr.split("/");
+            return new Date(`${year}-${month}-${day}`);
+        }
+        return formatDate(b.post_date) - formatDate(a.post_date);
+    });
+
+    const [visibleCount, setVisibleCount] = useState(5);
+    const totalPosts = allPosts.length;
+    const visiblePosts = sortedPostsByDate.slice(0, visibleCount);
+
+    const handleLoadMore = () => setVisibleCount(prev => prev + 5);
+
+    useEffect(() => {
+        if (hash) {
+            const targetId = hash.replace("#", "");
+            setHighlightedId(targetId);
+            const element = document.getElementById(targetId);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 100);
+                setTimeout(() => setHighlightedId(null), 3000);
+            }
+        }
+    }, [hash]);
+
+    return (
+        <div className="min-h-screen bg-cream/20">
+            <UserNavbar />
+            <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
+                {visiblePosts.map((post) => (
+                    <PostCard
+                        key={post.post_id}
+                        post={post}
+                        highlightedId={highlightedId}
+                    />
+                ))}
+
+                {visibleCount < totalPosts && (
+                    <button onClick={handleLoadMore} className="mx-auto px-10 py-3 bg-primary-dark text-white rounded-full font-bold hover:bg-opacity-90 transition-all">
+                        Load More
+                    </button>
+                )}
             </div>
-            <p className="text-sm text-gray-600 line-clamp-2 italic">
-                "{comment}"
-            </p>
         </div>
-    )
+    );
 }
 
-export default PostCommenters;
+export default Posts;

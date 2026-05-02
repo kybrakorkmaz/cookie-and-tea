@@ -268,9 +268,9 @@ export const profile = [
 export const posts = [
     {
         id:1,
-        user_id:1,
         posts:[
             {
+                user_id:1,
                 post_id:1,
                 post_type:"text",
                 post_date: "23/04/2026",
@@ -295,6 +295,7 @@ export const posts = [
                 donation:5
             },
             {
+                user_id:1,
                 post_id:2,
                 post_type:"text",
                 post_date: "28/04/2026",
@@ -322,6 +323,7 @@ export const posts = [
                 donation:500
             },
             {
+                user_id:1,
                 post_id:4,
                 post_type:"video",
                 post_date: "25/04/2026",
@@ -333,6 +335,77 @@ export const posts = [
                     "https://www.youtube.com/watch?v=9AuzJ2GBCGw&list=RD9AuzJ2GBCGw&start_radio=1","https://www.youtube.com/watch?v=9AuzJ2GBCGw&list=RD9AuzJ2GBCGw&start_radio=1"],
                 comment:0,
                 donation:200
+            },
+            {
+                user_id:1,
+                post_id:5,
+                post_type:"text",
+                post_date: "12/03/2026",
+                post_header: "Morning Light",
+                post_detail: "The day begins quietly, with soft light slowly filling the room. " +
+                    "There’s something comforting about these early moments, when everything feels still " +
+                    "and unhurried. It’s a gentle reminder to take things one step at a time.",
+                post_image:["/images/posts/morning-light.jpg"],
+                post_video: [],
+                comment:0,
+                donation:0
+            },
+            {
+                user_id:1,
+                post_id:6,
+                post_type:"text",
+                post_date: "18/04/2026",
+                post_header: "City Rain",
+                post_detail: "Raindrops fall steadily, turning streets into " +
+                    "reflections of light and motion. The sound blends into the background, " +
+                    "creating a strange kind of calm in the middle of the city’s chaos. It’s the kind of " +
+                    "moment that makes you pause without realizing it.",
+                post_image:[],
+                post_video: [],
+                comment:0,
+                donation:0
+            },
+            {
+                user_id:1,
+                post_id:7,
+                post_type:"text",
+                post_date: "25/04/2026",
+                post_header: "A Walk Alone",
+                post_detail: "Sometimes, walking alone is exactly what you need. No distractions, " +
+                    "just your thoughts and the rhythm of your steps. It’s in these quiet moments that " +
+                    "things start to feel a little clearer.",
+                post_image:[],
+                post_video: [],
+                comment:0,
+                donation:0
+            },
+            {
+                user_id:1,
+                post_id:8,
+                post_type:"text",
+                post_date: "02/05/2026",
+                post_header: "Spring Breeze",
+                post_detail: "A soft breeze moves through the air, carrying that fresh feeling only spring can bring. " +
+                    "Everything seems lighter, as if the world is slowly waking up again. It’s a small but meaningful " +
+                    "shift.",
+                post_image:[],
+                post_video: [],
+                comment:0,
+                donation:0
+            },
+            {
+                user_id:1,
+                post_id:9,
+                post_type:"text",
+                post_date: "10/05/2026",
+                post_header: "Late Night Thoughts",
+                post_detail: "Late hours bring a different kind of silence. With fewer distractions, " +
+                    "thoughts flow more freely, and ideas begin to take shape." +
+                    " There’s something peaceful about being awake when everything else is at rest.",
+                post_image:[],
+                post_video: [],
+                comment:0,
+                donation:0
             }
         ]
     }
@@ -446,7 +519,7 @@ export const donations = [
     },
     {
         donation_id: 4,
-        donator_id: 1,
+        donator_id: 2,
         donated_to_user_id:1,
         donated_to_post_id: 4,
         donated_date:"01/05/2026",
