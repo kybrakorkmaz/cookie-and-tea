@@ -2,7 +2,7 @@ import UserNavbar from "../../components/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Content from "./Content.jsx";
 import {useEffect, useState} from "react";
-import {followers, following, latestPosts, profile} from "../../constants/index.js";
+import {followers, following, posts, profile} from "../../constants/index.js";
 import UserFooter from "../../components/UserFooter.jsx";
 
 const Profile = () => {
@@ -34,7 +34,7 @@ const Profile = () => {
             earnings: profile[0].earnings
         });
 
-        setUserLatestTwoPosts(latestPosts[0].posts || []);
+        setUserLatestTwoPosts(posts?.[0]?.posts ?? []);
         //Angel's id=1
         setFollowsUs(followers[0].followers);
         setWeFollow(following[0].following);
