@@ -8,6 +8,7 @@ import ImagePost from "./ImagePost.jsx";
 import HybridPost from "./HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./PostCommenters.jsx";
+import PostComment from "./PostComment.jsx";
 
 const PostCard = ({ post, highlightedId }) => {
     // Every cards hold its own state
@@ -77,7 +78,7 @@ const PostCard = ({ post, highlightedId }) => {
                         <span className="text-sm font-bold">${post.donation}</span>
                     </button>
                 </div>
-
+                <PostComment/>
                 {/* If no panel is open (comments or donations sectttion) show only a preview comment */}
                 {previewComment && !activeType && (
                     <PostCommenters

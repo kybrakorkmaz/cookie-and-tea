@@ -75,7 +75,7 @@ const SendEmail = () => {
         <div className="bg-cream min-h-screen flex flex-col">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
 
-            <main className="flex-grow container mx-auto px-4 py-20 md:py-32">
+            <main className="grow container mx-auto px-4 py-20 md:py-32">
                 <div className="max-w-2xl mx-auto">
                     <h2 className="font-header text-h-2 text-primary-dark mb-8">What do you want to say us?</h2>
 

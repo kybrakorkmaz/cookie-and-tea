@@ -34,7 +34,7 @@ const Profile = () => {
             earnings: profile[0].earnings
         });
 
-        setUserLatestTwoPosts(posts[0].posts || []);
+        setUserLatestTwoPosts(posts?.[0]?.posts ?? []);
         //Angel's id=1
         setFollowsUs(followers[0].followers);
         setWeFollow(following[0].following);

@@ -11,7 +11,6 @@ const PostDonators = ({imgSrc, name, username, date, donatedAmount}) =>{
                 />
                 <div className="flex flex-col">
                     <span className="text-xs font-bold text-gray-800">{name}</span>
-                    <span className="text-xs text-gray-800">@{username}</span>
                 </div>
                 <span className="flex text-sm italic"> Donated <GiTwoCoins className="w-5 h-5 text-amber-500"/>${donatedAmount}</span>
             </div>
