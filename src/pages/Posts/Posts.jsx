@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { posts } from "../../constants/index.js";
 import { useLocation } from "react-router";
 import PostCard from "./PostCard.jsx";
+import UserFooter from "../../components/UserFooter.jsx";
 
 const Posts = () => {
     const { hash } = useLocation();
@@ -95,6 +96,7 @@ const Posts = () => {
                     </button>
                 )}
             </div>
+            <UserFooter/>
         </div>
     );
 };
