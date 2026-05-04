@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaMessage, FaPenToSquare } from "react-icons/fa6";
 import { GiTwoCoins } from "react-icons/gi";
-import { comments, profile } from "../../constants/index.js";
+import {comments, DONATE_ICON, profile} from "../../constants/index.js";
 import VideoPost from "./VideoPost.jsx";
 import ImagePost from "./ImagePost.jsx";
 import HybridPost from "./HybridPost.jsx";
@@ -10,12 +10,18 @@ import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./PostCommenters.jsx";
 import PostComment from "./PostComment.jsx";
 import EditPost from "./EditPost.jsx";
+import Donation from "../../components/Donation.jsx";
+import DonateMessage from "../../components/DonateMessage.jsx";
+
 
 const PostCard = ({ post, highlightedId }) => {
     // Every cards hold its own state
     const [activeType, setActiveType] = useState(null); // 'comments', 'donations' or null
     const isFocused = highlightedId === `post-${post.post_id}`;
     const [isEditing, setIsEditing] = useState(false);
+    const [donateAmount, setDonateAmount] = useState(null);
+    const [isDonating, setIsDonating] = useState(false);
+
     // preview comment
     const postComments = comments.filter(c => c.commented_to_post_id === post.post_id);
     let previewComment = null;
@@ -113,22 +119,39 @@ const PostCard = ({ post, highlightedId }) => {
                         {post.post_type === "image" && <ImagePost images={post.post_image}/>}
                         {post.post_type === "hybrid" && <HybridPost videos={post.post_video} images={post.post_image} />}
                     </div>
+                    <div className="flex justify-between">
+                        <div className="flex gap-2 bg-gray-50 p-2 rounded-full border border-gray-100">
+                            {Object.entries(DONATE_ICON).map(([key, iconPath]) => {
+                                // Extract number from "donate_5_dollars"
+                                const amount = key.split("_")[1];
 
-                    <div className="flex justify-end mt-1 gap-4">
-                        <button
-                            onClick={() => handleToggle('comments')}
-                            className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'comments' ? 'text-primary-dark' : 'hover:text-primary-dark'}`}
-                        >
-                            <FaMessage className="w-4 h-4"/>
-                            <span className="text-sm font-bold">{post.comment}</span>
-                        </button>
-                        <button
-                            onClick={() => handleToggle('donations')}
-                            className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'donations' ? 'text-amber-600' : 'hover:text-primary-dark'}`}
-                        >
-                            <GiTwoCoins className="w-5 h-5 text-amber-500"/>
-                            <span className="text-sm font-bold">${post.donation}</span>
-                        </button>
+                                return (
+                                    <Donation
+                                        key={key}
+                                        amount={amount}
+                                        icon={iconPath}
+                                        alt={key.replace(/_/g, " ")}
+                                        onOpenDonate={setDonateAmount}
+                                    />
+                                );
+                            })}
+                        </div>
+                        <div className="flex mt-1 gap-4">
+                            <button
+                                onClick={() => handleToggle('comments')}
+                                className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'comments' ? 'text-primary-dark' : 'hover:text-primary-dark'}`}
+                            >
+                                <FaMessage className="w-4 h-4"/>
+                                <span className="text-sm font-bold">{post.comment}</span>
+                            </button>
+                            <button
+                                onClick={() => handleToggle('donations')}
+                                className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'donations' ? 'text-amber-600' : 'hover:text-primary-dark'}`}
+                            >
+                                <GiTwoCoins className="w-5 h-5 text-amber-500"/>
+                                <span className="text-sm font-bold">${post.donation}</span>
+                            </button>
+                        </div>
                     </div>
                     <PostComment/>
                     {/* If no panel is open (comments or donations sectttion) show only a preview comment */}
@@ -156,6 +179,12 @@ const PostCard = ({ post, highlightedId }) => {
                     onClose={() => setIsEditing(false)}
                     onUpdate={handleUpdate}
                     onDelete={handleDelete}
+                />
+            )}
+            {donateAmount && (
+                <DonateMessage
+                    amount={donateAmount}
+                    onClose={() => setDonateAmount(null)}
                 />
             )}
         </>

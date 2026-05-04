@@ -51,7 +51,7 @@ const VideoPost = ({ video = [] }) => {
                         </button>
                     )}
 
-                    {/* Video Sayacı (Opsiyonel) */}
+                    {/* Video counter */}
                     <div className="absolute bottom-2 right-4 text-cream/80 text-xs font-bold bg-black/40 px-2 py-1 rounded-lg">
                         {currentIndex + 1} / {videosArray.length}
                     </div>
