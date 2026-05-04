@@ -1,6 +1,7 @@
 import { useState } from "react";
 import UploadImageFile from "../../components/UploadImageFile.jsx";
 import UploadFile from "../../components/UploadFile.jsx";
+import MediaManager from "../../components/MediaManager.jsx";
 
 const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
     const [editPost, setEditPost] = useState({
@@ -20,6 +21,20 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                 : value
         }));
     };
+
+    const handleFileUpdate = (name, files) => {
+        // In a real app, upload to S3/Cloudinary here and get a URL.
+        // For now, we'll create a local preview URL or use the file name
+        // to ensure the state is no longer "empty".
+        const newFiles = Array.from(files).map(file => URL.createObjectURL(file));
+
+        setEditPost(prev => ({
+            ...prev,
+            [name]: [...prev[name], ...newFiles]
+        }));
+    };
+
+
 
     return (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
@@ -57,33 +72,15 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                         />
                     </div>
 
-                    {/* Image Management */}
-                    <div>
-                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Images</label>
-                        {editPost.post_image.length === 0 ? <UploadImageFile /> : (
-                            <textarea
-                                name="post_image"
-                                value={editPost.post_image.join("\n")}
-                                onChange={handleChange}
-                                rows={Math.min(editPost.post_image.length, 4)}
-                                className="w-full mt-2 p-3 border rounded-xl outline-primary-dark resize-none overflow-y-auto max-h-32"
-                            />
-                        )}
-                    </div>
+                    <MediaManager
+                        label="Images" name="post_image" value={editPost.post_image}
+                        onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadImageFile}
+                    />
 
-                    {/* Video Management */}
-                    <div>
-                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Videos</label>
-                        {editPost.post_video.length === 0 ? <UploadFile /> : (
-                            <textarea
-                                name="post_video"
-                                value={editPost.post_video.join("\n")}
-                                onChange={handleChange}
-                                rows={Math.min(editPost.post_video.length, 4)}
-                                className="w-full mt-2 p-3 border rounded-xl outline-primary-dark resize-none overflow-y-auto max-h-32"
-                            />
-                        )}
-                    </div>
+                    <MediaManager
+                        label="Videos" name="post_video" value={editPost.post_video}
+                        onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadFile}
+                    />
                 </div>
 
                 {/* Action Footer */}

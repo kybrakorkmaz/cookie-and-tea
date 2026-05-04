@@ -15,9 +15,12 @@ const UploadImageFile = ({ onImageUpload }) => {
                             <input
                                 type="file"
                                 className="hidden"
+                                multiple // Allow multiple if your state supports it
+                                accept="image/*"
                                 onChange={(e) => {
-                                    // Here you would handle the file upload logic
-                                    console.log(e.target.files[0]);
+                                    if (e.target.files.length > 0) {
+                                        onFilesSelected(e.target.files);
+                                    }
                                 }}
                             />
                         </label>

@@ -22,7 +22,7 @@ const UploadVideoFile = ({ onVideoSelect }) => {
                                 type="file"
                                 accept="video/*"
                                 className="hidden"
-                                onChange={(e) => onVideoSelect(e.target.files[0])}
+                                onChange={(e) => onVideoSelect?.(e.target.files?.[0] ?? null)}
                             />
                         </label>
                     </div>
