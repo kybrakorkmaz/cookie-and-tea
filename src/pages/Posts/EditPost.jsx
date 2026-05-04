@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import UploadImageFile from "../../components/UploadImageFile.jsx";
 import UploadFile from "../../components/UploadFile.jsx";
 import MediaManager from "../../components/MediaManager.jsx";
 
 const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
+    const createdUrlsRef = useRef([]);
+
     const [editPost, setEditPost] = useState({
         ...post,
         post_header: post.post_header || "",
@@ -26,13 +28,24 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
         // In a real app, upload to S3/Cloudinary here and get a URL.
         // For now, we'll create a local preview URL or use the file name
         // to ensure the state is no longer "empty".
-        const newFiles = Array.from(files).map(file => URL.createObjectURL(file));
+        const newFiles = Array.from(files).map(file => {
+            const url = URL.createObjectURL(file);
+            createdUrlsRef.current.push(url);
+            return url;
+        });
 
         setEditPost(prev => ({
             ...prev,
             [name]: [...prev[name], ...newFiles]
         }));
     };
+
+    useEffect(() => {
+        return () => {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            createdUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, []);
 
 
 
@@ -97,7 +110,7 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                     </button>
                     <button
                         onClick={() => onUpdate(editPost)}
-                        className="flex-2 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl hover:opacity-90 transition-opacity shadow-lg"
+                        className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl hover:opacity-90 transition-opacity shadow-lg"
                     >
                         Update Post
                     </button>

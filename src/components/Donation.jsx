@@ -2,7 +2,8 @@
 const Donation = ({ amount, icon, alt, onOpenDonate }) => {
     return (
         <button
-            onClick={() => onOpenDonate(amount)}
+            type="button"
+            onClick={() => onOpenDonate?.(amount)}
             className="hover:scale-110 transition-transform duration-200"
             title={`Donate $${amount}`}
         >

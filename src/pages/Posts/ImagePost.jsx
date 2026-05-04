@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoArrowBackCircle, IoArrowForwardCircle } from "react-icons/io5";
 
 const ImagePost = ({ images = [] }) => {
-    const imagesArray = Array.isArray(images) ? images : [images];
+    const imagesArray = Array.isArray(images) ? images : images ? [images] : [];
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const nextImage = () => {

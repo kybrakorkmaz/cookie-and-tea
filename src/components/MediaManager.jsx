@@ -2,7 +2,7 @@ const MediaManager = ({ label, name, value, onChange, onFilesSelected, UploadCom
     <div>
         <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">{label}</label>
         {value.length === 0 ? (
-            <UploadComponent onFilesSelected={(files) => onFilesSelected(name, files)} />
+            <UploadComponent onFilesSelected={(file) => onFilesSelected(name, file ? [file] : [])} />
         ) : (
             <textarea
                 name={name}

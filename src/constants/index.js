@@ -530,7 +530,7 @@ export const donations = [
 ]
 
 export const DONATE_ICON = {
-    donate_5_dolors: "/images/donate-icons/donate-tea-icon.png",
-    donate_7_dolors: "/images/donate-icons/donate-cookie-icon.png",
-    donate_12_dolors: "/images/donate-icons/donate-both-icon.png"
+    donate_5_dollars: "/images/donate-icons/donate-tea-icon.png",
+    donate_7_dollars: "/images/donate-icons/donate-cookie-icon.png",
+    donate_12_dollars: "/images/donate-icons/donate-both-icon.png"
 };

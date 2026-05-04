@@ -8,7 +8,13 @@ const DonateMessage = ({ amount, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+        <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="donate-dialog-title"
+            className="fixed inset-0 z-100 flex items-center justify-center p-4"
+            onKeyDown={(e) => e.key === "Escape" && onClose()}
+            >
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
             <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 text-center">
@@ -23,12 +29,14 @@ const DonateMessage = ({ amount, onClose }) => {
 
                 <div className="flex gap-3">
                     <button
+                        type="button"
                         onClick={onClose}
                         className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
+                        type="button"
                         onClick={handleConfirm}
                         className="flex-1 py-3 px-4 rounded-xl font-bold bg-primary-dark text-white hover:opacity-90 transition-opacity"
                     >
