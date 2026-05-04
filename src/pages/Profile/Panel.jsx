@@ -12,11 +12,37 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
         textShadow: "0 0.5px 0.7px rgba(0,0,0,0.3)"
     };
     const [editMode, setEditMode] = useState(null); // 'profile' or 'cover' or null
-    const handleUpdate = () => {
-        // Logic for both based on editMode
-        const type = editMode === 'profile' ? 'Profile Photo' : 'Cover Image';
-        alert(`${type} updated successfully!`);
-        setEditMode(null);
+    const [error, setError] = useState(null);
+
+    const handleUpdate = async (file) => {
+        if (!file) {
+            setError("Please select a file to upload.");
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const endpoint = editMode === 'profile' ? '/api/profile/photo' : '/api/profile/cover';
+            
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Upload failed");
+
+            // Assuming response contains the new image URL
+            // const data = await response.json();
+            // updateStateOrRedux(data.url);
+
+            setEditMode(null);
+            setError(null);
+        } catch (err) {
+            console.error("Update Error:", err);
+            setError("Failed to upload image. Please try again.");
+        }
     };
     return(
         <div className="w-5/6 mx-auto mt-10 rounded-2xl overflow-hidden border border-primary-dark bg-white shadow-soft">
@@ -91,9 +117,18 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
             {editMode && (
                 <ImageUploadModal
                     title={editMode === 'profile' ? "Update Profile Photo" : "Update Cover Image"}
-                    onClose={() => setEditMode(null)}
+                    onClose={() => {
+                        setEditMode(null);
+                        setError(null);
+                    }}
                     onConfirm={handleUpdate}
                 />
+            )}
+
+            {error && (
+                <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110]">
+                    {error}
+                </div>
             )}
 
             {/* Panel Navbar */}
@@ -101,7 +136,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                 {/* navbar */}
                 <div className="flex font-header text-sh text-primary-dark p-4 pl-12 md:pl-24 gap-6 ">
                     <NavLink to="/about" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>About</NavLink>
-                    <NavLink to="/gallery" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Gallery</NavLink>
+                    <NavLink to="/people" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Gallery</NavLink>
                     <NavLink to="/posts" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Posts</NavLink>
                 </div>
                 {/* follow/unfollow button*/}

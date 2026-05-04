@@ -1,7 +1,7 @@
 import {NavLink} from "react-router";
 import {IoIosArrowForward} from "react-icons/io";
 
-const ContentLatestTwoPosts = ({userLatestTwoPosts}) => {
+const ContentLatestTwoPosts = ({userLatestTwoPosts = []}) => {
     const sortedPostsByDate = [...userLatestTwoPosts].sort((a, b) => {
         const formatDate = (dateStr) => {
             const [day, month, year] = dateStr.split('/');
@@ -23,13 +23,13 @@ const ContentLatestTwoPosts = ({userLatestTwoPosts}) => {
                 {latestTwo.map(post => (
                     <div key={post.post_id} className="border-b border-gray-50 last:border-0 pb-4">
                         <div className="flex justify-between items-start mb-2">
-                            <span className="font-paragraph font-medium text-sm text-gray-800">{post.post_header}</span>
+                            <h4 className="font-paragraph font-medium text-sm text-gray-800">{post.post_header}</h4>
                             <span className="font-paragraph text-xs text-gray-400">{post.post_date}</span>
                         </div>
                         <p className="font-paragraph text-gray-600 text-sm mb-3 italic">
                             {post.post_type === "image" ? "📷 Shared an image" : (
                                 post.post_type === "video" ? "🎥 Shared a video" :
-                                    post.post_detail.length > 100 ? post.post_detail.slice(0, 100) + "..." : post.post_detail
+                                    (post.post_detail || "").length > 100 ? (post.post_detail || "").slice(0, 100) + "..." : (post.post_detail || "")
                             )}
                         </p>
                         <NavLink

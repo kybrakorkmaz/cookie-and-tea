@@ -46,6 +46,9 @@ const ContentAboutEdit = ({ about, onClose, onSave }) => {
                 </div>
 
                 {/* About Section */}
+                <label htmlFor="about-textarea" className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
+                    About you
+                </label>
                 <textarea
                     name="about-textarea"
                     id="about-textarea"

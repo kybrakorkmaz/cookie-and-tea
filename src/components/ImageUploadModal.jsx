@@ -1,6 +1,9 @@
+import { useState } from "react";
 import UploadImageFile from "./UploadImageFile.jsx";
 
 const ImageUploadModal = ({ title, onClose, onConfirm }) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             {/* Backdrop */}
@@ -12,7 +15,7 @@ const ImageUploadModal = ({ title, onClose, onConfirm }) => {
                     <button onClick={onClose} className="text-gray-400 hover:text-black font-bold text-2xl transition-colors">✕</button>
                 </div>
 
-                <UploadImageFile onImageUpload={(file) => console.log("Selected file:", file)} />
+                <UploadImageFile onImageUpload={(file) => setSelectedFile(file)} />
 
                 <div className="flex gap-3 mt-6">
                     <button
@@ -22,7 +25,7 @@ const ImageUploadModal = ({ title, onClose, onConfirm }) => {
                         Cancel
                     </button>
                     <button
-                        onClick={onConfirm}
+                        onClick={() => onConfirm(selectedFile)}
                         className="flex-1 py-3 px-4 rounded-xl font-bold bg-primary-dark text-white hover:opacity-90 transition-opacity"
                     >
                         Confirm
