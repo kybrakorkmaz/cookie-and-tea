@@ -1,9 +1,9 @@
 import { FaPenToSquare } from "react-icons/fa6";
-import ContentSocial from "./ContentSocial.jsx";
-import ContentSocialEdit from "./ContentSocialEdit.jsx";
+import Social from "./Social.jsx";
+import SocialEdit from "./SocialEdit.jsx";
 import { useState, useEffect } from "react";
 
-const ContentSocials = ({ socials }) => {
+const Socials = ({ socials }) => {
     const [isEditClicked, setIsEditClicked] = useState(false);
     // 1. to update data from prop, we store them into state
     const [currentSocials, setCurrentSocials] = useState(socials || []);
@@ -71,7 +71,7 @@ const ContentSocials = ({ socials }) => {
             <div className="flex justify-start gap-4">
                 {/* 3. Now map current data not prop (old one) */}
                 {currentSocials.map(social => (
-                    <ContentSocial
+                    <Social
                         key={social.name}
                         socialAccountName={social.name}
                         accountUrl={social.url}
@@ -81,7 +81,7 @@ const ContentSocials = ({ socials }) => {
 
             {/* Edit window */}
             {isEditClicked && (
-                <ContentSocialEdit
+                <SocialEdit
                     socials={currentSocials}
                     onClose={() => setIsEditClicked(false)}
                     onSave={handleSaveSocials}
@@ -91,4 +91,4 @@ const ContentSocials = ({ socials }) => {
     );
 };
 
-export default ContentSocials;
+export default Socials;

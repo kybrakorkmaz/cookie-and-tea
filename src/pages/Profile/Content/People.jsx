@@ -3,7 +3,7 @@ import {useState} from "react";
 import {NavLink} from "react-router";
 import {IoIosArrowForward} from "react-icons/io";
 
-const ContentPeople = ({followers, following}) =>{
+const People = ({followers, following}) =>{
     const [peopleHeaderState, setPeopleHeaderState] = useState(true);
     const people = [
         { peopleFollowers: followers.slice(0,2) },
@@ -63,4 +63,4 @@ const ContentPeople = ({followers, following}) =>{
     )
 }
 
-export default ContentPeople;
+export default People;

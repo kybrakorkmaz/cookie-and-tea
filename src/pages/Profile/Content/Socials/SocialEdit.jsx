@@ -8,7 +8,7 @@ const ICON_MAP = {
     youtube: FaYoutube,
 };
 
-const ContentSocialEdit = ({ socials, onClose, onSave }) => {
+const SocialEdit = ({ socials, onClose, onSave }) => {
     // to store all data as state only store selected one's name. With name pick its url
     const [accountList, setAccountList] = useState(socials ?? []); // add fallback tto initialize
     const [selectedName, setSelectedName] = useState("");
@@ -123,4 +123,4 @@ const ContentSocialEdit = ({ socials, onClose, onSave }) => {
     );
 };
 
-export default ContentSocialEdit;
+export default SocialEdit;

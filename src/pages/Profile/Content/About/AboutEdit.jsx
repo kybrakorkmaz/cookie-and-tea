@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { z } from "zod";
 
-const aboutSchema = z.string().max(1000, "Maximum 1000 characters allowed.");
+const aboutSchema = z.string().max(1000, { message: "Maximum 1000 characters allowed." });
 
-const ContentAboutEdit = ({ about, onClose, onSave }) => {
+const AboutEdit = ({ about, onClose, onSave }) => {
     const [currentAbout, setCurrentAbout] = useState(about || "");
     const [error, setError] = useState("");
     const LAZY_MESSAGE = "This person is so lazy to introduce themselves.";
@@ -91,4 +91,4 @@ const ContentAboutEdit = ({ about, onClose, onSave }) => {
     );
 };
 
-export default ContentAboutEdit;
+export default AboutEdit;

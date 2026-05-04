@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import { IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
 
-const ContentEarnings = ({earnings})=>{
+const Earnings = ({earnings})=>{
     const [earningDays, setEarningDays] = useState("Last 30 days");
     const earned = earnings ?? {};
     const handleEarningSelect = (days) => {
@@ -91,4 +91,4 @@ const ContentEarnings = ({earnings})=>{
     )
 }
 
-export default ContentEarnings;
+export default Earnings;

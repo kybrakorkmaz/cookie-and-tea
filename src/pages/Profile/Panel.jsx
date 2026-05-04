@@ -126,21 +126,21 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
             )}
 
             {error && (
-                <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-[110]">
+                <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-110">
                     {error}
                 </div>
             )}
 
             {/* Panel Navbar */}
-            <div className="w-full flex justify-between items-center h-20 bg-white px-12">
+            <div className="w-full flex justify-between items-center h-20 bg-white px-8 md:px-12">
                 {/* navbar */}
-                <div className="flex font-header text-sh text-primary-dark p-4 pl-12 md:pl-24 gap-6 ">
-                    <NavLink to="/about" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>About</NavLink>
+                <div className="flex font-header text-sh text-primary-dark p-4 pl-0 md:pl-24 gap-2 md:gap-6 ">
+                    <NavLink to="/intro" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Intro</NavLink>
                     <NavLink to="/people" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Gallery</NavLink>
                     <NavLink to="/posts" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Posts</NavLink>
                 </div>
                 {/* follow/unfollow button*/}
-                <button className="p-3 font-paragraph text-p rounded-xl text-primary-dark border border-primary-dark hover:bg-primary-dark hover:text-white transition-all active:scale-95">
+                <button className="p-1 sm:p-2 md:p-3 font-header text-sh  rounded-xl text-primary-dark border border-primary-dark hover:bg-primary-dark hover:text-white transition-all active:scale-95">
                     Follow
                 </button>
             </div>

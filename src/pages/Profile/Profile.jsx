@@ -1,6 +1,6 @@
 import UserNavbar from "../../components/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
-import Content from "./Content.jsx";
+import Intro from "./Intro.jsx";
 import {useEffect, useState} from "react";
 import {followers, following, posts, profile} from "../../constants/index.js";
 import UserFooter from "../../components/UserFooter.jsx";
@@ -52,8 +52,8 @@ const Profile = () => {
                     profileImage={user.profileImage}
                     profileAlt={user.profileAlt}
                 />
-                {/* Main Content */}
-                <Content
+                {/* Main Intro */}
+                <Intro
                     about={user.about}
                     socials={user.socials}
                     earnings={user.earnings}
