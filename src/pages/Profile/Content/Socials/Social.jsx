@@ -8,7 +8,7 @@ const ICON_MAP = {
     youtube: FaYoutube,
 };
 
-const ContentSocial = ({ accountUrl, socialAccountName }) => {
+const Social = ({ accountUrl, socialAccountName }) => {
     // socialAccountName'e karşılık gelen bileşeni seçiyoruz
     // Eğer listede olmayan bir isim gelirse hata vermemesi için fallback (opsiyonel) eklenebilir.
     const IconComponent = ICON_MAP[socialAccountName];
@@ -27,4 +27,4 @@ const ContentSocial = ({ accountUrl, socialAccountName }) => {
     );
 };
 
-export default ContentSocial;
+export default Social;

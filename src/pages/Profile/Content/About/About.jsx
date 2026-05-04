@@ -1,8 +1,8 @@
 import {FaPenToSquare} from "react-icons/fa6";
 import {useEffect, useState} from "react";
-import ContentAboutEdit from "./ContentAboutEdit.jsx";
+import AboutEdit from "./AboutEdit.jsx";
 
-const ContentAbout = ({about}) => {
+const About = ({about}) => {
     const [isEditClicked, setIsEditClicked] = useState(false);
     const [currentAbout, setCurrentAbout] = useState(about || "");
 
@@ -52,7 +52,7 @@ const ContentAbout = ({about}) => {
     return(
         <div className="bg-white p-10 rounded-2xl shadow-soft">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="font-header text-sh">About</h3>
+                <h3 className="font-header text-sh text-primary-dark">About</h3>
                 <button
                     onClick={()=>setIsEditClicked(true)}
                     className={"text-gray-500 cursor-pointer hover:text-primary-dark transition-colors"}
@@ -63,7 +63,7 @@ const ContentAbout = ({about}) => {
             <hr className="border-gray-200 mb-6"/>
             <p className="font-paragraph text-gray-700 leading-relaxed">{currentAbout}</p>
             {isEditClicked && (
-                <ContentAboutEdit
+                <AboutEdit
                     about={currentAbout}
                     onClose={()=>setIsEditClicked(false)}
                     onSave={handleSaveAbout}
@@ -73,4 +73,4 @@ const ContentAbout = ({about}) => {
     )
 }
 
-export default ContentAbout;
+export default About;

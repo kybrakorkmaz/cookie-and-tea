@@ -1,6 +1,6 @@
 import UserNavbar from "../../components/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
-import Content from "./Content.jsx";
+import Intro from "./Intro.jsx";
 import {useEffect, useState} from "react";
 import {followers, following, posts, profile} from "../../constants/index.js";
 import UserFooter from "../../components/UserFooter.jsx";
@@ -43,23 +43,25 @@ const Profile = () => {
         <div className="bg-cream/50 min-h-screen pb-20">
             <UserNavbar />
             {/* Panel Section */}
-            <Panel
-                name={user.name}
-                username={user.username}
-                backgroundImage={user.backgroundImage}
-                backgroundAlt={user.backgroundAlt}
-                profileImage={user.profileImage}
-                profileAlt={user.profileAlt}
-            />
-            {/* Main Content */}
-            <Content
-                about={user.about}
-                socials={user.socials}
-                earnings={user.earnings}
-                userLatestTwoPosts={userLatestTwoPosts}
-                followers={followsUs}
-                following={weFollow}
-            />
+            <div className="m-0 p-0 mb-40">
+                <Panel
+                    name={user.name}
+                    username={user.username}
+                    backgroundImage={user.backgroundImage}
+                    backgroundAlt={user.backgroundAlt}
+                    profileImage={user.profileImage}
+                    profileAlt={user.profileAlt}
+                />
+                {/* Main Intro */}
+                <Intro
+                    about={user.about}
+                    socials={user.socials}
+                    earnings={user.earnings}
+                    userLatestTwoPosts={userLatestTwoPosts}
+                    followers={followsUs}
+                    following={weFollow}
+                />
+            </div>
             <UserFooter/>
         </div>
     );
