@@ -9,12 +9,13 @@ import HybridPost from "./HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./PostCommenters.jsx";
 import PostComment from "./PostComment.jsx";
+import EditPost from "./EditPost.jsx";
 
 const PostCard = ({ post, highlightedId }) => {
     // Every cards hold its own state
     const [activeType, setActiveType] = useState(null); // 'comments', 'donations' or null
     const isFocused = highlightedId === `post-${post.post_id}`;
-
+    const [isEditing, setIsEditing] = useState(false);
     // preview comment
     const postComments = comments.filter(c => c.commented_to_post_id === post.post_id);
     let previewComment = null;
@@ -26,6 +27,19 @@ const PostCard = ({ post, highlightedId }) => {
 
     const handleToggle = (type) => {
         setActiveType(prev => prev === type ? null : type);
+    };
+
+    const handleUpdate = (updatedPost) => {
+        console.log("Saving updated post to database:", updatedPost);
+        // Example: If you have a refresh function from parent:
+        // refreshPosts();
+        setIsEditing(false);
+    };
+
+    const handleDelete = (postId) => {
+        console.log("Deleting post with ID:", postId);
+        // Example: await api.delete(`/posts/${postId}`);
+        setIsEditing(false);
     };
 
     return (
@@ -40,11 +54,20 @@ const PostCard = ({ post, highlightedId }) => {
         >
             <div className="flex flex-col gap-2">
                 <div className="flex justify-end">
-                    <button className="hover:text-primary-dark text-gray-400 transition-colors">
+                    <button
+                        onClick={()=>setIsEditing(true)}
+                        className="hover:text-primary-dark text-gray-400 transition-colors">
                         <FaPenToSquare className="w-5 h-5"/>
                     </button>
                 </div>
-
+                {isEditing && (
+                    <EditPost
+                        post={post}
+                        onClose={() => setIsEditing(false)}
+                        onUpdate={handleUpdate}
+                        onDelete={handleDelete}
+                    />
+                )}
                 <div className="flex items-center justify-between">
                     <h3 className="text-2xl font-header font-bold text-primary-dark">{post.post_header}</h3>
                     <span className="font-paragraph text-sm text-gray-400">{post.post_date}</span>

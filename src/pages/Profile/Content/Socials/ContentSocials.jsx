@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 const ContentSocials = ({ socials }) => {
     const [isEditClicked, setIsEditClicked] = useState(false);
-    // 1. to update datas from prop, we store them into state
+    // 1. to update data from prop, we store them into state
     const [currentSocials, setCurrentSocials] = useState(socials || []);
 
 

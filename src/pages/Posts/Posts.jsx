@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { posts } from "../../constants/index.js";
 import { useLocation } from "react-router";
 import PostCard from "./PostCard.jsx";
+import UserFooter from "../../components/UserFooter.jsx";
 
 const Posts = () => {
     const { hash } = useLocation();
@@ -75,8 +76,7 @@ const Posts = () => {
     return (
         <div className="min-h-screen bg-cream/20">
             <UserNavbar />
-
-            <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
+            <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto mb-14 md:mb-32 lg:mb-40">
                 {visiblePosts.map((post) => (
                     <PostCard
                         key={post.post_id}
@@ -95,6 +95,7 @@ const Posts = () => {
                     </button>
                 )}
             </div>
+            <UserFooter/>
         </div>
     );
 };
