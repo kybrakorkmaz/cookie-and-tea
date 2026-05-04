@@ -23,10 +23,10 @@ const ContentLatestTwoPosts = ({userLatestTwoPosts}) => {
                 {latestTwo.map(post => (
                     <div key={post.post_id} className="border-b border-gray-50 last:border-0 pb-4">
                         <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-header text-lg font-bold text-gray-800">{post.post_header}</h4>
+                            <span className="font-paragraph font-medium text-sm text-gray-800">{post.post_header}</span>
                             <span className="font-paragraph text-xs text-gray-400">{post.post_date}</span>
                         </div>
-                        <p className="font-paragraph text-gray-600 text-sm mb-3">
+                        <p className="font-paragraph text-gray-600 text-sm mb-3 italic">
                             {post.post_type === "image" ? "📷 Shared an image" : (
                                 post.post_type === "video" ? "🎥 Shared a video" :
                                     post.post_detail.length > 100 ? post.post_detail.slice(0, 100) + "..." : post.post_detail
@@ -36,7 +36,7 @@ const ContentLatestTwoPosts = ({userLatestTwoPosts}) => {
                             to={`/posts#post-${post.post_id}`}
                             className="flex items-center justify-end text-primary-dark hover:text-primary-dark/70 transition-all gap-1"
                         >
-                            <span className="text-xs  tracking-wider">See details</span>
+                            <span className="font-paragraph text-xs  tracking-wider ">See details</span>
                             <IoIosArrowForward className="w-3 h-3" />
                         </NavLink>
                     </div>

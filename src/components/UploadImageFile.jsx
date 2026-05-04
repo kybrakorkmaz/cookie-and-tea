@@ -1,4 +1,4 @@
-const UploadImageFile = ({ onImageUpload }) => {
+const UploadImageFile = ({ onImageUpload=null }) => {
     return (
         <div className="flex justify-center mt-4">
             <div className="rounded-lg border bg-gray-50 w-full">

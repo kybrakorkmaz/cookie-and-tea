@@ -52,7 +52,7 @@ const ContentAbout = ({about}) => {
     return(
         <div className="bg-white p-10 rounded-2xl shadow-soft">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="font-header text-sh">About</h3>
+                <h3 className="font-header text-sh text-primary-dark">About</h3>
                 <button
                     onClick={()=>setIsEditClicked(true)}
                     className={"text-gray-500 cursor-pointer hover:text-primary-dark transition-colors"}
