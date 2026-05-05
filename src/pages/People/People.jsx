@@ -7,12 +7,27 @@ import UserFooter from "../components/UserFooter.jsx";
 const People = () =>{
     const [headerState, setHeaderState] = useState(true);
     const [followingIds, setFollowingIds] = useState([4]);
+    const [visibleCount, setVisibleCount] = useState(2);
 
     const textStyle = "underline text-primary-dark font-bold";
+
+    const handleLoadMore = () => {
+        setVisibleCount((prev) => prev + 5);
+    };
+
+    const followerList =followers[0]?.followers || [];
+    const followingList = following[0]?.following || [];
+
+    const totalFollowers = followerList;
+    const totalFollowing = followingList;
+
     const peopleList = [
-        { peopleFollowers: followers[0]?.followers || [] },
-        { peopleFollowing: following[0]?.following || [] }
+        { peopleFollowers: followerList.slice(0, visibleCount)},
+        { peopleFollowing: followingList.slice(0, visibleCount)}
     ];
+
+
+
     // todo People API call
     const handleFollow = async (personId) => {
         try {
@@ -71,6 +86,15 @@ const People = () =>{
                     ))}
                     {(headerState ? peopleList[0].peopleFollowers : peopleList[1].peopleFollowing).length === 0 && (
                         <div className="text-center py-20 text-gray-400 font-paragraph">No one found.</div>
+                    )}
+                    {(headerState ? visibleCount < totalFollowers  : visibleCount < totalFollowing) && (
+                        <button
+                            type="button"
+                            onClick={handleLoadMore}
+                            className="mx-auto px-10 py-3 bg-primary-dark text-white rounded-full font-bold hover:bg-opacity-90 transition-all"
+                        >
+                            Load More
+                        </button>
                     )}
                 </div>
             </div>
