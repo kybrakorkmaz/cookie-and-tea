@@ -6,12 +6,33 @@ import UserFooter from "../../components/UserFooter.jsx";
 import Panel from "../Profile/Panel.jsx";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
+    //const [allPosts, setAllPosts] = useState([]);
+    //const [loading, setLoading] = useState(true);
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
     const allPosts = posts[0].posts;
 
+    /*
+        useEffect(() => {
+            const fetchPosts = async () => {
+                try {
+                    // Simulate API call or use real fetch
+                    // const response = await fetch('/api/profile/posts');
+                    // const data = await response.json();
+
+                    // Using your mock data for now:
+                    setAllPosts(posts[0].posts);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchPosts();
+        }, []);
+     */
     const sortedPostsByDate = useMemo(() => {
         const formatDate = (dateStr) => {
             const [day, month, year] = dateStr.split("/");
@@ -42,6 +63,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     // 2. Handle scrolling and highlighting based on the captured internalTarget.
     // This decoupled approach ensures the scroll timer isn't cleared when the parent state resets.
     useEffect(() => {
+        //if (!internalTarget || loading) return; // Wait for loading to finish!
         if (!internalTarget) return;
 
         const targetIndex = sortedPostsByDate.findIndex(
@@ -82,7 +104,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
             clearTimeout(highlightTimer);
         };
     }, [internalTarget, visibleCount, sortedPostsByDate]);
-
+    //if (loading) return <div className="text-center py-20">Loading...</div>;
     return (
         <div className="min-h-screen ">
             <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
