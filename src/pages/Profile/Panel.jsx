@@ -6,7 +6,7 @@ import {useState} from "react";
 import UploadImageFile from "../../components/UploadImageFile.jsx";
 import ImageUploadModal from "../../components/ImageUploadModal.jsx";
 
-const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, profileAlt}) => {
+const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, profileAlt, selected, setSelected}) => {
     const strokeStyle = {
         WebkitTextStroke: `0.7px black`,
         textShadow: "0 0.5px 0.7px rgba(0,0,0,0.3)"
@@ -133,14 +133,48 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
             {/* Panel Navbar */}
             <div className="w-full flex justify-between items-center h-20 bg-white px-8 md:px-12">
-                {/* navbar */}
-                <div className="flex font-header text-sh text-primary-dark p-4 pl-0 md:pl-24 gap-2 md:gap-6 ">
-                    <NavLink to="/intro" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Intro</NavLink>
-                    <NavLink to="/people" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Gallery</NavLink>
-                    <NavLink to="/posts" className={({isActive}) => isActive ? "border-b-2 border-primary-dark pb-1" : "hover:text-primary transition-colors"}>Posts</NavLink>
+                <div className="flex font-header text-sh text-primary-dark p-4 pl-0 md:pl-24 gap-4 md:gap-8">
+
+                    {/* Intro Tab */}
+                    <button
+                        onClick={() => setSelected("intro")}
+                        className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
+                            selected === "intro"
+                                ? "border-b-2 border-primary-dark text-primary-dark"
+                                : "text-gray-400 border-b-2 border-transparent"
+                        }`}
+                    >
+                        Intro
+                    </button>
+
+                    {/* Gallery Tab */}
+                    <button
+                        onClick={() => setSelected("gallery")}
+                        className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
+                            selected === "gallery"
+                                ? "border-b-2 border-primary-dark text-primary-dark"
+                                : "text-gray-400 border-b-2 border-transparent"
+                        }`}
+                    >
+                        Gallery
+                    </button>
+
+                    {/* Posts Tab */}
+                    <button
+                        onClick={() => {
+                            setSelected("posts");
+                        }}
+                        className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
+                            selected === "posts"
+                                ? "border-b-2 border-primary-dark text-primary-dark"
+                                : "text-gray-400 border-b-2 border-transparent"
+                        }`}
+                    >
+                        Posts
+                    </button>
                 </div>
-                {/* follow/unfollow button*/}
-                <button className="p-1 sm:p-2 md:p-3 font-header text-sh  rounded-xl text-primary-dark border border-primary-dark hover:bg-primary-dark hover:text-white transition-all active:scale-95">
+
+                <button className="p-1 sm:p-2 md:p-3 font-header text-sh rounded-xl text-primary-dark border border-primary-dark hover:bg-primary-dark hover:text-white transition-all active:scale-95">
                     Follow
                 </button>
             </div>

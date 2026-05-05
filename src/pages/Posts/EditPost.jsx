@@ -54,7 +54,7 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
             {/* Backdrop */}
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-            {/* Modal Content */}
+            {/* Modal Intro */}
             <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
 
                 {/* Header */}

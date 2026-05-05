@@ -57,7 +57,7 @@ const UserFooter = () => {
             </div>
 
             <div className="flex items-center justify-center text-primary-dark w-full min-h-18">
-                <p className="font-paragraph text-sm opacity-80">
+                <p className="font-paragraph text-p opacity-80">
                     @cookie and Tea {date}
                 </p>
             </div>

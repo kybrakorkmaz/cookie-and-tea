@@ -3,15 +3,9 @@ import { NavLink } from "react-router";
 import Logo from "./Logo.jsx";
 import SearchBar from "./SearchBar.jsx";
 
-const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor = "bg-primary/65", textOutline = "black" }) => {
+const Navbar = ({textColor = "text-white", bgColor = "bg-cream", searchBarColor = "bg-primary/65", textOutline = "black" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const closeMenu = () => setIsMenuOpen(false);
-
-    const navLinks = [
-        { to: "/faq", label: "FAQ" },
-        { to: "/your-passions", label: "Your Passions" },
-    ];
-
+    const closeMenu = () => setIsMenuOpen(false) ;
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     const signUpStyles = {
@@ -55,13 +49,8 @@ const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor
                     <div
                         id="mobile-menu"
                         className={`flex flex-col lg:hidden gap-4 animate-fadeIn ${textColor}`}>
-                        {navLinks.map(link => (
-                            <NavLink
-                                key={link.to}
-                                to={link.to}
-                                className="navbar-item pl-1"
-                            >{link.label}</NavLink>
-                        ))}
+                        <NavLink to="/faq" className="navbar-item pl-1">FAQ</NavLink>
+                        <NavLink to="/your-passions" className="navbar-item pl-1">Your Passions</NavLink>
                         <NavLink to="/login" className="navbar-item pl-1">Login</NavLink>
                         <NavLink
                             to="/sign-up"
@@ -78,23 +67,28 @@ const Navbar = ({ textColor = "text-white", bgColor = "bg-cream", searchBarColor
 
                 {/* DESKTOP LEFT */}
                 <div className={`hidden lg:flex order-1 items-center gap-10 ${textColor}`}>
-                    {navLinks.map(link => (
-                        <NavLink
-                            key={link.to}
-                            to={link.to}
-                            onClick={closeMenu}
-                            className="navbar-item"
-                        >{link.label}</NavLink>
-                    ))}
+                    <NavLink
+                        to="/faq"
+                        onClick={closeMenu}
+                        className={({ isActive }) =>
+                            `navbar-item ${isActive ? "underline underline-offset-8 decoration-2" : ""}`}
+                    >FAQ</NavLink>
+                    <NavLink
+                        to="/your-passions"
+                        onClick={closeMenu}
+                        className={({ isActive }) =>
+                            `navbar-item ${isActive ? "underline underline-offset-8 decoration-2" : ""}`}
+                    >Your Passions
+                    </NavLink>
                 </div>
-
                 {/* DESKTOP RIGHT */}
                 <div className={`hidden lg:flex order-3 items-center gap-10 ${textColor}`}>
                     <SearchBar bgSearchColor={searchBarColor}/>
                     <NavLink
                         to="/login"
                         onClick={closeMenu}
-                        className="navbar-item">Login</NavLink>
+                        className="navbar-item">Login
+                    </NavLink>
                     <NavLink
                         to="/sign-up"
                         onClick={closeMenu}

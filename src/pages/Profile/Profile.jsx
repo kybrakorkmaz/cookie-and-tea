@@ -4,6 +4,8 @@ import Intro from "./Intro.jsx";
 import {useEffect, useState} from "react";
 import {followers, following, posts, profile} from "../../constants/index.js";
 import UserFooter from "../../components/UserFooter.jsx";
+import Gallery from "./Gallery.jsx";
+import Posts from "../Posts/Posts.jsx";
 
 const Profile = () => {
     const [user, setUser] = useState({
@@ -17,9 +19,22 @@ const Profile = () => {
         socials:[],
         earnings:{}
     });
-    const [userLatestTwoPosts, setUserLatestTwoPosts]= useState([]);
+
+    const [userTopDonatedPosts, setUserTopDonatedPosts] = useState([]);
+
     const [followsUs, setFollowsUs]=useState([]);
     const [weFollow, setWeFollow]=useState([]);
+    const [selected, setSelected]=useState("intro");
+
+    const [targetPostId, setTargetPostId] = useState(null);
+
+    const handleNavigateToPost = (postId) => {
+        // 1. Switch tab
+        setSelected("posts");
+        setTargetPostId(postId);
+    };
+
+
     // todo API call
     useEffect(() => {
         setUser({
@@ -34,10 +49,14 @@ const Profile = () => {
             earnings: profile[0].earnings
         });
 
-        setUserLatestTwoPosts(posts?.[0]?.posts ?? []);
-        //Angel's id=1
+        // Angel's id=1
         setFollowsUs(followers[0].followers);
         setWeFollow(following[0].following);
+
+        // todo API call for top posts or handle sorting here
+        // Set the posts data. Sorting happens in the child component via useMemo.
+        setUserTopDonatedPosts(posts?.[0]?.posts ?? [])
+
     }, []);
     return (
         <div className="bg-cream/50 min-h-screen pb-20">
@@ -51,16 +70,22 @@ const Profile = () => {
                     backgroundAlt={user.backgroundAlt}
                     profileImage={user.profileImage}
                     profileAlt={user.profileAlt}
+                    selected={selected}
+                    setSelected={setSelected}
                 />
                 {/* Main Intro */}
-                <Intro
-                    about={user.about}
-                    socials={user.socials}
-                    earnings={user.earnings}
-                    userLatestTwoPosts={userLatestTwoPosts}
-                    followers={followsUs}
-                    following={weFollow}
-                />
+                {selected==="gallery" ? <Gallery/>
+                    :selected === "posts" ? <Posts targetPostId={targetPostId} onTargetHandled={() => setTargetPostId(null)} />
+                        :<Intro
+                            about={user.about}
+                            socials={user.socials}
+                            earnings={user.earnings}
+                            userTopDonatedPosts={userTopDonatedPosts}
+                            onPostClick={handleNavigateToPost}
+                            followers={followsUs}
+                            following={weFollow}/>
+                }
+
             </div>
             <UserFooter/>
         </div>

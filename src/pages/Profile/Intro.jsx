@@ -1,10 +1,11 @@
-import About from "./Content/About/About.jsx";
-import Socials from "./Content/Socials/Socials.jsx";
-import Earnings from "./Content/Earnings.jsx";
-import LatestTwoPosts from "./Content/LatestTwoPosts.jsx";
-import People from "./Content/People.jsx";
+import About from "./Intro/About/About.jsx";
+import Socials from "./Intro/Socials/Socials.jsx";
+import Earnings from "./Intro/Earnings.jsx";
+import LatestTwoPosts from "./Intro/MostDonatedPosts.jsx";
+import People from "./Intro/People.jsx";
+import MostDonatedPosts from "./Intro/MostDonatedPosts.jsx";
 
-const Intro = ({about, socials, earnings, userLatestTwoPosts, followers, following}) =>{
+const Intro = ({about, socials, earnings, userTopDonatedPosts,onPostClick, followers, following}) =>{
     //console.log("content component socials:",socials);
     return(
         <div className="flex flex-col lg:flex-row w-5/6 mx-auto gap-28 mt-16">
@@ -21,7 +22,7 @@ const Intro = ({about, socials, earnings, userLatestTwoPosts, followers, followi
             {/* RIGHT: Latest Posts & People */}
             <div className="w-full lg:w-1/2 space-y-8">
                 {/* Latest Posts*/}
-                <LatestTwoPosts userLatestTwoPosts={userLatestTwoPosts}/>
+                <MostDonatedPosts userTopDonatedPosts={userTopDonatedPosts} onPostClick={onPostClick}/>
                 {/* People */}
                 <People followers={followers} following={following}/>
             </div>

@@ -5,6 +5,7 @@ import {IoIosArrowForward} from "react-icons/io";
 
 const People = ({followers, following}) =>{
     const [peopleHeaderState, setPeopleHeaderState] = useState(true);
+
     const people = [
         { peopleFollowers: followers.slice(0,2) },
         { peopleFollowing: following.slice(0,2) }

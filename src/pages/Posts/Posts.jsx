@@ -1,17 +1,14 @@
 import UserNavbar from "../../components/UserNavbar.jsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { posts } from "../../constants/index.js";
-import { useLocation } from "react-router";
 import PostCard from "./PostCard.jsx";
 import UserFooter from "../../components/UserFooter.jsx";
+import Panel from "../Profile/Panel.jsx";
 
-const Posts = () => {
-    const { hash } = useLocation();
-
+const Posts = ({ targetPostId, onTargetHandled }) => {
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
-
-    const lastHandledHashRef = useRef(null);
+    const [internalTarget, setInternalTarget] = useState(null);
 
     const allPosts = posts[0].posts;
 
@@ -33,50 +30,62 @@ const Posts = () => {
         setVisibleCount((prev) => prev + 5);
     };
 
+    // 1. Sync external targetPostId to internal state and clear it in parent immediately.
+    // This prevents the "intent" from leaking across manual tab changes.
     useEffect(() => {
-        if (!hash) return;
+        if (targetPostId) {
+            setInternalTarget(targetPostId);
+            onTargetHandled();
+        }
+    }, [targetPostId, onTargetHandled]);
 
-        // same hash → ignore
-        if (lastHandledHashRef.current === hash) return;
+    // 2. Handle scrolling and highlighting based on the captured internalTarget.
+    // This decoupled approach ensures the scroll timer isn't cleared when the parent state resets.
+    useEffect(() => {
+        if (!internalTarget) return;
 
-        const targetId = hash.replace("#", "");
-        const targetPostId = Number(targetId.replace("post-", ""));
-        const targetIndex = sortedPostsByDate.findIndex((post) => post.post_id === targetPostId);
+        const targetIndex = sortedPostsByDate.findIndex(
+            (post) => post.post_id === internalTarget
+        );
 
+        if (targetIndex === -1) {
+            setInternalTarget(null);
+            return;
+        }
+
+        // Expand visibility if needed
         if (targetIndex >= visibleCount) {
             setVisibleCount(targetIndex + 1);
             return;
         }
 
-        lastHandledHashRef.current = hash;
-
+        const targetId = `post-${internalTarget}`;
         setHighlightedId(targetId);
 
-        const element = document.getElementById(targetId);
-
-        if (!element) return;
-
-        const scrollTimer = setTimeout(() => {
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
-        }, 100);
+        const timer = setTimeout(() => {
+            const el = document.getElementById(targetId);
+            if (el) {
+                el.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }
+        }, 150);
 
         const highlightTimer = setTimeout(() => {
             setHighlightedId(null);
-        }, 3000);
+            setInternalTarget(null); // Finish handling the intent
+        }, 2000);
 
         return () => {
-            clearTimeout(scrollTimer);
+            clearTimeout(timer);
             clearTimeout(highlightTimer);
         };
-    }, [hash, sortedPostsByDate, visibleCount]);
+    }, [internalTarget, visibleCount, sortedPostsByDate]);
 
     return (
-        <div className="min-h-screen bg-cream/20">
-            <UserNavbar />
-            <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto mb-14 md:mb-32 lg:mb-40">
+        <div className="min-h-screen ">
+            <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
                 {visiblePosts.map((post) => (
                     <PostCard
                         key={post.post_id}
@@ -95,7 +104,6 @@ const Posts = () => {
                     </button>
                 )}
             </div>
-            <UserFooter/>
         </div>
     );
 };

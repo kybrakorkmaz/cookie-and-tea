@@ -6,9 +6,17 @@ const Footer=()=>{
     const date = new Date().getFullYear();
     return(
         <>
-            <div className="bg-cream w-full max-h-60 flex flex-wrap items-center justify-between px-8 md:px-10 lg:px-60 pt-10 pb-16 font-paragraph text-p font-medium">
-                <NavLink to={"/email"}>cookie.tea@mail.com</NavLink>
-                <NavLink to={"/about"}>About</NavLink>
+            <div className="bg-cream w-full max-h-60 flex flex-wrap items-center justify-between px-8 md:px-10 lg:px-60 pt-10 pb-16 font-paragraph  text-primary-dark text-p font-medium">
+                <NavLink
+                    to={"/send-email"}
+                    className={({ isActive }) =>
+                    `navbar-item ${isActive ? " underline underline-offset-8 decoration-2" : ""}`}
+                >cookie.tea@mail.com</NavLink>
+                <NavLink
+                    to={"/about"}
+                    className={({ isActive }) =>
+                        `navbar-item ${isActive ? "underline underline-offset-8 decoration-2" : ""}`}
+                >About</NavLink>
                 <a href="https://github.com/kybrakorkmaz/cookie-and-tea" target="_blank" rel="noreferrer">
                     Resources
                 </a>

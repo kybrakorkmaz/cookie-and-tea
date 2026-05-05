@@ -1,18 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import UploadImageFile from "./UploadImageFile.jsx";
 
 const ImageUploadModal = ({ title, onClose, onConfirm }) => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const modalRef = useRef(null);
+    const firstFocusableRef = useRef(null);
+    const lastFocusableRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                onClose();
+            }
+            if (e.key === "Tab") {
+                if (e.shiftKey) { // shift + tab
+                    if (document.activeElement === firstFocusableRef.current) {
+                        e.preventDefault();
+                        lastFocusableRef.current?.focus();
+                    }
+                } else { // tab
+                    if (document.activeElement === lastFocusableRef.current) {
+                        e.preventDefault();
+                        firstFocusableRef.current?.focus();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        firstFocusableRef.current?.focus();
+
+        // Prevent background scroll
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "auto";
+        };
+    }, [onClose]);
 
     return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+        <div 
+            role="dialog" 
+            aria-modal="true" 
+            aria-labelledby="modal-title"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        >
             {/* Backdrop */}
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-heavy p-8">
+            <div ref={modalRef} className="relative w-full max-w-lg bg-white rounded-2xl shadow-heavy p-8">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-primary-dark">{title}</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-black font-bold text-2xl transition-colors">✕</button>
+                    <h2 id="modal-title" className="text-xl font-bold text-primary-dark">{title}</h2>
+                    <button 
+                        ref={firstFocusableRef}
+                        onClick={onClose} 
+                        className="text-gray-400 hover:text-black font-bold text-2xl transition-colors"
+                        aria-label="Close modal"
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 <UploadImageFile onImageUpload={(file) => setSelectedFile(file)} />
@@ -25,8 +72,14 @@ const ImageUploadModal = ({ title, onClose, onConfirm }) => {
                         Cancel
                     </button>
                     <button
-                        onClick={() => onConfirm(selectedFile)}
-                        className="flex-1 py-3 px-4 rounded-xl font-bold bg-primary-dark text-white hover:opacity-90 transition-opacity"
+                        ref={lastFocusableRef}
+                        disabled={!selectedFile}
+                        onClick={() => selectedFile && onConfirm(selectedFile)}
+                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all ${
+                            selectedFile 
+                            ? "bg-primary-dark text-white hover:opacity-90" 
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+                        }`}
                     >
                         Confirm
                     </button>
