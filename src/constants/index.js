@@ -534,3 +534,7 @@ export const DONATE_ICON = {
     donate_7_dollars: "/images/donate-icons/donate-cookie-icon.png",
     donate_12_dollars: "/images/donate-icons/donate-both-icon.png"
 };
+
+export const published_images=[
+
+]

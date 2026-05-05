@@ -6,7 +6,7 @@ import Footer from "../../components/Footer.jsx";
 const Faq = () => {
     return (
         <div className="bg-cream min-h-screen">
-            <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
+            <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65"/>
 
             <div className="flex flex-col items-center justify-center px-4 py-40 mb-10">
                 <div className="text-center mb-12">

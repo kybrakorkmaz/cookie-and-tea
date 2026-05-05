@@ -8,7 +8,7 @@ import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Posts from "./pages/Posts/Posts.jsx";
-import People from "./pages//People.jsx"
+import People from "./pages/People/People.jsx"
 const App = ()=>{
   return(
       <BrowserRouter>
@@ -27,7 +27,7 @@ const App = ()=>{
               <Route path={"/posts/:userId?"} element={<Posts/>}/>
 
               {/*
-              <Route path={"/profile/socials/edit"} element={<ContentSocialEdit/>}/>
+              <Route path={"/profile/socials/edit"} element={<SocialEdit/>}/>
               <Route path={"/feed"} element={<Feed/>}/>
           <Route path={"*"} element={<NotFound/>}/>*/}
           </Routes>

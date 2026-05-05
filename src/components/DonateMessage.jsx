@@ -17,7 +17,7 @@ const DonateMessage = ({ amount, onClose }) => {
             >
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="relative w-full max-sm bg-white rounded-3xl shadow-2xl p-8 text-center">
+            <div className="relative max-w-sm max-sm bg-white rounded-3xl shadow-2xl p-8 text-center">
                 <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <GiTwoCoins className="w-8 h-8 text-amber-600" />
                 </div>

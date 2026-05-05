@@ -36,7 +36,7 @@ const Questions = ({ id, question, answer }) => {
                 </span>
             </button>
 
-            {/* Expandable Content Area */}
+            {/* Expandable Intro Area */}
             <div
                 id={contentId}
                 role="region"
