@@ -409,6 +409,35 @@ export const posts = [
                 donation:0
             }
         ]
+    },
+    {
+        id: 2,
+        posts: [
+            {
+                user_id: 4,
+                post_id: 10,
+                post_type: "text",
+                post_date: "04/05/2026",
+                post_header: "New Studio Setup",
+                post_detail: "Finally finished setting up my workspace. Ready to create!",
+                post_image: [],
+                post_video: [],
+                comment: 1,
+                donation: 10
+            },
+            {
+                user_id: 4,
+                post_id: 11,
+                post_type: "image",
+                post_date: "05/05/2026",
+                post_header: "Nature's Beauty",
+                post_detail: "Caught this during my morning hike.",
+                post_image: ["/images/posts/nature.jpg"],
+                post_video: [],
+                comment: 0,
+                donation: 5
+            }
+        ]
     }
 ]
 
@@ -451,15 +480,22 @@ export const followers = [
 
 export const following = [
     {
-        user_id: 1,
+        id:1,
+        follower_id: 1,
         following:[
             {
-                id: 1,
                 following_user_id: 4,
                 img: "/images/people/mike.jpg",
                 name: "Mike",
                 username: "@mikescorner"
+            },
+            {
+                following_user_id: 3,
+                img: "/images/people/kate.jpg",
+                name: "Kate",
+                username: "@katescorner"
             }
+
         ]
     }
 ]
@@ -534,7 +570,3 @@ export const DONATE_ICON = {
     donate_7_dollars: "/images/donate-icons/donate-cookie-icon.png",
     donate_12_dollars: "/images/donate-icons/donate-both-icon.png"
 };
-
-export const published_images=[
-
-]

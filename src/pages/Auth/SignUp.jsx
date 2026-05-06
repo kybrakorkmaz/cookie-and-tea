@@ -1,9 +1,9 @@
-import Navbar from "../components/Navbar.jsx";
-import Input from "../components/Input.jsx";
+import Navbar from "../../components/Navbar.jsx";
+import Input from "../../components/Input.jsx";
 import {useState} from "react";
-import {PrimaryButton} from "../components/Buttons.jsx";
-import {registerSchema} from "../validations/userRegisterLoginValidation.js";
-import Footer from "../components/Footer.jsx";
+import {PrimaryButton} from "../../components/Buttons.jsx";
+import {registerSchema} from "../../validations/userRegisterLoginValidation.js";
+import Footer from "../../components/Footer.jsx";
 import {Link} from "react-router";
 
 

@@ -4,11 +4,13 @@ import Faq from "./pages/FAQ/Faq.jsx";
 import YourPassions from "./pages/YourPassions/YourPassions.jsx";
 import About from "./pages/About.jsx";
 import SendEmail from "./pages/SendEmail.jsx";
-import SignUp from "./pages/SignUp.jsx";
-import Login from "./pages/Login.jsx";
+import SignUp from "./pages/Auth/SignUp.jsx";
+import Login from "./pages/Auth/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Posts from "./pages/Posts/Posts.jsx";
-import People from "./pages/People/People.jsx"
+import People from "./pages/People/People.jsx";
+import Feed from "./pages/Feed.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 const App = ()=>{
   return(
       <BrowserRouter>
@@ -25,10 +27,9 @@ const App = ()=>{
               <Route path={"/profile/:userId?"} element={<Profile/>}/>
               <Route path={"/people"} element={<People/>}/>
               <Route path={"/posts/:userId?"} element={<Posts/>}/>
-
+              <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
               {/*
-              <Route path={"/profile/socials/edit"} element={<SocialEdit/>}/>
-              <Route path={"/feed"} element={<Feed/>}/>
+
           <Route path={"*"} element={<NotFound/>}/>*/}
           </Routes>
       </BrowserRouter>

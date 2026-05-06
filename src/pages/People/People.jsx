@@ -57,14 +57,17 @@ const People = () => {
 
                 {/* People Feed */}
                 <div className="flex flex-col gap-4">
-                    {visiblePeople.map(person => (
-                        <PersonCard
-                            key={person.id}
-                            person={person}
-                            isFollowing={followingIds.includes(person.id)}
-                            onFollow={handleFollow}
-                        />
-                    ))}
+                    {visiblePeople.map(person => {
+                        const personId = person.id || person.following_user_id;
+                        return (
+                            <PersonCard
+                                key={personId}
+                                person={person}
+                                isFollowing={followingIds.includes(personId)}
+                                onFollow={handleFollow}
+                            />
+                        );
+                    })}
 
                     {visiblePeople.length === 0 && (
                         <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200 text-gray-400 font-paragraph">
