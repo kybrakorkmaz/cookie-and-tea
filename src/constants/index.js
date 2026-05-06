@@ -480,27 +480,22 @@ export const followers = [
 
 export const following = [
     {
-        user_id: 1,
+        id:1,
+        follower_id: 1,
         following:[
             {
-                id: 1,
                 following_user_id: 4,
                 img: "/images/people/mike.jpg",
                 name: "Mike",
                 username: "@mikescorner"
-            }
-        ]
-    },
-    {
-        user_id: 2,
-        following: [
+            },
             {
-                id: 1,
-                following_user_id: 1,
-                img: "/images/people/angel.jpg",
-                name: "Angel",
-                username: "@angelscorner"
+                following_user_id: 3,
+                img: "/images/people/kate.jpg",
+                name: "Kate",
+                username: "@katescorner"
             }
+
         ]
     }
 ]

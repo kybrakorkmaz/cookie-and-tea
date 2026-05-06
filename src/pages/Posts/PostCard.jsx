@@ -31,6 +31,8 @@ const PostCard = ({ post, highlightedId }) => {
         previewComment = { ...firstComment, user };
     }
 
+    const postUser = profile.find(p => p.user_id === post.user_id);
+
     const handleToggle = (type) => {
         setActiveType(prev => prev === type ? null : type);
     };
@@ -88,81 +90,102 @@ const PostCard = ({ post, highlightedId }) => {
             <motion.div
                 id={`post-${post.post_id}`}
                 animate={{
-                    scale: isFocused ? 1.02 : 1,
-                    backgroundColor: isFocused ? "#fefce8" : "#ffffff",
-                    borderColor: isFocused ? "var(--color-primary-dark)" : "#e5e7eb",
+                    scale: isFocused ? 1.01 : 1,
+                    backgroundColor: isFocused ? "#FFFBEB" : "#ffffff", // Subtle amber tint for focus
+                    borderColor: isFocused ? "var(--color-primary-dark)" : "#f3f4f6",
                 }}
-                className="p-6 rounded-2xl border-2 shadow-sm relative scroll-mt-32 transition-colors duration-500"
+                className="p-5 md:p-7 rounded-2xl border-2 shadow-sm relative scroll-mt-32 transition-all duration-300 hover:shadow-md hover:border-gray-200 group"
             >
-                <div className="flex flex-col gap-2">
-                    <div className="flex justify-end">
+                <div className="flex flex-col gap-4">
+                    {/* Top Bar: User Info & Actions */}
+                    <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                                <img className="w-full h-full object-cover" src={postUser?.profileImage} alt="profile"/>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="font-header font-bold text-gray-900 text-sm leading-tight">{postUser?.name}</span>
+                                <span className="font-paragraph text-xs text-gray-500">@{postUser?.username}</span>
+                            </div>
+                        </div>
                         <button
                             onClick={()=>setIsEditing(true)}
-                            className="hover:text-primary-dark text-gray-400 transition-colors">
-                            <FaPenToSquare className="w-5 h-5"/>
+                            className="p-2 text-gray-300 hover:text-primary-dark hover:bg-gray-50 rounded-lg transition-all"
+                        >
+                            <FaPenToSquare className="w-4 h-4"/>
                         </button>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-2xl font-header font-bold text-primary-dark">{post.post_header}</h3>
-                        <span className="font-paragraph text-sm text-gray-400">{post.post_date}</span>
+                    {/* Content Section */}
+                    <div className="space-y-1">
+                        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+                            <h3 className="text-xl md:text-2xl font-header font-extrabold text-primary-dark tracking-tight">
+                                {post.post_header}
+                            </h3>
+                            <span className="font-paragraph text-[11px] uppercase tracking-wider text-gray-400 font-bold">
+                                {post.post_date}
+                            </span>
+                        </div>
+
+                        {post.post_detail && (
+                            <p className="font-paragraph text-gray-600 mt-2 leading-relaxed text-sm md:text-base whitespace-pre-line">
+                                {post.post_detail}
+                            </p>
+                        )}
                     </div>
 
-                    {post.post_detail && (
-                        <p className="font-paragraph text-gray-700 mt-2 leading-relaxed whitespace-pre-line">
-                            {post.post_detail}
-                        </p>
-                    )}
-
-                    <div className="mt-4">
+                    {/* Media Section */}
+                    <div className="mt-2 rounded-xl overflow-hidden border border-gray-50">
                         {post.post_type === "video" && <VideoPost video={post.post_video}/>}
                         {post.post_type === "image" && <ImagePost images={post.post_image}/>}
                         {post.post_type === "hybrid" && <HybridPost videos={post.post_video} images={post.post_image} />}
                     </div>
-                    <div className="flex justify-between">
-                        <div className="flex gap-2 bg-gray-50 p-2 rounded-full border border-gray-100">
-                            {Object.entries(DONATE_ICON).map(([key, iconPath]) => {
-                                // Extract number from "donate_5_dollars"
-                                const amount = key.split("_")[1];
 
-                                return (
-                                    <Donation
-                                        key={key}
-                                        amount={amount}
-                                        icon={iconPath}
-                                        alt={key.replace(/_/g, " ")}
-                                        onOpenDonate={setDonateAmount}
-                                    />
-                                );
-                            })}
+                    {/* Interaction Bar */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2 pt-4 border-t border-gray-50">
+                        <div className="flex gap-2.5 bg-gray-50/80 p-1.5 rounded-full border border-gray-100 backdrop-blur-sm">
+                            {Object.entries(DONATE_ICON).map(([key, iconPath]) => (
+                                <Donation
+                                    key={key}
+                                    amount={key.split("_")[1]}
+                                    icon={iconPath}
+                                    onOpenDonate={setDonateAmount}
+                                />
+                            ))}
                         </div>
-                        <div className="flex mt-1 gap-4">
+
+                        <div className="flex items-center gap-5">
                             <button
-                                onClick={() => handleToggle('comments')}
-                                className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'comments' ? 'text-primary-dark' : 'hover:text-primary-dark'}`}
+                                onClick={() => setActiveType(prev => prev === 'comments' ? null : 'comments')}
+                                className={`group flex items-center gap-1.5 transition-all duration-200 ${activeType === 'comments' ? 'text-primary-dark' : 'text-gray-400 hover:text-primary-dark'}`}
                             >
-                                <FaMessage className="w-4 h-4"/>
+                                <div className={`p-2 rounded-full transition-colors ${activeType === 'comments' ? 'bg-primary-dark/10' : 'group-hover:bg-gray-100'}`}>
+                                    <FaMessage className="w-4 h-4"/>
+                                </div>
                                 <span className="text-sm font-bold">{post.comment}</span>
                             </button>
+
                             <button
-                                onClick={() => handleToggle('donations')}
-                                className={`flex items-center gap-1 cursor-pointer transition-colors ${activeType === 'donations' ? 'text-amber-600' : 'hover:text-primary-dark'}`}
+                                onClick={() => setActiveType(prev => prev === 'donations' ? null : 'donations')}
+                                className={`group flex items-center gap-1.5 transition-all duration-200 ${activeType === 'donations' ? 'text-amber-600' : 'text-gray-400 hover:text-amber-500'}`}
                             >
-                                <GiTwoCoins className="w-5 h-5 text-amber-500"/>
+                                <div className={`p-2 rounded-full transition-colors ${activeType === 'donations' ? 'bg-amber-50' : 'group-hover:bg-gray-100'}`}>
+                                    <GiTwoCoins className="w-5 h-5 text-amber-500"/>
+                                </div>
                                 <span className="text-sm font-bold">${post.donation}</span>
                             </button>
                         </div>
                     </div>
-                    <PostComment/>
-                    {/* If no panel is open (comments or donations sectttion) show only a preview comment */}
+
+                    {/* Preview Comment (Minimalist) */}
                     {previewComment && !activeType && (
-                        <PostCommenters
-                            imgSrc={previewComment.user?.profileImage}
-                            name={previewComment.user?.name}
-                            username={previewComment.user?.username}
-                            date={previewComment.commented_date}
-                            comment={previewComment.comment}
-                        />
+                        <div className="mt-1">
+                            <PostCommenters
+                                imgSrc={previewComment.user?.profileImage}
+                                name={previewComment.user?.name}
+                                comment={previewComment.comment}
+                            />
+                        </div>
                     )}
 
                     <ShowSupporters
