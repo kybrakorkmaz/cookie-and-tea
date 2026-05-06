@@ -14,6 +14,28 @@ export const registerSchema = z.object({
         path: ["passwordConfirm"],
     }
 );
+
+export const profileUpdateSchema = z.object({
+    username: z.string()
+        .min(5, "Username must be at least 5 characters!")
+        .max(255, "This is too long"),
+    name: z.string().min(1, "Name is required"),
+    email: z.email("Invalid email address!"),
+    password: z.string().min(8, "password must be at least 8 characters!").optional().or(z.literal('')),
+    passwordConfirm: z.string().optional().or(z.literal('')),
+}).refine(
+    (data) => {
+        if (data.password && data.password !== data.passwordConfirm) {
+            return false;
+        }
+        return true;
+    },
+    {
+        message: "Passwords do not match",
+        path: ["passwordConfirm"],
+    }
+);
+
 export const loginSchema = z.object({
     //username or email login
     username:z.union([

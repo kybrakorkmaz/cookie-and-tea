@@ -3,11 +3,10 @@ import {useState} from "react";
 import {FaStripe} from "react-icons/fa";
 import {donations} from "../../constants/index.js";
 
-const Payment = ()=>{
+const Payment = ({ userId })=>{
     const [isConnected, setIsConnected] = useState(false);
 
-    // Mock current user id
-    const currentUserId = 1;
+    const currentUserId = userId || 1;
     const userDonations = donations.filter(d => d.donated_to_user_id === currentUserId);
 
     return(
@@ -63,8 +62,12 @@ const Payment = ()=>{
                                             <td className="px-6 py-4 text-sm text-gray-600">{donation.donated_date}</td>
                                             <td className="px-6 py-4 text-sm font-bold text-primary-dark">${donation.donated_amount}</td>
                                             <td className="px-6 py-4">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    Paid
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                    donation.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                    donation.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-green-100 text-green-800'
+                                                }`}>
+                                                    {donation.status ? donation.status.charAt(0).toUpperCase() + donation.status.slice(1) : 'Paid'}
                                                 </span>
                                             </td>
                                         </tr>

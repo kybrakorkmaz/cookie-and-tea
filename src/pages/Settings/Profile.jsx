@@ -1,7 +1,7 @@
 import {useState} from "react";
 import Input from "../../components/Input.jsx"
 import {PrimaryButton} from "../../components/Buttons.jsx";
-import {registerSchema} from "../../validations/userRegisterLoginValidation.js";
+import {profileUpdateSchema} from "../../validations/userRegisterLoginValidation.js";
 
 const Profile =  ()=>{
     const [formData, setFormData]=useState({
@@ -24,8 +24,9 @@ const Profile =  ()=>{
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const result = registerSchema.safeParse({
+        const result = profileUpdateSchema.safeParse({
             username: formData.Username,
+            name: formData.Name,
             email: formData.Email,
             password: formData.Password,
             passwordConfirm: formData.Confirm
@@ -36,6 +37,7 @@ const Profile =  ()=>{
             result.error.issues.forEach(issue => {
                 const path = issue.path[0];
                 const fieldName = path === "username" ? "Username" :
+                                 path === "name" ? "Name" :
                                  path === "email" ? "Email" :
                                  path === "password" ? "Password" :
                                  path === "passwordConfirm" ? "Confirm" : path;
@@ -50,7 +52,8 @@ const Profile =  ()=>{
         }
 
         // API call would go here
-        console.log("Profile update success:", formData);
+        const { Password, Confirm, ...safeData } = formData;
+        console.log("Profile update success:", { ...safeData, Password: "<redacted>", Confirm: "<redacted>" });
         alert("Profile updated successfully!");
     };
 
