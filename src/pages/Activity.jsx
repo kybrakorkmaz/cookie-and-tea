@@ -12,28 +12,28 @@ const Activity = () => {
     const currentUserId = 1;
 
     // Mock likes since they are not in constants
-    const mockLikes = [
+    const mockLikes = useMemo(() => [
         { id: 1, user_id: 2, action: "liked your post", date: "05/05/2026", type: "like" },
         { id: 2, user_id: 3, action: "liked your post", date: "04/05/2026", type: "like" },
-    ];
+    ], []);
 
-    const formattedComments = comments.map(c => ({
+    const formattedComments = useMemo(() => comments.map(c => ({
         id: `comment-${c.comment_id}`,
         user_id: c.commenter_id,
         user: profile.find(u => u.user_id === c.commenter_id)?.name || "User " + c.commenter_id,
         action: `commented: "${c.comment.substring(0, 40)}${c.comment.length > 40 ? '...' : ''}"`,
         date: c.commented_date,
         type: "comment"
-    }));
+    })), [comments, profile]);
 
-    const formattedDonations = donations.map(d => ({
+    const formattedDonations = useMemo(() => donations.map(d => ({
         id: `donation-${d.donation_id}`,
         user_id: d.donator_id,
         user: profile.find(u => u.user_id === d.donator_id)?.name || "User " + d.donator_id,
         action: `donated $${d.donated_amount}`,
         date: d.donated_date,
         type: "donation"
-    }));
+    })), [donations, profile]);
 
     // Followed users activities (posts)
     const followedActivities = useMemo(() => {
@@ -56,14 +56,14 @@ const Activity = () => {
 
     const othersActivities = useMemo(() => {
         const followedIds = following[0]?.following.map(f => f.following_user_id) || [];
-        return [...mockLikes, ...formattedComments, ...formattedDonations]
+        return [...mockLikes, ...formattedComments, ...formattedDonations, ...followedActivities]
             .filter(a => followedIds.includes(a.user_id))
             .sort((a, b) => {
                 const dateA = new Date(a.date.split('/').reverse().join('-'));
                 const dateB = new Date(b.date.split('/').reverse().join('-'));
                 return dateB - dateA;
             });
-    }, [formattedComments, formattedDonations, followedActivities]);
+    }, [mockLikes, formattedComments, formattedDonations, followedActivities]);
 
     const yourActivities = useMemo(() => {
         return [...formattedComments, ...formattedDonations]

@@ -1,6 +1,6 @@
 # cookie and tea
 
-CAT (cookie and tea) is a web application similer to Buy Me a Coffe and Ko-fi:
+CAT (cookie and tea) is a web application similar to Buy Me a Coffee and Ko-fi:
 Users can support their work with a support message or a donation.
 If users want to donate ones work, there are three options:
 - The tea icon represents 5 dollars.
