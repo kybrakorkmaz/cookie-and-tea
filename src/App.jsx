@@ -10,6 +10,7 @@ import Profile from "./pages/Profile/Profile.jsx";
 import Posts from "./pages/Posts/Posts.jsx";
 import People from "./pages/People/People.jsx";
 import Feed from "./pages/Feed.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 const App = ()=>{
   return(
       <BrowserRouter>
@@ -26,7 +27,7 @@ const App = ()=>{
               <Route path={"/profile/:userId?"} element={<Profile/>}/>
               <Route path={"/people"} element={<People/>}/>
               <Route path={"/posts/:userId?"} element={<Posts/>}/>
-              <Route path={"/feed"} element={<Feed/>}/>
+              <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
               {/*
 
           <Route path={"*"} element={<NotFound/>}/>*/}

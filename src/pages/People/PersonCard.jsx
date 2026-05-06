@@ -20,11 +20,11 @@ const PersonCard = ({ person, isFollowing, onFollow }) => (
         </NavLink>
 
         <button
-            onClick={() => onFollow(person.id)}
+            onClick={() => onFollow(person.id || person.following_user_id)}
             className={`px-6 py-2 rounded-full font-paragraph text-sm font-bold transition-all border ${
                 isFollowing
                     ? "bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100"
-                    : "bg-primary-dark border-primary-dark text-white hover:bg-opacity-90 shadow-md"
+                    : "bg-primary-dark border-primary-dark text-white hover:bg-primary-dark/90 shadow-md"
             }`}
         >
             {isFollowing ? "Unfollow" : "Follow"}

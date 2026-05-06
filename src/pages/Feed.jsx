@@ -1,7 +1,7 @@
 import UserNavbar from "../components/UserNavbar.jsx";
 import {FaImage, FaVideo, FaTimes, FaNewspaper} from "react-icons/fa";
 import { GrSend } from "react-icons/gr";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UploadImageFile from "../components/UploadImageFile.jsx";
 import UploadVideoFile from "../components/UploadFile.jsx";
 import PostCard from "./Posts/PostCard.jsx";
@@ -15,6 +15,7 @@ const Feed = () => {
     const [uploadedVideos, setUploadedVideos] = useState([]);
     const [showImageUpload, setShowImageUpload] = useState(false);
     const [showVideoUpload, setShowVideoUpload] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(5);
 
     const currentUserId = 1;
     const followedUserIds = following.find(f => f.follower_id === currentUserId)?.following.map(f => f.following_user_id) || [];
@@ -28,10 +29,18 @@ const Feed = () => {
             return dateB - dateA;
         });
 
+    const visiblePosts = feedPosts.slice(0, visibleCount);
+
+    useEffect(() => {
+        return () => {
+            uploadedVideos.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [uploadedVideos]);
+
     const handleImageUpload = (file) => {
         if (file && uploadedImages.length < 10) {
             const reader = new FileReader();
-            reader.onload = (e) => setUploadedImages([...uploadedImages, e.target.result]);
+            reader.onload = (e) => setUploadedImages(prev => [...prev, e.target.result]);
             reader.readAsDataURL(file);
         }
     };
@@ -44,12 +53,20 @@ const Feed = () => {
     };
 
     const removeImage = (index) => setUploadedImages(uploadedImages.filter((_, i) => i !== index));
-    const removeVideo = (index) => setUploadedVideos(uploadedVideos.filter((_, i) => i !== index));
+    const removeVideo = (index) => {
+        URL.revokeObjectURL(uploadedVideos[index]);
+        setUploadedVideos(uploadedVideos.filter((_, i) => i !== index));
+    };
 
     const handleCreatePost = () => {
         if (!title && !content) return;
+        uploadedVideos.forEach(url => URL.revokeObjectURL(url));
         setTitle(""); setContent(""); setUploadedImages([]); setUploadedVideos([]);
         setShowImageUpload(false); setShowVideoUpload(false);
+    };
+
+    const handleLoadMore = () => {
+        setVisibleCount(prev => prev + 5);
     };
 
     return (
@@ -147,7 +164,7 @@ const Feed = () => {
                         </div>
                         <button
                             onClick={handleCreatePost}
-                            className="bg-primary-dark text-white p-2.5 rounded-full hover:bg-opacity-90 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                            className="bg-primary-dark text-white p-2.5 rounded-full hover:bg-primary-dark/90 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm cursor-pointer"
                             disabled={!title && !content}
                         >
                             <GrSend className="rotate-45" size={20} />
@@ -164,9 +181,19 @@ const Feed = () => {
                 {/* Feed Section */}
                 <div className="flex flex-col gap-8">
                     <h2 className="text-xl font-header font-bold text-gray-800 mb-2">Your Feed</h2>
-                    {feedPosts.map((post) => (
+                    {visiblePosts.map((post) => (
                         <PostCard key={post.post_id} post={post} />
                     ))}
+
+                    {visibleCount < feedPosts.length && (
+                        <button
+                            type="button"
+                            onClick={handleLoadMore}
+                            className="mt-4 mx-auto px-12 py-3 bg-primary-dark text-white rounded-full font-bold hover:bg-primary-dark/90 transition-all active:scale-95 shadow-md cursor-pointer"
+                        >
+                            Load More
+                        </button>
+                    )}
                 </div>
 
             </div>
