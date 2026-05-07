@@ -1,9 +1,10 @@
-import UserNavbar from "../../components/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Intro from "./Intro.jsx";
 import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router";
 import {followers, following, posts, profile} from "../../constants/index.js";
-import UserFooter from "../../components/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/UserFooter.jsx";
 import Gallery from "./Gallery.jsx";
 import Posts from "../Posts/Posts.jsx";
 
@@ -24,7 +25,18 @@ const Profile = () => {
 
     const [followsUs, setFollowsUs]=useState([]);
     const [weFollow, setWeFollow]=useState([]);
-    const [selected, setSelected]=useState("intro");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const selected = searchParams.get("tab") || "intro";
+
+    const setSelected = (tab) => {
+        const newParams = new URLSearchParams(searchParams);
+        if (tab === "intro") {
+            newParams.delete("tab");
+        } else {
+            newParams.set("tab", tab);
+        }
+        setSearchParams(newParams, { replace: true });
+    };
 
     const [targetPostId, setTargetPostId] = useState(null);
 
@@ -33,7 +45,6 @@ const Profile = () => {
         setSelected("posts");
         setTargetPostId(postId);
     };
-
 
     // todo API call
     useEffect(() => {

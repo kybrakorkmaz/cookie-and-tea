@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {index} from "../constants/index.js";
+import {index} from "../../constants/index.js";
 
 const SearchBar= ({bgSearchColor})=>{
     const [query, setQuery]= useState("");

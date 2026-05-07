@@ -1,10 +1,7 @@
 import { FaCamera } from "react-icons/fa";
-import {IoMdAdd } from "react-icons/io";
-import { NavLink } from "react-router";
 import {MdModeEditOutline} from "react-icons/md";
 import {useState} from "react";
-import UploadImageFile from "../../components/UploadImageFile.jsx";
-import ImageUploadModal from "../../components/ImageUploadModal.jsx";
+import ImageUploadModal from "../../components/media/ImageUploadModal.jsx";
 
 const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, profileAlt, selected, setSelected}) => {
     const strokeStyle = {
@@ -44,6 +41,12 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
             setError("Failed to upload image. Please try again.");
         }
     };
+    const handleTabClick = (tab) => {
+        setSelected(tab);
+        // Reset scroll when switching tabs
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     return(
         <div className="w-5/6 mx-auto mt-10 rounded-2xl overflow-hidden border border-primary-dark bg-white shadow-soft">
             {/* cover area */}
@@ -137,7 +140,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
                     {/* Intro Tab */}
                     <button
-                        onClick={() => setSelected("intro")}
+                        onClick={() => handleTabClick("intro")}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "intro"
                                 ? "border-b-2 border-primary-dark text-primary-dark"
@@ -149,7 +152,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
                     {/* Gallery Tab */}
                     <button
-                        onClick={() => setSelected("gallery")}
+                        onClick={() => handleTabClick("gallery")}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "gallery"
                                 ? "border-b-2 border-primary-dark text-primary-dark"
@@ -162,7 +165,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                     {/* Posts Tab */}
                     <button
                         onClick={() => {
-                            setSelected("posts");
+                            handleTabClick("posts");
                         }}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "posts"

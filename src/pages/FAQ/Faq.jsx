@@ -1,7 +1,7 @@
-import Navbar from "../../components/Navbar.jsx";
+import Navbar from "../../components/nav-footer/Navbar.jsx";
 import { frequentlyAskedQuestions } from "../../constants/index.js";
 import Questions from "./Questions.jsx";
-import Footer from "../../components/Footer.jsx";
+import Footer from "../../components/nav-footer/Footer.jsx";
 
 const Faq = () => {
     return (
@@ -15,8 +15,6 @@ const Faq = () => {
                         If you can't find an answer... feel free to drop us <span className="text-primary">an email.</span>
                     </h3>
                 </div>
-
-                {/* ✅ ARTIK BURADA GAP VAR: Her soru kendi kutusunda */}
                 <div className="w-full max-w-3xl flex flex-col gap-6">
                     {frequentlyAskedQuestions.map(fq => (
                         <Questions

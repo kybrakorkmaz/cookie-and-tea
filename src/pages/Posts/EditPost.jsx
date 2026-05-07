@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import UploadImageFile from "../../components/UploadImageFile.jsx";
-import UploadFile from "../../components/UploadFile.jsx";
-import MediaManager from "../../components/MediaManager.jsx";
+import UploadImageFile from "../../components/media/UploadImageFile.jsx";
+import UploadFile from "../../components/media/UploadFile.jsx";
+import MediaManager from "../../components/media/MediaManager.jsx";
 
 const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
     const createdUrlsRef = useRef([]);

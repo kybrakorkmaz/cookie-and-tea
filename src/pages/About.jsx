@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
+import Navbar from "../components/nav-footer/Navbar.jsx";
+import Footer from "../components/nav-footer/Footer.jsx";
 
 const About = ()=>{
     return(

@@ -1,8 +1,9 @@
-import UserNavbar from "../components/UserNavbar.jsx";
-import UserFooter from "../components/UserFooter.jsx";
+import UserNavbar from "../components/nav-footer/UserNavbar.jsx";
+import UserFooter from "../components/nav-footer/UserFooter.jsx";
 import { donations, comments, following, posts, profile } from "../constants/index.js";
 import { useState, useMemo } from "react";
 import { FaHeart, FaComment, FaDonate, FaPlusSquare } from "react-icons/fa";
+import PageUpButton from "../components/PageUpButton.jsx";
 
 const Activity = () => {
     const [activeTab, setActiveTab] = useState("others"); // others, yours
@@ -133,6 +134,7 @@ const Activity = () => {
                 </div>
             </div>
             <UserFooter />
+            <PageUpButton />
         </div>
     );
 };

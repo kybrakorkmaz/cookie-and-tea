@@ -1,10 +1,10 @@
-import Navbar from "../../components/Navbar.jsx";
+import Navbar from "../../components/nav-footer/Navbar.jsx";
 import {PrimaryButton} from "../../components/Buttons.jsx";
 import {Link} from "react-router";
 import {useState} from "react";
 import Input from "../../components/Input.jsx";
 import {loginSchema} from "../../validations/userRegisterLoginValidation.js";
-import Footer from "../../components/Footer.jsx";
+import Footer from "../../components/nav-footer/Footer.jsx";
 
 const Login = () =>{
     const [formData, setFormData] = useState({
