@@ -5,10 +5,10 @@ import {useEffect} from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const Offers=()=>{
     useEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
-
         const ctx = gsap.context(() => {
             gsap.from(".card-offer", {
                 opacity: 0,

@@ -33,7 +33,7 @@ const Footer=()=>{
                 </a>
 
                 <div className="flex items-center justify-center pt-1 gap-6 md:gap-10">
-                    <a href="https://x.com/your-profile"
+                    <a href="https://x.com/cookieandtea"
                        aria-label="Follow Cookie and Tea on X"
                        target="_blank"
                        rel="noreferrer"
@@ -41,7 +41,7 @@ const Footer=()=>{
                     >
                         <FaXTwitter className={iconStyle} />
                     </a>
-                    <a href="https://instagram.com/your-profile"
+                    <a href="https://instagram.com/cookieandtea"
                        aria-label="Follow Cookie and Tea on Instagram"
                        target="_blank"
                        rel="noreferrer"

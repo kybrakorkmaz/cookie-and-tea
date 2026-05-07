@@ -97,7 +97,7 @@ const PostCard = ({ post, highlightedId }) => {
                     {/* Top Bar: User Info & Actions */}
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
-                            <RoundedImage image={postUser?.profileImage} alt={postUser.name} w={"w-11"} h={"h-11"}/>
+                            <RoundedImage image={postUser?.profileImage} alt={postUser?.name || ''} w={"w-11"} h={"h-11"}/>
                             <div className="flex flex-col">
                                 <span className="font-header font-bold text-gray-900 text-sm leading-tight">{postUser?.name}</span>
                                 <span className="font-paragraph text-xs text-gray-500">@{postUser?.username}</span>

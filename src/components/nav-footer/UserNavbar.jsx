@@ -20,7 +20,10 @@ const UserNavbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-    const activityLength = getSortedActivities().length;
+
+    const image = "/images/people/angel.jpg";
+    const currentUserId = 1;
+    const activityLength = getSortedActivities(currentUserId, image).length;
 
     const links = [
         { to: "/profile/1?tab=intro", label: "Profile" },
@@ -45,6 +48,8 @@ const UserNavbar = () => {
                 links={links}
                 nav="usernavbar"
                 textColor="text-primary-dark"
+                onNavigate={() => setIsMenuOpen(false)}
+                searchBarColor="bg-white"
             />
             {/* Desktop Layout */}
             <div className="hidden lg:flex flex-row justify-between items-center gap-6">
@@ -69,24 +74,28 @@ const UserNavbar = () => {
 
                     {/* Notifications Wrapper */}
                     <div className="relative">
-                        <div className="cursor-pointer" onClick={() => setShowNotifications(!showNotifications)}>
+                        <button
+                            className="cursor-pointer bg-transparent border-none p-0"
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            aria-label="Toggle notifications"
+                        >
                             <Badge badgeContent={activityLength} color="primary">
                                 <NotificationsIcon
                                     className="text-primary-dark hover:text-primary transition-colors"
                                     sx={{ width: '2rem', height: '2rem' }}
                                 />
                             </Badge>
-                        </div>
+                        </button>
                         {showNotifications && (
                             <Notifications onClose={() => setShowNotifications(false)} />
                         )}
                     </div>
 
-                    <NavLink to="/feed" className="text-primary-dark hover:text-primary transition-colors">
+                    <NavLink to="/feed" className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
                         <FaHome style={{ width: "2rem", height: "2rem" }} />
                     </NavLink>
 
-                    <NavLink to="/settings" className="text-primary-dark hover:text-primary transition-colors block">
+                    <NavLink to="/settings" className="text-primary-dark hover:text-primary transition-colors block" aria-label="Settings">
                         <RiListSettingsFill style={{ width: "2rem", height: "2rem" }} />
                     </NavLink>
                 </div>

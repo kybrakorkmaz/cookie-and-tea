@@ -22,6 +22,7 @@ const InteractionBar = ({ post, activeType, setActiveType, setDonateAmount }) =>
                 {/* Comment Toggle */}
                 <button
                     onClick={() => setActiveType(prev => prev === 'comments' ? null : 'comments')}
+                    aria-pressed={activeType === 'comments'}
                     className={`group flex items-center gap-1.5 transition-all duration-200 ${
                         activeType === 'comments' ? 'text-primary-dark' : 'text-gray-400 hover:text-primary-dark'
                     }`}
@@ -37,6 +38,7 @@ const InteractionBar = ({ post, activeType, setActiveType, setDonateAmount }) =>
                 {/* Donation Toggle */}
                 <button
                     onClick={() => setActiveType(prev => prev === 'donations' ? null : 'donations')}
+                    aria-pressed={activeType === 'donations'}
                     className={`group flex items-center gap-1.5 transition-all duration-200 ${
                         activeType === 'donations' ? 'text-amber-600' : 'text-gray-400 hover:text-amber-500'
                     }`}
@@ -44,7 +46,7 @@ const InteractionBar = ({ post, activeType, setActiveType, setDonateAmount }) =>
                     <div className={`p-2 rounded-full transition-colors ${
                         activeType === 'donations' ? 'bg-amber-50' : 'group-hover:bg-gray-100'
                     }`}>
-                        <GiTwoCoins className="w-5 h-5 text-amber-500"/>
+                        <GiTwoCoins className="w-5 h-5 text-current"/>
                     </div>
                     <span className="text-sm font-bold">${post.donation}</span>
                 </button>

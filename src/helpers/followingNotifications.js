@@ -1,8 +1,6 @@
 // Activity from followed users (Others)
 import {comments, donations, following, profile} from "../constants/index.js";
-const currentUserId = 1;
-const followedIds = following[0]?.following.map(f => f.following_user_id) || []
-const image = "/images/people/angel.jpg";
+
 export const followedActivities = (followedIds) =>([
     ...comments.filter(c => followedIds.includes(c.commenter_id)).map(c => ({
         id: `c-${c.comment_id}`,
@@ -37,7 +35,8 @@ export const accountOwnerActivities=(currentUserId, image)=>([
         }))
 ]);
 
-export const getSortedActivities = () => {
+export const getSortedActivities = (currentUserId = 1, image = "/images/people/angel.jpg") => {
+    const followedIds = following.find(u => u.user_id === currentUserId)?.following?.map(f => f.following_user_id) ?? [];
     const followed = followedActivities(followedIds);
     const owner = accountOwnerActivities(currentUserId, image);
 

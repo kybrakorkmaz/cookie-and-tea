@@ -26,7 +26,9 @@ const Profile = () => {
     const [followsUs, setFollowsUs]=useState([]);
     const [weFollow, setWeFollow]=useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
-    const selected = searchParams.get("tab") || "intro";
+    const allowedTabs = ["intro", "posts", "gallery"];
+    const tabParam = searchParams.get("tab");
+    const selected = allowedTabs.includes(tabParam) ? tabParam : "intro";
 
     const setSelected = (tab) => {
         const newParams = new URLSearchParams(searchParams);

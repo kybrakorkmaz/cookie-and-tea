@@ -7,7 +7,9 @@ const Notifications =  ({onClose}) =>{
     const dropdownBg = "bg-white/50 backdrop-blur-md border border-gray-100/50 shadow-xl rounded-2xl overflow-hidden z-50";
     // Get latest activities (both yours and followed users)
     const latestActivities = useMemo(() => {
-        return getSortedActivities();
+        const currentUserId = 1;
+        const image = "/images/people/angel.jpg";
+        return getSortedActivities(currentUserId, image);
     }, []);
     return(
         <>

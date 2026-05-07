@@ -7,7 +7,7 @@ const FromYouReviews = ({ name, username, accountUrl, image, review }) => {
                 <RoundedImage w={"w-14"} h={"h-14"} image={image} alt={name}/>
                 <div className="flex flex-col">
                     <span className="text-lg capitalize">{name}</span>
-                    <a href={accountUrl} className="text-gray-400 text-sm hover:underline">
+                    <a href={accountUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 text-sm hover:underline">
                         @{username}
                     </a>
                 </div>

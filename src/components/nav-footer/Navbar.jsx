@@ -47,6 +47,7 @@ const Navbar = ({
                     textColor={textColor}
                     searchBarColor={searchBarColor}
                     signUpStyle={signUpStyles}
+                    onNavigate={() => setIsMenuOpen(false)}
                 />
 
                 {/* Desktop Logo */}
