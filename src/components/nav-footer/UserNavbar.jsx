@@ -12,9 +12,6 @@ import HamburgerMenu from "./HamburgerMenu.jsx";
 import MobileNavbar from "./MobileNavbar.jsx";
 
 
-const image = "/images/people/angel.jpg";
-const name = "Angel"
-
 const UserNavbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -22,8 +19,10 @@ const UserNavbar = () => {
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     const image = "/images/people/angel.jpg";
+    const name = "Angel"
     const currentUserId = 1;
-    const activityLength = getSortedActivities(currentUserId, image).length;
+    const sortedActivities = useMemo(() => getSortedActivities(currentUserId, image), [currentUserId, image]);
+    const activityLength = sortedActivities.length;
 
     const links = [
         { to: "/profile/1?tab=intro", label: "Profile" },
@@ -63,14 +62,14 @@ const UserNavbar = () => {
 
                 <div className="flex flex-1/3 justify-end items-center gap-4 px-4">
                     {/* Profile Link Card */}
-                    <div className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm">
+                    <NavLink to="/profile/1?tab=intro" className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
                         <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-100">
                             <img src={image} alt={name} className="w-full h-full object-cover object-top" />
                         </div>
-                        <NavLink to="/profile/1?tab=intro" className="text-primary-dark text-sm font-bold hover:text-primary transition-colors pr-2">
+                        <span className="text-primary-dark text-sm font-bold group-hover:text-primary transition-colors pr-2">
                             Your Page
-                        </NavLink>
-                    </div>
+                        </span>
+                    </NavLink>
 
                     {/* Notifications Wrapper */}
                     <div className="relative">

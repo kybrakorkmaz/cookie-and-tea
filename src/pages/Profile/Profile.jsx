@@ -2,33 +2,43 @@ import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Intro from "./Intro.jsx";
 import {useEffect, useState} from "react";
-import {useSearchParams} from "react-router";
-import {followers, following, posts, profile} from "../../constants/index.js";
+import {useParams, useSearchParams} from "react-router";
+import {posts} from "../../constants/index.js";
 import UserFooter from "../../components/nav-footer/UserFooter.jsx";
 import Gallery from "./Gallery.jsx";
 import Posts from "../Posts/Posts.jsx";
+import apiClient from "../../api/axios.js";
+
+const allowedTabs = ["intro", "posts", "gallery"];
 
 const Profile = () => {
-    const [user, setUser] = useState({
+    const {username} = useParams(); // Dynamically captures whatever is in the URL path
+    // 1. Panel Header State
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get("tab");
+    // Tab State (Defaults to "intro" at first glance)
+    const selected = allowedTabs.includes(tabParam) ? tabParam : "intro";
+
+    // Decoupled Frontend States matching your individual Backend Resource Endpoints
+    const [userPanel, setUserPanel] = useState({
+        id: null,
         name:"",
         username:"",
         backgroundImage:"",
         backgroundAlt:"",
         profileImage:"",
         profileAlt:"",
+    });
+    // 2. Intro Dashboard State
+    const [userIntro, setUserIntro] = useState({
         about:"",
         socials:[],
         earnings:{}
-    });
-
+    })
+    // 3. Connection & Post Sub-states
     const [userTopDonatedPosts, setUserTopDonatedPosts] = useState([]);
-
-    const [followsUs, setFollowsUs]=useState([]);
-    const [weFollow, setWeFollow]=useState([]);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const allowedTabs = ["intro", "posts", "gallery"];
-    const tabParam = searchParams.get("tab");
-    const selected = allowedTabs.includes(tabParam) ? tabParam : "intro";
+    const [followers, setFollowers] = useState([]);
+    const [targetPostId, setTargetPostId] = useState(null);
 
     const setSelected = (tab) => {
         const newParams = new URLSearchParams(searchParams);
@@ -40,7 +50,6 @@ const Profile = () => {
         setSearchParams(newParams, { replace: true });
     };
 
-    const [targetPostId, setTargetPostId] = useState(null);
 
     const handleNavigateToPost = (postId) => {
         // 1. Switch tab
@@ -48,56 +57,100 @@ const Profile = () => {
         setTargetPostId(postId);
     };
 
-    // todo API call
+    // API Call 1: Fetch Panel Header Data using Axios
     useEffect(() => {
-        setUser({
-            name: profile[0].name,
-            username: profile[0].username,
-            backgroundImage: profile[0].backgroundImage,
-            backgroundAlt: profile[0].backgroundAlt,
-            profileImage: profile[0].profileImage,
-            profileAlt: profile[0].profileAlt,
-            about: profile[0].about,
-            socials: profile[0].socials.filter(social => Boolean(social.url)),
-            earnings: profile[0].earnings
-        });
+        if (!username) return;
+        const fetchPanelHeader = async () => {
+            try {
+                // Axios handles the base URL automatically. Just supply the end path!
+                // Axios also parses JSON internally, so no more ".json()" step.// 🛰️ PIPELINE 1: Fetch Panel Resource (Runs ONCE when the username changes)
+                const response = await apiClient.get(`/api/v1/profile/${username}`);
+                const data = response.data;
 
-        // Angel's id=1
-        setFollowsUs(followers[0].followers);
-        setWeFollow(following[0].following);
+                setUserPanel ({
+                    id: data.id,
+                    name: data.name,
+                    username: data.username,
+                    profileImage: data.profileImage,
+                    profileAlt: data.profileImage ? `profile-${data.username}` : "default profile",
+                    backgroundImage: data.backgroundImage,
+                    backgroundAlt: data.backgroundImage ? `background-${data.username}` : "default background",
+                });
+            } catch (err) {
+                // Axios automatically throws errors for 4xx and 5xx status codes!
+                console.error("Error fetching header details via Axios:", err.message);
+            }
+        };
+        fetchPanelHeader();
+    }, [username]);
 
-        // todo API call for top posts or handle sorting here
-        // Set the posts data. Sorting happens in the child component via useMemo.
-        setUserTopDonatedPosts(posts?.[0]?.posts ?? [])
+    // API Call 2: Fetch Intro Dashboard Data using Axios
+    useEffect(() => {
+        // Only trigger this database call if the active tab is set to "intro"
+        if (!username) return;
 
-    }, []);
+        const fetchIntroData = async () => {
+            try {
+                if(selected === "intro"){
+                    // Passing URL Query parameters the professional Axios way: using the 'params' config object
+                    // Hits: GET /api/v1/profile/kubra/intro?earningTimeline=30&isFollower=true
+                    const response = await apiClient.get(`/api/v1/profile/${username}/intro`,{
+                        params:{
+                            earningTimeline: 30,
+                            isFollower: true
+                        }
+                    });
+                    const data = response.data;
+
+                    // hydrates userIntro state instead of userPanel
+                    setUserIntro({
+                        about: data.about || "",
+                        socials: data.socials ? data.socials.filter(social => Boolean(social.socialUrl)) : [],
+                        earnings: { total: data.earningsTotal }
+                    });
+
+                    setUserTopDonatedPosts(data.topSupportedPosts || []);
+                    setFollowers(data.recentConnections || [])
+                }
+                // 💡 Note: If selected === "gallery", your separate <Gallery /> component
+                // can safely hit your GET /api/v1/profile/:username/gallery endpoint internally!
+
+            } catch (err) {
+                console.error(`Failed loading ${selected} sub-resource:`, err);
+            }
+        };
+        fetchIntroData();
+    }, [selected, username]); // Refetches instantly if the user jumps back to Intro!
     return (
         <div className="bg-cream/50 min-h-screen pb-20">
             <UserNavbar />
             {/* Panel Section */}
             <div className="m-0 p-0 mb-40">
                 <Panel
-                    name={user.name}
-                    username={user.username}
-                    backgroundImage={user.backgroundImage}
-                    backgroundAlt={user.backgroundAlt}
-                    profileImage={user.profileImage}
-                    profileAlt={user.profileAlt}
+                    name={userPanel.name}
+                    username={userPanel.username}
+                    backgroundImage={userPanel.backgroundImage}
+                    backgroundAlt={userPanel.backgroundAlt}
+                    profileImage={userPanel.profileImage}
+                    profileAlt={userPanel.profileAlt}
                     selected={selected}
                     setSelected={setSelected}
                 />
                 {/* Main Intro */}
-                {selected==="gallery" ? <Gallery/>
-                    :selected === "posts" ? <Posts targetPostId={targetPostId} onTargetHandled={() => setTargetPostId(null)} />
-                        :<Intro
-                            about={user.about}
-                            socials={user.socials}
-                            earnings={user.earnings}
+                {selected==="gallery" ? (
+                    <Gallery username={username}/>
+                    ) : selected === "posts" ? (
+                        <Posts targetPostId={targetPostId} onTargetHandled={() => setTargetPostId(null)} />
+                    ) :(
+                        <Intro
+                            about={userIntro.about}
+                            socials={userIntro.socials}
+                            earnings={userIntro.earnings}
                             userTopDonatedPosts={userTopDonatedPosts}
                             onPostClick={handleNavigateToPost}
-                            followers={followsUs}
-                            following={weFollow}/>
-                }
+                            followers={followers}
+                        />
+                )}
 
             </div>
             <UserFooter/>

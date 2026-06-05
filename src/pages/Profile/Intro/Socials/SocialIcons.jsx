@@ -1,6 +1,5 @@
 import { FaXTwitter, FaSquarePinterest, FaYoutube, FaInstagram } from "react-icons/fa6";
 
-// İkonları bir nesne içinde topluyoruz. Bu sayede switch-case kalabalığından kurtuluruz.
 const ICON_MAP = {
     twitter: FaXTwitter,
     instagram: FaInstagram,
@@ -8,12 +7,11 @@ const ICON_MAP = {
     youtube: FaYoutube,
 };
 
-const Social = ({ accountUrl, socialAccountName }) => {
-    // socialAccountName'e karşılık gelen bileşeni seçiyoruz
-    // Eğer listede olmayan bir isim gelirse hata vermemesi için fallback (opsiyonel) eklenebilir.
-    const IconComponent = ICON_MAP[socialAccountName];
+const SocialIcons = ({ accountUrl, socialMedia }) => {
+    // Select the component matching our database enum value string
+    const IconComponent = ICON_MAP[socialMedia];
 
-    if (!IconComponent) return null; // İkon bulunamazsa hiçbir şey basma
+    if (!IconComponent) return null; // if no icon exists do nothing
 
     return (
         <a
@@ -27,4 +25,4 @@ const Social = ({ accountUrl, socialAccountName }) => {
     );
 };
 
-export default Social;
+export default SocialIcons;

@@ -1,11 +1,15 @@
 import {FaPenToSquare} from "react-icons/fa6";
 import {useEffect, useState} from "react";
 import AboutEdit from "./AboutEdit.jsx";
+import apiClient from "../../../../api/axios.js";
+import {useParams} from "react-router";
 
 const About = ({about}) => {
+    const {username} = useParams();
     const [isEditClicked, setIsEditClicked] = useState(false);
     const [currentAbout, setCurrentAbout] = useState(about || "");
 
+    // Sync state safely only when the parent value actually shifts
     useEffect(() => {
         setCurrentAbout(about || "");
     }, [about]);
@@ -18,32 +22,36 @@ const About = ({about}) => {
 
 
     const handleSaveAbout = async (updatedAbout) =>{
+        // Terminate instantly if invoked by mount-lifecycle automation
+        if(updatedAbout===undefined){
+            //setIsEditClicked(false);
+            return;
+        }
         const previousAbout = currentAbout;
 
-        setCurrentAbout(updatedAbout);
-
-        if(updatedAbout && updatedAbout.trim() !== "") {
-            setCurrentAbout(updatedAbout);
+        // Short-circuit if nothing changed to prevent wasteful network requests
+        if(previousAbout === updatedAbout) {
+            setIsEditClicked(false);
+            return;
         }
 
+        // Optimistic UI Update: change screen instantly for maximum perceived speed
+        setCurrentAbout(updatedAbout);
+
         try{
-            const response = await fetch("url", {
-                method:"POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    //"Authorization":`Bearer ${token}`if user authenticated
-                },
-                body: JSON.stringify({about: updatedAbout})
+           // Send payload inside an JSON request object body
+            const response = await apiClient.put(`/api/v1/profile/${username}/about`, {
+                about:updatedAbout
             });
-
-            if(!response.ok) throw new Error("Error Occurred");
-
+            if (response.data?.about !== undefined) {
+                setCurrentAbout(response.data.about);
+            }
             //close modal
             setIsEditClicked(false);
         }catch (error){
-            //if error occurs rollback
+            // Rollback state if network pipes break or fail schema check constraints
             setCurrentAbout(previousAbout);
-            console.error(error);
+            console.error("Failed saving profile about context:", error.message);
             alert("Changes couldn't be saved. Please try again!");
         }
     }
@@ -61,7 +69,7 @@ const About = ({about}) => {
                 </button>
             </div>
             <hr className="border-gray-200 mb-6"/>
-            <p className="font-paragraph text-gray-700 leading-relaxed">{currentAbout}</p>
+            <p className="font-paragraph text-gray-700 leading-relaxed">{currentAbout || "This person is so lazy to introduce themselves."}</p>
             {isEditClicked && (
                 <AboutEdit
                     about={currentAbout}

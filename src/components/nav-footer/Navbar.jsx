@@ -12,7 +12,7 @@ const Navbar = ({
                     textOutline = "black"
                 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
     const signUpStyles = {
         WebkitTextStroke: `0.7px ${textOutline}`,

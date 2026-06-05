@@ -1,55 +1,53 @@
 import { FaPenToSquare } from "react-icons/fa6";
-import Social from "./Social.jsx";
+import SocialIcons from "./SocialIcons.jsx";
 import SocialEdit from "./SocialEdit.jsx";
 import { useState, useEffect } from "react";
+import apiClient from "../../../../api/axios.js";
+import {useParams} from "react-router";
 
 const Socials = ({ socials }) => {
     const [isEditClicked, setIsEditClicked] = useState(false);
-    // 1. to update data from prop, we store them into state
-    const [currentSocials, setCurrentSocials] = useState(socials || []);
-
-
-    // if data comes late or info changes (API or useEffect) update state
+    const [currentSocials, setCurrentSocials] = useState([]);
+    const {username} = useParams();
+    // Update internal state when data loads or updates from the main server response
     useEffect(() => {
         setCurrentSocials(socials || []);
     }, [socials]);
 
-    // if edit icon clicked prevent scrolling
+    // if edit icon is clicked prevent scrolling
     useEffect(() => {
         document.body.style.overflow = isEditClicked ? 'hidden' : 'auto';
         return () => { document.body.style.overflow = 'auto'; };
     }, [isEditClicked]);
 
-    // 2. updates social media account data list
+    // updates social media account data list
     const handleSaveSocials = async (updatedList) => {
+        if (!updatedList) return;
         // store old data for using again if error occurred
         const previousSocials = currentSocials;
         // Sanity check: prevent to send empty URLs
-        const finalData = updatedList.filter(item => item.url && item.url.trim() !== "");
-        // 1. Update frontend immediately so the user don't wait to see the updated data
+        const finalData = updatedList
+            .filter(item=>item.socialUrl && item.socialUrl.trim() !=="")
+            .map(item=>({
+                socialMedia: item.socialMedia,
+                socialUrl: item.socialUrl.trim()
+            }));
+        // Optimistic UI Update: change frontend state immediately so it feels instantaneous
         setCurrentSocials(finalData);
-
         try {
-            // 2. send changes to backend
-            const response = await fetch('url', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${token}` // if user authenticated
-                },
-                body: JSON.stringify(finalData)
+            // Passing the array cleanly inside the HTTP Request Body payload
+            await apiClient.put(`/api/v1/profile/${username}/socials`, {
+                socials: finalData
             });
-
-            if (!response.ok) throw new Error('Error occurred!');
 
             //close modal
             setIsEditClicked(false);
 
         } catch (error) {
-            // if error occurs rollback to previous data
+            // Rollback to old values if network connection dropouts occur
             setCurrentSocials(previousSocials);
-            console.error("Error:", error);
-            // NOTE: do not call setIsEditClicked(false)
+            console.error("Failed saving social media settings:", error);
+            // do not call setIsEditClicked(false)
             // so if anything occurs, window stays open and the user does not lose its url(s)
             alert("Changes couldn't be saved. Please try again!");
         }
@@ -69,12 +67,12 @@ const Socials = ({ socials }) => {
             <hr className="border-gray-200 mb-6"/>
 
             <div className="flex justify-start gap-4">
-                {/* 3. Now map current data not prop (old one) */}
-                {currentSocials.map(social => (
-                    <Social
-                        key={social.name}
-                        socialAccountName={social.name}
-                        accountUrl={social.url}
+                {/* Now map current data not prop (old one) */}
+                {currentSocials.map((social, index) => (
+                    <SocialIcons
+                        key={social.id || index} // Safe fallback key
+                        socialMedia={social.socialMedia}
+                        accountUrl={social.socialUrl}
                     />
                 ))}
             </div>
