@@ -6,6 +6,9 @@ const aboutSchema = z.string().max(1000, { message: "Maximum 1000 characters all
 const AboutEdit = ({ about, onClose, onSave }) => {
     const [currentAbout, setCurrentAbout] = useState(about || "");
     const [error, setError] = useState("");
+    const [isSaving, setIsSaving] = useState(false); // Multi-click guard protection
+
+
     const LAZY_MESSAGE = "This person is so lazy to introduce themselves.";
 
     const handleChange = (e) => {
@@ -22,6 +25,19 @@ const AboutEdit = ({ about, onClose, onSave }) => {
         setCurrentAbout(val);
     };
 
+    // Form transaction orchestrator
+    const executeSavePipeline = async (valueToSend) => {
+        try {
+            setIsSaving(true);
+            await onSave(valueToSend);
+            onClose(); // Only fires if the promise resolves smoothly!
+        } catch (err) {
+            console.error("Modal about submit failed:", err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const handleSaveInternal = () => {
         // Final Zod check
         const result = aboutSchema.safeParse(currentAbout);
@@ -35,6 +51,10 @@ const AboutEdit = ({ about, onClose, onSave }) => {
         onSave(finalValue);
     };
 
+    const handleClearAll = () => {
+        executeSavePipeline(LAZY_MESSAGE);
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
@@ -42,7 +62,7 @@ const AboutEdit = ({ about, onClose, onSave }) => {
             <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-heavy p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h4 className="font-header text-xl text-primary-dark">Edit About</h4>
-                    <button onClick={onClose} className="text-gray-400 hover:text-black font-bold text-2xl transition-colors">✕</button>
+                    <button onClick={onClose} disabled={isSaving} className="text-gray-400 hover:text-black font-bold text-2xl transition-colors">✕</button>
                 </div>
 
                 {/* About Section */}
@@ -73,17 +93,20 @@ const AboutEdit = ({ about, onClose, onSave }) => {
 
                 <div className="mt-8 flex justify-end gap-3 font-paragraph">
                     <button
-                        onClick={() => onSave(LAZY_MESSAGE)}
+                        type="button"
+                        onClick={handleClearAll}
+                        disabled={isSaving}
                         className="px-4 py-2 text-red-400 hover:text-red-600 font-bold transition-colors"
                     >
                         Clear All
                     </button>
                     <button
+                        type="button"
                         onClick={handleSaveInternal}
-                        className="bg-primary-dark text-white px-8 py-3 rounded-xl text-sm font-bold active:scale-95 transition-all hover:bg-opacity-90 disabled:opacity-50 disabled:pointer-events-none"
-                        disabled={!!error}
+                        disabled={!!error || isSaving}
+                        className="bg-primary-dark text-white px-8 py-3 rounded-xl text-sm font-bold active:scale-95 transition-all hover:bg-opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
                     >
-                        Save Changes
+                        {isSaving ? "Saving..." : "Save Changes"}
                     </button>
                 </div>
             </div>

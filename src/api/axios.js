@@ -1,5 +1,4 @@
 import axios from "axios";
-import {config} from "zod";
 
 // Pull the correct environment variable injected automatically by Vite
 const baseUrl = import.meta.env.VITE_API_BASE_URL || "";

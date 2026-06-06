@@ -1,11 +1,6 @@
 import { FaXTwitter, FaSquarePinterest, FaYoutube, FaInstagram } from "react-icons/fa6";
+import {ICON_MAP} from "../../constants/profileConstants.js";
 
-const ICON_MAP = {
-    twitter: FaXTwitter,
-    instagram: FaInstagram,
-    pinterest: FaSquarePinterest,
-    youtube: FaYoutube,
-};
 
 const SocialIcons = ({ accountUrl, socialMedia }) => {
     // Select the component matching our database enum value string

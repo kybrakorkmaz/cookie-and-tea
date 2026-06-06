@@ -5,7 +5,6 @@ import People from "./Intro/People.jsx";
 import MostDonatedPosts from "./Intro/MostDonatedPosts.jsx";
 
 const Intro = ({about, socials, earnings, userTopDonatedPosts,onPostClick, followers}) =>{
-    ///console.log("content component socials:",socials);
     return(
         <div className="flex flex-col lg:flex-row w-5/6 mx-auto gap-28 mt-16">
 

@@ -10,9 +10,10 @@ import Notifications from "../Notifications.jsx";
 import {getSortedActivities} from "../../helpers/followingNotifications.js";
 import HamburgerMenu from "./HamburgerMenu.jsx";
 import MobileNavbar from "./MobileNavbar.jsx";
-
+import {useAuth} from "../../context/AuthContext.js"; // todo change navbar profile for authenticated user
 
 const UserNavbar = () => {
+    const { user } = useAuth(); // Pulling live session data dynamically
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 

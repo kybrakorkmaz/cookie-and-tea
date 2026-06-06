@@ -1,17 +1,16 @@
-import { FaXTwitter, FaSquarePinterest, FaYoutube, FaInstagram, FaPlus } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 import { useEffect, useState } from "react";
+import {ICON_MAP} from "../../constants/profileConstants.js";
 
-const ICON_MAP = {
-    twitter: FaXTwitter,
-    instagram: FaInstagram,
-    pinterest: FaSquarePinterest,
-    youtube: FaYoutube,
-};
 
 const SocialEdit = ({ socials, onClose, onSave }) => {
     const [accountList, setAccountList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("")
-    // 1. Map incoming backend props into our state with a platform-index ID
+
+    // Keep track of submission loading states to prevent double-clicks
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Map incoming backend props into our state with a platform-index ID
     useEffect(() => {
         if (!socials) return;
 
@@ -23,7 +22,7 @@ const SocialEdit = ({ socials, onClose, onSave }) => {
         setAccountList(formattedSocials);
     }, [socials]);
 
-    // 2. Update the specific URL text using its unique compound ID
+    // Update the specific URL text using its unique compound ID
     const handleUrlChange = (targetId, newUrl) => {
         const updated = accountList.map(acc => {
             if (acc.id === targetId) {
@@ -34,18 +33,17 @@ const SocialEdit = ({ socials, onClose, onSave }) => {
         setAccountList(updated);
     };
 
-    // 3. Add a brand-new clean link input box for the active platform category
+    // Add a brand-new clean link input box for the active platform category
     const handleAddNewSlot = () => {
-        const newIndex = accountList.length;
+        const uniqueId = `${selectedCategory}-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         const newSlot = {
-            id: `${selectedCategory}-${newIndex}`,
+            id: uniqueId,
             socialMedia: selectedCategory,
             socialUrl: "" // Starts empty for the user to type into
         };
         setAccountList([...accountList, newSlot]);
     };
-
-    // 4. Remove a single specific input slot from our local state list
+    // Remove a single specific input slot from our local state list
     const handleRemoveSlot = (targetId) => {
         const filtered = accountList.filter(acc => acc.id !== targetId);
         setAccountList(filtered);
@@ -53,6 +51,26 @@ const SocialEdit = ({ socials, onClose, onSave }) => {
 
     // Filter out all links belonging to the clicked platform icon tab
     const filteredInputs = accountList.filter(acc => acc.socialMedia === selectedCategory);
+
+    // Await the execution of onSave before closing the modal container
+    const handleFormSubmit = async () => {
+        const cleaned = accountList
+            .map(a => ({ ...a, socialUrl: a.socialUrl.trim() }))
+            .filter(a => a.socialUrl !== "");
+
+        try {
+            setIsSaving(true);
+            // Wait for backend validation and resolution inside Socials.jsx handleSaveSocials
+            await onSave(cleaned);
+            // Only closes down if the network execution succeeded smoothly!
+            onClose();
+        } catch (error) {
+            // Keep the modal open so the user doesn't lose data inputs on network dropouts
+            console.error("Modal save intercept failed:", error);
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -137,16 +155,11 @@ const SocialEdit = ({ socials, onClose, onSave }) => {
                         Cancel
                     </button>
                     <button
-                        onClick={() => {
-                            const cleaned = accountList
-                                .map(a => ({ ...a, socialUrl: a.socialUrl.trim() }))
-                                .filter(a => a.socialUrl !== "");
-                            onSave(cleaned);
-                            onClose();
-                        }}
-                        className="bg-primary-dark text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md active:scale-95 transition-all hover:bg-opacity-90 cursor-pointer"
+                        onClick={handleFormSubmit}
+                        disabled={isSaving}
+                        className="bg-primary-dark text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md active:scale-95 transition-all hover:bg-opacity-90 cursor-pointer disabled:bg-gray-400 disabled:scale-100 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                        Save Changes
+                        {isSaving ? "Saving..." : "Save Changes"}
                     </button>
                 </div>
             </div>

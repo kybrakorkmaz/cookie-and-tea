@@ -1,57 +1,15 @@
 import { FaPenToSquare } from "react-icons/fa6";
 import SocialIcons from "./SocialIcons.jsx";
 import SocialEdit from "./SocialEdit.jsx";
-import { useState, useEffect } from "react";
-import apiClient from "../../../../api/axios.js";
-import {useParams} from "react-router";
+import {useProfileSocials} from "../../hooks/useProfileSocials.js";
 
 const Socials = ({ socials }) => {
-    const [isEditClicked, setIsEditClicked] = useState(false);
-    const [currentSocials, setCurrentSocials] = useState([]);
-    const {username} = useParams();
-    // Update internal state when data loads or updates from the main server response
-    useEffect(() => {
-        setCurrentSocials(socials || []);
-    }, [socials]);
-
-    // if edit icon is clicked prevent scrolling
-    useEffect(() => {
-        document.body.style.overflow = isEditClicked ? 'hidden' : 'auto';
-        return () => { document.body.style.overflow = 'auto'; };
-    }, [isEditClicked]);
-
-    // updates social media account data list
-    const handleSaveSocials = async (updatedList) => {
-        if (!updatedList) return;
-        // store old data for using again if error occurred
-        const previousSocials = currentSocials;
-        // Sanity check: prevent to send empty URLs
-        const finalData = updatedList
-            .filter(item=>item.socialUrl && item.socialUrl.trim() !=="")
-            .map(item=>({
-                socialMedia: item.socialMedia,
-                socialUrl: item.socialUrl.trim()
-            }));
-        // Optimistic UI Update: change frontend state immediately so it feels instantaneous
-        setCurrentSocials(finalData);
-        try {
-            // Passing the array cleanly inside the HTTP Request Body payload
-            await apiClient.put(`/api/v1/profile/${username}/socials`, {
-                socials: finalData
-            });
-
-            //close modal
-            setIsEditClicked(false);
-
-        } catch (error) {
-            // Rollback to old values if network connection dropouts occur
-            setCurrentSocials(previousSocials);
-            console.error("Failed saving social media settings:", error);
-            // do not call setIsEditClicked(false)
-            // so if anything occurs, window stays open and the user does not lose its url(s)
-            alert("Changes couldn't be saved. Please try again!");
-        }
-    };
+    const {
+        isEditClicked,
+        setIsEditClicked,
+        currentSocials,
+        handleSaveSocials
+    } = useProfileSocials(socials);
 
     return (
         <div className="bg-white p-10 rounded-2xl shadow-soft text-primary-dark">

@@ -1,42 +1,16 @@
 import {motion, AnimatePresence} from "framer-motion";
-import {useEffect, useState} from "react";
-import {NavLink, useParams} from "react-router";
+import {NavLink} from "react-router";
 import {IoIosArrowForward} from "react-icons/io";
-import apiClient from "../../../api/axios.js";
+import {useProfilePeople} from "../hooks/useProfilePeople.js";
 
 const People = ({followers}) =>{
-    const { username } = useParams();
-    const [isFollowersTab, setIsFollowersTab] = useState(true);
-    const [following, setFollowing] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    // Fetch following list dynamically ONLY when jumping to the "Following" tab for the first time
-    useEffect(() => {
-        if (isFollowersTab || following.length > 0) return;
-
-        const fetchFollowingData = async () => {
-            try {
-                setLoading(true);
-                const response = await apiClient.get(`/api/v1/profile/${username}/follow`, {
-                    params: { isFollower: false }
-                });
-
-                // Extra safety mapping ensuring array formats are maintained
-                if (response.data && response.data.follow) {
-                    setFollowing(response.data.follow);
-                }
-            } catch (err) {
-                console.error("Failed to load following metrics:", err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFollowingData();
-    }, [isFollowersTab, username, following.length]);
-
-    // Choose the data slice based on active tab state
-    const displayList = isFollowersTab ? followers : following;
+    // Inject the connections engine seamlessly
+    const {
+        isFollowersTab,
+        setIsFollowersTab,
+        displayList,
+        loading
+    } = useProfilePeople(followers);
 
     return(
         <div className="bg-white p-6 md:p-10 rounded-2xl shadow-soft">
