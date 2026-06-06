@@ -22,7 +22,7 @@
     --font-header: "Chiron GoRound TC", sans-serif;
     --font-paragraph: "National Park", sans-serif;
 
-    /* Font Boyutları (Clamp değerleri korunmuştur) */
+    /* Font Boyutları */
     --text-logo: 3.5rem;
     --text-h1-xl: clamp(12.5rem, 6vw, 13.5rem);
     --text-h1-lg: clamp(9rem, 6vw, 12.5rem);
@@ -65,22 +65,14 @@
         background: var(--color-cream);
     }
 }
-/* Component bazlı stiller ve ID seçiciler */
-#navbar {
+.navbar{
     font-optical-sizing: auto;
     font-weight: normal;
     font-style: normal;
-    color: var(--color-white);
-
-    & .navbar-item:hover {
-        color: var(--color-primary);
-    }
-
-    /**& #logo:hover {
-        color: var(--color-white);
-    }***/
 }
-
+.navbar-item {
+    @apply transition-colors duration-300;
+}
 #logo {
     font-weight: 400;
     font-style: normal;

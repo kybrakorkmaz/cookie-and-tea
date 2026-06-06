@@ -1,9 +1,8 @@
 import { Navigate } from "react-router";
 
 const ProtectedRoute = ({ children }) => {
-    // Basic mock authentication check
-    // In a real app, this would check a token or auth state
-    const isAuthenticated = true; // For now, we assume authenticated as it's a mock project
+    // Check for a real auth state (e.g., token in localStorage)
+    const isAuthenticated = !!localStorage.getItem("token");
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;

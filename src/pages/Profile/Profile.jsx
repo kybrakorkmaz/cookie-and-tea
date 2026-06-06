@@ -1,90 +1,55 @@
-import UserNavbar from "../../components/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Intro from "./Intro.jsx";
-import {useEffect, useState} from "react";
-import {followers, following, posts, profile} from "../../constants/index.js";
-import UserFooter from "../../components/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/UserFooter.jsx";
 import Gallery from "./Gallery.jsx";
 import Posts from "../Posts/Posts.jsx";
-
+import { useProfile } from "./hooks/useProfile.js";
 const Profile = () => {
-    const [user, setUser] = useState({
-        name:"",
-        username:"",
-        backgroundImage:"",
-        backgroundAlt:"",
-        profileImage:"",
-        profileAlt:"",
-        about:"",
-        socials:[],
-        earnings:{}
-    });
+    // Inject useProfile hook
+    const {
+        username,
+        selected,
+        setSelected,
+        userPanel,
+        userIntro,
+        userTopDonatedPosts,
+        followers,
+        targetPostId,
+        setTargetPostId,
+        handleNavigateToPost
+    } = useProfile();
 
-    const [userTopDonatedPosts, setUserTopDonatedPosts] = useState([]);
-
-    const [followsUs, setFollowsUs]=useState([]);
-    const [weFollow, setWeFollow]=useState([]);
-    const [selected, setSelected]=useState("intro");
-
-    const [targetPostId, setTargetPostId] = useState(null);
-
-    const handleNavigateToPost = (postId) => {
-        // 1. Switch tab
-        setSelected("posts");
-        setTargetPostId(postId);
-    };
-
-
-    // todo API call
-    useEffect(() => {
-        setUser({
-            name: profile[0].name,
-            username: profile[0].username,
-            backgroundImage: profile[0].backgroundImage,
-            backgroundAlt: profile[0].backgroundAlt,
-            profileImage: profile[0].profileImage,
-            profileAlt: profile[0].profileAlt,
-            about: profile[0].about,
-            socials: profile[0].socials.filter(social => Boolean(social.url)),
-            earnings: profile[0].earnings
-        });
-
-        // Angel's id=1
-        setFollowsUs(followers[0].followers);
-        setWeFollow(following[0].following);
-
-        // todo API call for top posts or handle sorting here
-        // Set the posts data. Sorting happens in the child component via useMemo.
-        setUserTopDonatedPosts(posts?.[0]?.posts ?? [])
-
-    }, []);
     return (
         <div className="bg-cream/50 min-h-screen pb-20">
             <UserNavbar />
             {/* Panel Section */}
             <div className="m-0 p-0 mb-40">
                 <Panel
-                    name={user.name}
-                    username={user.username}
-                    backgroundImage={user.backgroundImage}
-                    backgroundAlt={user.backgroundAlt}
-                    profileImage={user.profileImage}
-                    profileAlt={user.profileAlt}
+                    name={userPanel.name}
+                    username={userPanel.username}
+                    backgroundImage={userPanel.backgroundImage}
+                    backgroundAlt={userPanel.backgroundAlt}
+                    profileImage={userPanel.profileImage}
+                    profileAlt={userPanel.profileAlt}
                     selected={selected}
                     setSelected={setSelected}
                 />
-                {/* Main Intro */}
-                {selected==="gallery" ? <Gallery/>
-                    :selected === "posts" ? <Posts targetPostId={targetPostId} onTargetHandled={() => setTargetPostId(null)} />
-                        :<Intro
-                            about={user.about}
-                            socials={user.socials}
-                            earnings={user.earnings}
+                {/* Tabs: Welcome Tab Intro */}
+                {selected==="gallery" ? (
+                    <Gallery username={username}/>
+                    ) : selected === "posts" ? (
+                        <Posts targetPostId={targetPostId} onTargetHandled={() => setTargetPostId(null)} />
+                    ) :(
+                        <Intro
+                            about={userIntro.about}
+                            socials={userIntro.socials}
+                            earnings={userIntro.earnings}
                             userTopDonatedPosts={userTopDonatedPosts}
                             onPostClick={handleNavigateToPost}
-                            followers={followsUs}
-                            following={weFollow}/>
-                }
+                            followers={followers}
+                        />
+                )}
 
             </div>
             <UserFooter/>

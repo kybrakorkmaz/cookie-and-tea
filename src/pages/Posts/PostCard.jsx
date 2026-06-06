@@ -12,6 +12,8 @@ import PostComment from "./PostComment.jsx";
 import EditPost from "./EditPost.jsx";
 import Donation from "../../components/Donation.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
+import RoundedImage from "../../components/RoundedImage.jsx";
+import InteractionBar from "./InteractionBar.jsx";
 
 
 const PostCard = ({ post, highlightedId }) => {
@@ -20,7 +22,6 @@ const PostCard = ({ post, highlightedId }) => {
     const isFocused = highlightedId === `post-${post.post_id}`;
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
-    const [isDonating, setIsDonating] = useState(false);
 
     // preview comment
     const postComments = comments.filter(c => c.commented_to_post_id === post.post_id);
@@ -32,10 +33,6 @@ const PostCard = ({ post, highlightedId }) => {
     }
 
     const postUser = profile.find(p => p.user_id === post.user_id);
-
-    const handleToggle = (type) => {
-        setActiveType(prev => prev === type ? null : type);
-    };
 
     // todo import api from "../../api/axiosConfig";
 
@@ -100,9 +97,7 @@ const PostCard = ({ post, highlightedId }) => {
                     {/* Top Bar: User Info & Actions */}
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-full overflow-hidden border border-gray-100 shadow-sm">
-                                <img className="w-full h-full object-cover" src={postUser?.profileImage} alt="profile"/>
-                            </div>
+                            <RoundedImage image={postUser?.profileImage} alt={postUser?.name || ''} w={"w-11"} h={"h-11"}/>
                             <div className="flex flex-col">
                                 <span className="font-header font-bold text-gray-900 text-sm leading-tight">{postUser?.name}</span>
                                 <span className="font-paragraph text-xs text-gray-500">@{postUser?.username}</span>
@@ -142,40 +137,12 @@ const PostCard = ({ post, highlightedId }) => {
                     </div>
 
                     {/* Interaction Bar */}
-                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2 pt-4 border-t border-gray-50">
-                        <div className="flex gap-2.5 bg-gray-50/80 p-1.5 rounded-full border border-gray-100 backdrop-blur-sm">
-                            {Object.entries(DONATE_ICON).map(([key, iconPath]) => (
-                                <Donation
-                                    key={key}
-                                    amount={key.split("_")[1]}
-                                    icon={iconPath}
-                                    onOpenDonate={setDonateAmount}
-                                />
-                            ))}
-                        </div>
-
-                        <div className="flex items-center gap-5">
-                            <button
-                                onClick={() => setActiveType(prev => prev === 'comments' ? null : 'comments')}
-                                className={`group flex items-center gap-1.5 transition-all duration-200 ${activeType === 'comments' ? 'text-primary-dark' : 'text-gray-400 hover:text-primary-dark'}`}
-                            >
-                                <div className={`p-2 rounded-full transition-colors ${activeType === 'comments' ? 'bg-primary-dark/10' : 'group-hover:bg-gray-100'}`}>
-                                    <FaMessage className="w-4 h-4"/>
-                                </div>
-                                <span className="text-sm font-bold">{post.comment}</span>
-                            </button>
-
-                            <button
-                                onClick={() => setActiveType(prev => prev === 'donations' ? null : 'donations')}
-                                className={`group flex items-center gap-1.5 transition-all duration-200 ${activeType === 'donations' ? 'text-amber-600' : 'text-gray-400 hover:text-amber-500'}`}
-                            >
-                                <div className={`p-2 rounded-full transition-colors ${activeType === 'donations' ? 'bg-amber-50' : 'group-hover:bg-gray-100'}`}>
-                                    <GiTwoCoins className="w-5 h-5 text-amber-500"/>
-                                </div>
-                                <span className="text-sm font-bold">${post.donation}</span>
-                            </button>
-                        </div>
-                    </div>
+                    <InteractionBar
+                        post={post}
+                        activeType={activeType}
+                        setActiveType={setActiveType}
+                        setDonateAmount={setDonateAmount}
+                    />
 
                     {/* Preview Comment (Minimalist) */}
                     {previewComment && !activeType && (

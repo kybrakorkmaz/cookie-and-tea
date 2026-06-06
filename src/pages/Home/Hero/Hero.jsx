@@ -1,4 +1,4 @@
-import Navbar from "../../../components/Navbar.jsx";
+import Navbar from "../../../components/nav-footer/Navbar.jsx";
 import Banner from "./Banner.jsx";
 
 const Hero = () => {

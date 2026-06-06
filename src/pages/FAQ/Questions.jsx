@@ -4,7 +4,6 @@ import { useState } from "react";
 const Questions = ({ id, question, answer }) => {
     const [showExplaining, setShowExplaining] = useState(false);
 
-    // Klavye desteği (Enter veya Space tuşları için)
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -16,10 +15,6 @@ const Questions = ({ id, question, answer }) => {
 
     return (
         <div className="bg-white border border-primary-dark/20 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-            {/* ✅ Semantic Update:
-                'div' yerine 'button' kullanarak odaklanabilir (focusable) hale getirdik.
-                aria-expanded ve aria-controls ile ekran okuyuculara durum bilgisi veriyoruz.
-            */}
             <button
                 type="button"
                 aria-expanded={showExplaining}

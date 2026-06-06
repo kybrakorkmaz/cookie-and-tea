@@ -26,9 +26,10 @@ const App = ()=>{
               <Route path={"/sign-up"} element={<SignUp/>}/>
               <Route path={"/login"} element={<Login/>}/>
               {/* User & Profile Routes */}
-              <Route path={"/profile/:userId?"} element={<Profile/>}/>
-              <Route path={"/people"} element={<People/>}/>
-              <Route path={"/posts/:userId?"} element={<Posts/>}/>
+              <Route path="/profile/:username" element={<Profile />} />
+              <Route path="/people" element={<People />} />
+              <Route path="/posts/:userId?" element={<Posts />} />
+
               <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
               <Route path={"/settings"} element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
               <Route path={"/activity"} element={<ProtectedRoute><Activity/></ProtectedRoute>}/>

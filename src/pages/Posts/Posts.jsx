@@ -1,9 +1,10 @@
-import UserNavbar from "../../components/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
 import { useEffect, useMemo, useState } from "react";
 import { posts } from "../../constants/index.js";
 import PostCard from "./PostCard.jsx";
-import UserFooter from "../../components/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/UserFooter.jsx";
 import Panel from "../Profile/Panel.jsx";
+import PageUpButton from "../../components/PageUpButton.jsx";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
     //const [allPosts, setAllPosts] = useState([]);
@@ -126,6 +127,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
                     </button>
                 )}
             </div>
+            <PageUpButton />
         </div>
     );
 };

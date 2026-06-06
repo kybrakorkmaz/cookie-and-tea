@@ -12,15 +12,18 @@ const UserFooter = () => {
         <>
             <div className="w-full flex flex-wrap items-center justify-between px-8 md:px-10 lg:px-60 pt-10 pb-16 font-paragraph text-p font-medium text-primary-dark gap-4">
 
-                <NavLink to="/send-email" className={linkStyle}>
+                <NavLink to="/send-email"  className={({ isActive }) =>
+                    `navbar-item ${isActive ? " underline underline-offset-8 decoration-2" : ""} ${linkStyle}`}>
                     cookie.tea@mail.com
                 </NavLink>
 
-                <NavLink to="/about" className={linkStyle}>
+                <NavLink to="/about"  className={({ isActive }) =>
+                    `navbar-item ${isActive ? " underline underline-offset-8 decoration-2" : ""} ${linkStyle}`}>
                     About
                 </NavLink>
 
-                <NavLink to="/faq" className={linkStyle}>
+                <NavLink to="/faq"  className={({ isActive }) =>
+                    `navbar-item ${isActive ? " underline underline-offset-8 decoration-2" : ""} ${linkStyle}`}>
                     FAQ
                 </NavLink>
 

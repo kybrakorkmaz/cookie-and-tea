@@ -1,8 +1,8 @@
 import {useState} from "react";
 import Profile from "./Profile.jsx";
 import Payment from "./Payment.jsx";
-import UserNavbar from "../../components/UserNavbar.jsx";
-import UserFooter from "../../components/UserFooter.jsx";
+import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
+import UserFooter from "../../components/nav-footer/UserFooter.jsx";
 
 const Settings = () =>{
     const [selected, setSelected] = useState("profile");

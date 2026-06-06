@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { posts } from "../../constants/index.js";
 import { IoClose } from "react-icons/io5";
+import PageUpButton from "../../components/PageUpButton.jsx";
 
 const Gallery = () => {
     // Lightbox state
@@ -82,6 +83,7 @@ const Gallery = () => {
                     No images shared yet.
                 </div>
             )}
+            <PageUpButton />
         </div>
     );
 };

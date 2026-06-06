@@ -16,12 +16,11 @@ const Banner = () => {
             const split = new SplitText(textRef.current, { type: "chars" });
 
             // 2. Filter the characters
-            // We find the characters that were originally inside "text-black" spans
             const firstLetters = split.chars.filter(char =>
                 char.innerText === "c" || char.innerText === "a" || char.innerText === "t"
             );
 
-            // We find everything else
+            // Other letters
             const otherLetters = split.chars.filter(char => !firstLetters.includes(char));
 
             const tl = gsap.timeline();
@@ -47,7 +46,7 @@ const Banner = () => {
         return () => ctx.revert();
     }, []);
     return (
-        <section className="ref={sectionRef} hidden lg:flex min-w-[65%]">
+        <section ref={sectionRef} className="hidden lg:flex min-w-[65%]">
             <div className="relative w-full">
                 <img
                     id="main-hero"

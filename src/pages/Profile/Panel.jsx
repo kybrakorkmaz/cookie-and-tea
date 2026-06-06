@@ -1,49 +1,23 @@
 import { FaCamera } from "react-icons/fa";
-import {IoMdAdd } from "react-icons/io";
-import { NavLink } from "react-router";
 import {MdModeEditOutline} from "react-icons/md";
 import {useState} from "react";
-import UploadImageFile from "../../components/UploadImageFile.jsx";
-import ImageUploadModal from "../../components/ImageUploadModal.jsx";
+import ImageUploadModal from "../../components/media/ImageUploadModal.jsx";
+import {usePanelActions} from "./hooks/usePanelActions.js";
 
 const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, profileAlt, selected, setSelected}) => {
     const strokeStyle = {
         WebkitTextStroke: `0.7px black`,
         textShadow: "0 0.5px 0.7px rgba(0,0,0,0.3)"
     };
-    const [editMode, setEditMode] = useState(null); // 'profile' or 'cover' or null
-    const [error, setError] = useState(null);
-
-    const handleUpdate = async (file) => {
-        if (!file) {
-            setError("Please select a file to upload.");
-            return;
-        }
-
-        try {
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            const endpoint = editMode === 'profile' ? '/api/profile/photo' : '/api/profile/cover';
-            
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) throw new Error("Upload failed");
-
-            // Assuming response contains the new image URL
-            // const data = await response.json();
-            // updateStateOrRedux(data.url);
-
-            setEditMode(null);
-            setError(null);
-        } catch (err) {
-            console.error("Update Error:", err);
-            setError("Failed to upload image. Please try again.");
-        }
-    };
+    // Inject your streamlined behavioral control layer
+    const {
+        editMode,
+        setEditMode,
+        error,
+        setError,
+        handleUpdate,
+        handleTabClick
+    } = usePanelActions(setSelected);
     return(
         <div className="w-5/6 mx-auto mt-10 rounded-2xl overflow-hidden border border-primary-dark bg-white shadow-soft">
             {/* cover area */}
@@ -56,7 +30,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                         alt={backgroundAlt}
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-primary-dark/10" /> // Resim yoksa bir placeholder
+                    <div className="absolute inset-0 bg-primary-dark/10" /> // a placeholder for an account w/ none bg image
                 )}
                 {/* Cover Edit Button */}
                 <div className="absolute top-6 right-6">
@@ -137,7 +111,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
                     {/* Intro Tab */}
                     <button
-                        onClick={() => setSelected("intro")}
+                        onClick={() => handleTabClick("intro")}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "intro"
                                 ? "border-b-2 border-primary-dark text-primary-dark"
@@ -149,7 +123,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
                     {/* Gallery Tab */}
                     <button
-                        onClick={() => setSelected("gallery")}
+                        onClick={() => handleTabClick("gallery")}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "gallery"
                                 ? "border-b-2 border-primary-dark text-primary-dark"
@@ -162,7 +136,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                     {/* Posts Tab */}
                     <button
                         onClick={() => {
-                            setSelected("posts");
+                            handleTabClick("posts");
                         }}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "posts"
