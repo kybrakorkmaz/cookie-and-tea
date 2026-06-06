@@ -48,7 +48,7 @@ const AboutEdit = ({ about, onClose, onSave }) => {
         }
 
         const finalValue = currentAbout.trim() === "" ? LAZY_MESSAGE : currentAbout;
-        onSave(finalValue);
+        executeSavePipeline(finalValue);
     };
 
     const handleClearAll = () => {
@@ -57,8 +57,10 @@ const AboutEdit = ({ about, onClose, onSave }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-
+            <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={!isSaving ? onClose : undefined}
+            />
             <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-heavy p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h4 className="font-header text-xl text-primary-dark">Edit About</h4>

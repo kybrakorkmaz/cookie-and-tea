@@ -1,5 +1,6 @@
 import {useParams, useSearchParams} from "react-router";
 import {useEffect, useState} from "react";
+import apiClient from "../../../api/axios.js";
 
 const allowedTabs = ["intro", "posts", "gallery"];
 

@@ -17,6 +17,7 @@ export const useProfileEarnings = (time, earnings) => {
         if (time === "Last 30 days") {
             // Restore default total from dashboard layout snapshot cleanly
             setLiveTotal(earnings.total ?? 0);
+            return;
         }
         const controller = new AbortController();
 
@@ -43,7 +44,7 @@ export const useProfileEarnings = (time, earnings) => {
 
         return () => controller.abort();
 
-    }, [time, username]);
+    }, [time, username, earnings?.total]);
 
     return {
         liveTotal,
