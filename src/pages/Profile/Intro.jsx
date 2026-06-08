@@ -7,7 +7,6 @@ import MostDonatedPosts from "./Intro/MostDonatedPosts.jsx";
 const Intro = ({about, socials, earnings, userTopDonatedPosts,onPostClick, followers}) =>{
     return(
         <div className="flex flex-col lg:flex-row w-5/6 mx-auto gap-28 mt-16">
-
             {/* LEFT: About, Socials, Earnings */}
             <div className="w-full lg:w-1/2 space-y-8">
                 {/* About */}

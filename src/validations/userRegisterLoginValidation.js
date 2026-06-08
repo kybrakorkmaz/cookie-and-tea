@@ -1,6 +1,8 @@
 import {z} from "zod";
 /** @type {import("zod").ZodSchema} */
 export const registerSchema = z.object({
+        name: z.string()
+        .min(1, "Name cannot be empty"),
         username: z.string()
             .min(5, "Username must be at least 5 characters!")
             .max(255, "This is too long"),

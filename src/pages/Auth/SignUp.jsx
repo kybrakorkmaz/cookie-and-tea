@@ -9,6 +9,7 @@ import {Link} from "react-router";
 
 const SignUp = ()=>{
     const [formData, setFormData] = useState({
+        name: "",
         username:"",
         email:"",
         password:"",
@@ -47,6 +48,14 @@ const SignUp = ()=>{
             <div className="max-w-sm mx-auto mt-20 mb-30">
                 <h2 className="font-header text-h-2 text-center text-primary-dark">Sign Up</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col">
+                    <Input
+                        name="name"
+                        label="Name"
+                        value={formData.name}
+                        error={errors.name?.[0]}
+                        onChange={handleChange}
+                        placeholder="Name"
+                    />
                     <Input
                         name="username"
                         label="Username"
