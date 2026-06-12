@@ -44,5 +44,5 @@ export const loginSchema = z.object({
         z.email("Invalid email address"),
         z.string().min(5, "Username must be at least 5 characters!")
     ]),
-    password: z.string().min(1, "Password is required")
+    password: z.string().min(8, "Password is required")
 });

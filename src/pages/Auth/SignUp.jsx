@@ -1,47 +1,17 @@
 import Navbar from "../../components/nav-footer/Navbar.jsx";
 import Input from "../../components/Input.jsx";
-import {useState} from "react";
 import {PrimaryButton} from "../../components/Buttons.jsx";
-import {registerSchema} from "../../validations/userRegisterLoginValidation.js";
 import Footer from "../../components/nav-footer/Footer.jsx";
 import {Link} from "react-router";
-
-
+import {useSignUp} from "./hooks/useSignUp.jsx";
+import Password from "./components/Password.jsx";
 const SignUp = ()=>{
-    const [formData, setFormData] = useState({
-        name: "",
-        username:"",
-        email:"",
-        password:"",
-        passwordConfirm:""
-    });
-    const [errors, setErrors] = useState({});
-
-    const handleChange=(e)=>{
-        const {value, name}= e.target;
-        setFormData(prev=>({...prev, [name]:value}));
-        if(errors[name]) setErrors(prev=>({...prev, [name]:null}));
-    }
-
-    const handleSubmit=async (e)=>{
-        e.preventDefault();
-        const result = registerSchema.safeParse(formData);
-
-        if(!result.success){
-            setErrors(result.error.flatten().fieldErrors);
-            return;
-        }
-
-        // todo send payload to API call request
-        const payload = {
-            username: result.data.username,
-            password: result.data.password,
-            email: result.data.email
-        }
-
-        console.log("successfully registered: ", payload.username);
-        setFormData({username: "", email: "", password: "",  passwordConfirm:""});
-    }
+   const {
+       formData,
+       errors,
+       handleChange,
+       handleSubmit
+   } = useSignUp();
     return(
         <div className="bg-cream min-h-screen">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
@@ -73,21 +43,21 @@ const SignUp = ()=>{
                         onChange={handleChange}
                         placeholder="email@example.com"
                     />
-                    <Input
-                        type="password" // todo eye icon
+                    <Password
+                        type="password"
                         name="password"
                         label="Password"
                         value={formData.password}
                         error={errors.password?.[0]}
                         onChange={handleChange}
-                        placeholder="********"
+                        placeholder={"********"}
                     />
-                    <Input
+                    <Password
                         type="password"
-                        name="passwordConfirm" // name must be the same as formData name
-                        label="Password Confirm"
-                        value={formData.passwordConfirm}
-                        error={errors.passwordConfirm?.[0]}
+                        name="confirmPassword" // name must be the same as formData name
+                        label="Confirm Password"
+                        value={formData.confirmPassword}
+                        error={errors.confirmPassword?.[0]}
                         onChange={handleChange}
                         placeholder="********"
                     />
