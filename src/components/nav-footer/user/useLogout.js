@@ -11,7 +11,9 @@ export const useLogout = () => {
         const logout = async () =>{
             try{
                 const response = await apiClient.post("api/v1/auth/logout");
-                if (response.status === 200) {
+
+                // Support any successful 2xx status code block cleanly
+                if (response.status >= 200 && response.status < 300) {
                     console.log("Cookie wiped on browser!");
 
                     // Clear your React app's global state memory

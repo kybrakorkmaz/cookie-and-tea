@@ -12,8 +12,8 @@ const Login = () => {
         handleSubmit,
         handleChange,
         errors,
-        isSubmitting,       // 🌟 Destructured
-        clearServerErrors   // 🌟 Destructured
+        isSubmitting,       // Destructured
+        clearServerErrors   // Destructured
     } = useLogin();
 
     return (
@@ -45,11 +45,11 @@ const Login = () => {
                         <div className="flex flex-col items-center justify-center mt-10">
                             <PrimaryButton
                                 type="submit"
-                                text={isSubmitting ? "Logging in..." : "Login"} // 🌟 Feedback text
+                                text={isSubmitting ? "Logging in..." : "Login"} // Feedback text
                                 bgColor="bg-primary-dark"
                                 textColor="text-white"
                                 textPosition="text-center"
-                                disabled={isSubmitting} // 🌟 Disable button when submitting
+                                disabled={isSubmitting} // Disable button when submitting
                             />
                             <p className="font-paragraph text-p pt-5">
                                 Don't have an account? Sign up <span className="underline cursor-pointer"><Link to={"/sign-up"}>here.</Link></span>
@@ -59,7 +59,7 @@ const Login = () => {
                 </div>
             </main>
 
-            {/* 🌟 FIX: Floating alert notification toast styled exactly like SendEmail layout */}
+            {/* Floating alert notification toast styled exactly like SendEmail layout */}
             {errors.server && errors.server.length > 0 && (
                 <div className="fixed bottom-4 right-4 flex items-center gap-4 py-3 px-6 rounded-lg text-white shadow-lg bg-red-600 transition-all animate-bounce z-50" role="alert">
                     <div className="font-medium flex flex-col gap-0.5">
@@ -69,7 +69,8 @@ const Login = () => {
                     </div>
                     <button
                         onClick={clearServerErrors}
-                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 focus:outline-none"
+                        aria-label="Close notification"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 focus:outline-none cursor-pointer"
                     >
                         X
                     </button>

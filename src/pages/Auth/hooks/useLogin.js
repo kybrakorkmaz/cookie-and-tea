@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { loginSchema } from "../../../validations/userRegisterLoginValidation.js";
 import apiClient from "../../../api/axios.js";
 import { useNavigate } from "react-router";
@@ -9,7 +9,10 @@ const useLogin = () => {
     const { setAuth } = useAuth();
     const [formData, setFormData] = useState({ identifier: "", password: "" });
     const [errors, setErrors] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false); // 🌟 Added loading tracking state
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // introduce atomic mutable reference tracking
+    const submittingRef = useRef(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -19,7 +22,9 @@ const useLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isSubmitting) return; // 🌟 Prevent double execution
+
+        //  Atomic guard check reads synchronously from mutable ref
+        if (submittingRef.current) return;
 
         const result = loginSchema.safeParse(formData);
         if (!result.success) {
@@ -28,7 +33,10 @@ const useLogin = () => {
         }
 
         try {
+            // Flip the ref lock instantly before entering async micro-task lines
+            submittingRef.current = true;
             setIsSubmitting(true);
+
             const response = await apiClient.post("/api/v1/auth/login", result.data);
 
             if (response.status === 200) {
@@ -41,11 +49,12 @@ const useLogin = () => {
             const backendMessage = error.response?.data?.message || "Something went wrong. Please try again.";
             setErrors({ server: [backendMessage] });
         } finally {
-            setIsSubmitting(false); // 🌟 Reset submission state
+            // Cleanly reset both the engine reference and UI indicator state
+            submittingRef.current = false;
+            setIsSubmitting(false);
         }
     };
 
-    // Helper method to clear server errors when the toast 'X' is clicked
     const clearServerErrors = () => setErrors(prev => ({ ...prev, server: null }));
 
     return {
@@ -53,8 +62,8 @@ const useLogin = () => {
         handleSubmit,
         handleChange,
         errors,
-        isSubmitting,        // 🌟 Returned
-        clearServerErrors    // 🌟 Returned
+        isSubmitting,
+        clearServerErrors
     };
 };
 
