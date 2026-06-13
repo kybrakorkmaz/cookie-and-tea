@@ -1,7 +1,7 @@
-import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
 import {followers, following} from "../../constants/index.js";
 import {useState} from "react";
-import UserFooter from "../../components/nav-footer/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
 import PersonCard from "./PersonCard.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
 

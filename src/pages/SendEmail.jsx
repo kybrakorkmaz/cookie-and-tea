@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Navbar from "../components/nav-footer/Navbar.jsx";
+import Navbar from "../components/nav-footer/guest/Navbar.jsx";
 import Input from "../components/Input.jsx";
 import { PrimaryButton } from "../components/Buttons.jsx";
-import Footer from "../components/nav-footer/Footer.jsx";
+import Footer from "../components/nav-footer/guest/Footer.jsx";
 import sendEmailSchema from "../validations/sendEmailValidation.js";
 import emailjs from "@emailjs/browser";
 import {ENV} from "../validations/envValidation.js";

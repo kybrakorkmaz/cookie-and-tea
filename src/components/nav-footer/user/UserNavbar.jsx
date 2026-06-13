@@ -1,35 +1,49 @@
-import Logo from "./Logo.jsx";
-import SearchBar from "./SearchBar.jsx";
+import Logo from "../Logo.jsx";
+import SearchBar from "../SearchBar.jsx";
 import Badge from '@mui/material/Badge'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import {FaHome} from "react-icons/fa";
 import {useState, useMemo} from "react";
 import {RiListSettingsFill} from "react-icons/ri";
 import {NavLink} from "react-router";
-import Notifications from "../Notifications.jsx";
-import {getSortedActivities} from "../../helpers/followingNotifications.js";
-import HamburgerMenu from "./HamburgerMenu.jsx";
-import MobileNavbar from "./MobileNavbar.jsx";
-import {useAuth} from "../../context/AuthContext.jsx"; // todo change navbar profile for authenticated user
+import Notifications from "../../Notifications.jsx";
+import {getSortedActivities} from "../../../helpers/followingNotifications.js";
+import HamburgerMenu from "../HamburgerMenu.jsx";
+import MobileNavbar from "../MobileNavbar.jsx";
+import {IoLogOut} from "react-icons/io5";
+import {useLogout} from "./useLogout.js";
+import {useAuth} from "../../../context/AuthContext.jsx"; // todo change navbar profile for authenticated user
 
 const UserNavbar = () => {
-   /// const { user } = useAuth(); // Pulling live session data dynamically
+    const { user } = useAuth(); // Pulling live session data dynamically
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+    // Establish fallbacks in case the fields are initially null or loading
+    const currentUserId = user?.id || null;
+    const username = user?.username || "";
+    const name = user?.name || "User";
+
+    // Fallback avatar image if the user has not uploaded a profileImage yet
+    // const image = user?.profileImage || "/images/people/default-avatar.jpg"; todo create default image for users
     const image = "/images/people/angel.jpg";
-    const name = "Angel"
-    const currentUserId = 1;
+
+    // Compute notifications based on the dynamic logged-in user id
     const sortedActivities = useMemo(() => getSortedActivities(currentUserId, image), [currentUserId, image]);
     const activityLength = sortedActivities.length;
 
+
+    const {handleClick} = useLogout();
+
+    // Inject the dynamic username into your sidebar navigation layout links
     const links = [
-        { to: "/profile/1?tab=intro", label: "Profile" },
+        { to: `/profile/${username}?tab=intro`, label: "Profile" },
         { to: "/activity", label: "Activity" },
         { to: "/feed", label: "Feed" },
         { to: "/settings", label: "Settings" },
+        { to: "/logout", label: "Logout"}
     ];
 
     return (
@@ -63,7 +77,7 @@ const UserNavbar = () => {
 
                 <div className="flex flex-1/3 justify-end items-center gap-4 px-4">
                     {/* Profile Link Card */}
-                    <NavLink to="/profile/1?tab=intro" className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
+                    <NavLink to={`/profile/${username}?tab=intro`} className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
                         <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-100">
                             <img src={image} alt={name} className="w-full h-full object-cover object-top" />
                         </div>
@@ -82,7 +96,7 @@ const UserNavbar = () => {
                             <Badge badgeContent={activityLength} color="primary">
                                 <NotificationsIcon
                                     className="text-primary-dark hover:text-primary transition-colors"
-                                    sx={{ width: '2rem', height: '2rem' }}
+                                    sx={{ width: '1.8rem', height: '1.8rem' }}
                                 />
                             </Badge>
                         </button>
@@ -92,12 +106,20 @@ const UserNavbar = () => {
                     </div>
 
                     <NavLink to="/feed" className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
-                        <FaHome style={{ width: "2rem", height: "2rem" }} />
+                        <FaHome style={{ width: "1.8rem", height: "1.8rem" }} />
                     </NavLink>
 
                     <NavLink to="/settings" className="text-primary-dark hover:text-primary transition-colors block" aria-label="Settings">
-                        <RiListSettingsFill style={{ width: "2rem", height: "2rem" }} />
+                        <RiListSettingsFill style={{ width: "1.8rem", height: "1.8rem" }} />
                     </NavLink>
+
+                    <button
+                        onClick={handleClick}
+                        className="text-primary-dark hover:text-primary transition-colors block bg-transparent border-none cursor-pointer"
+                        aria-label="Logout"
+                    >
+                        <IoLogOut style={{ width: "1.8rem", height: "1.8rem" }} />
+                    </button>
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
-import Navbar from "../../components/nav-footer/Navbar.jsx";
+import Navbar from "../../components/nav-footer/guest/Navbar.jsx";
 import { frequentlyAskedQuestions } from "../../constants/index.js";
 import Questions from "./Questions.jsx";
-import Footer from "../../components/nav-footer/Footer.jsx";
+import Footer from "../../components/nav-footer/guest/Footer.jsx";
 
 const Faq = () => {
     return (

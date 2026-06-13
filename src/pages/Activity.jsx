@@ -1,5 +1,5 @@
-import UserNavbar from "../components/nav-footer/UserNavbar.jsx";
-import UserFooter from "../components/nav-footer/UserFooter.jsx";
+import UserNavbar from "../components/nav-footer/user/UserNavbar.jsx";
+import UserFooter from "../components/nav-footer/user/UserFooter.jsx";
 import { donations, comments, following, posts, profile } from "../constants/index.js";
 import { useState, useMemo } from "react";
 import { FaHeart, FaComment, FaDonate, FaPlusSquare } from "react-icons/fa";
