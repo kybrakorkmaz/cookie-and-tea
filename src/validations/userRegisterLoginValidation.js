@@ -24,17 +24,18 @@ export const profileUpdateSchema = z.object({
     name: z.string().min(1, "Name is required"),
     email: z.email("Invalid email address!"),
     password: z.string().min(8, "password must be at least 8 characters!").optional().or(z.literal('')),
-    confirmPassword: z.string().optional().or(z.literal('')),
+    passwordConfirm: z.string().optional().or(z.literal('')),
 }).refine(
     (data) => {
-        if (data.password && data.password !== data.confirmPassword) {
+        const targetConfirm = data.confirmPassword || data.passwordConfirm;
+        if (data.password && data.password !== targetConfirm) {
             return false;
         }
         return true;
     },
     {
         message: "Passwords do not match",
-        path: ["confirmPassword"],
+        path: ["passwordConfirm"],
     }
 );
 

@@ -6,10 +6,10 @@ import path from "path";
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-const envMode = process.env.CI ? 'production' : 'test';
+const envMode = 'test';
 const loadedEnvVars = loadEnv(envMode, process.cwd(), '');
 
-process.env = {...process.env, ...loadedEnvVars};
+Object.assign(process.env, loadedEnvVars);
 
 /**
  * @see https://playwright.dev/docs/test-configuration

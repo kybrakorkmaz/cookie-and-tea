@@ -12,8 +12,6 @@ export const useSignUp = () =>{
     });
     const [errors, setErrors] = useState({});
 
-    console.log("password:", formData.password, " confirm: ", formData.confirmPassword);
-
     const handleChange=(e)=>{
         const {value, name}= e.target;
         setFormData(prev=>({...prev, [name]:value}));

@@ -1,20 +1,17 @@
-import {ENV} from "../../src/validations/envValidation.js";
-
 /**
- * Headless Helper: Registers a unique user directly over the network API bypass.
- * Fast and avoids loading the heavy React UI, great for setting up login prerequisites.
- * @param page
+ * Headless Helper: Registers and prepares a user profile for active login flows.
+ * @param {import('@playwright/test').Page} page
  * @returns {Promise<{username: string, email: string, password: string}>}
  */
-export async function registerUserViaApi(page){
+export async function registerUserViaApi(page) {
     const uniqueId = `tester_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const email = `${uniqueId}@cookieandtea.com`;
     const password = "Secret123!";
     const confirmPassword = "Secret123!";
 
-    const backendUrl = ENV.VITE_API_BASE_URL;
+    const backendUrl = process.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
-    // Direct http call targeting your running API router pipeline
+    // 1. Create the user profile across the router wire
     const response = await page.request.post(`${backendUrl}/api/v1/auth/sign-up`, {
         data: {
             name: "Kubra Integration Test",
@@ -32,13 +29,17 @@ export async function registerUserViaApi(page){
     return { username: uniqueId, email, password };
 }
 
+/**
+ * Shared UI Interaction Helper: Fills the frontend login form inputs
+ * @param {import('@playwright/test').Page} page
+ * @param {string} identifier
+ * @param {string} password
+ */
 export async function loginUserViaUI(page, identifier, password) {
-    await page.goto("/login"); // Go to frontend route
+    await page.goto("/login");
 
-    // interact with inputs
     await page.locator('input[name="identifier"]').fill(identifier);
     await page.locator('input[name="password"]').fill(password);
 
-    // Trigger submission
-    await page.getByRole('button', {name: /^login$/i}).click();
+    await page.getByRole('button', { name: /^login$/i }).click();
 }

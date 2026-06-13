@@ -1,8 +1,12 @@
 import {useState} from "react";
 import {loginSchema} from "../../../validations/userRegisterLoginValidation.js";
 import apiClient from "../../../api/axios.js";
+import {useNavigate} from "react-router";
+import {useAuth} from "../../../context/AuthContext.jsx";
 
 const useLogin = () => {
+    const navigate = useNavigate();
+    const { setAuth } = useAuth();
     const [formData, setFormData] = useState({
         identifier:"",
         password:""
@@ -20,28 +24,28 @@ const useLogin = () => {
         e.preventDefault();
 
         const result = loginSchema.safeParse(formData);
-
         if(!result.success){
             setErrors(result.error.flatten().fieldErrors);
             return;
         }
-
         const payload = result.data;
-
-        console.log("Login attempt for user:", payload.identifier);
-
         try {
             const response = await apiClient.post("/api/v1/auth/login", payload);
-            if(response.status !== 200){
-                console.error("cannot login");
-            }
-            console.log("logged successfully!");
 
-            setFormData({identifier: "", password: ""});
-            console.log("Login form cleared.");
+            if(response.status === 200){
+                console.log("logged successfully!");
+                setAuth(response.data.user);
+                setFormData({identifier: "", password: ""});
+                setErrors({});
+                navigate("/feed");
+            }
+
 
         } catch (error) {
-            console.error("Login failed:", error.message);
+            // Surface backend rejection responses back to UI states cleanly
+            const backendMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+            setErrors({ server: [backendMessage] });
+            console.error("Login connection failure context:", error.message);
         }
     }
 

@@ -5,8 +5,7 @@ const envSchema = z.object({
         .enum(["development", "production", "test"])
         .default("development"),
     VITE_API_BASE_URL: z
-        .url("Invalid API Base URL configuration")
-        .default("http://localhost:8001"),
+        .url("Invalid API Base URL configuration"),
     VITE_EMAILJS_SERVICE_ID: z.string().min(1, "EMAILJS SERVICE KEY EMPTY"),
     VITE_EMAILJS_PUBLIC_KEY: z.string().min(1, "EMAILJS PUBLIC KEY EMPTY"),
     VITE_EMAILJS_TEMPLATE_ID: z.string().min(1, "EMAILJS TEMPLATE ID EMPTY!"),
