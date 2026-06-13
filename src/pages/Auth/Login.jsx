@@ -18,6 +18,13 @@ const Login = () =>{
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
             <div className="max-w-sm mx-auto mt-20 mb-30" >
                 <h2 className="font-header text-h-2 text-center text-primary-dark">Login</h2>
+                {errors.server && errors.server.length > 0 && (
+                    <div className="mt-6 p-3 rounded-lg bg-red-50 border border-primary text-primary text-sm flex flex-col gap-1" role="alert">
+                        {errors.server.map((msg, index) => (
+                            <p key={index} className="font-paragraph m-0">{msg}</p>
+                        ))}
+                    </div>
+                )}
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     <Input
                         name="identifier"

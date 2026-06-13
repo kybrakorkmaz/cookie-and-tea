@@ -27,8 +27,7 @@ export const profileUpdateSchema = z.object({
     passwordConfirm: z.string().optional().or(z.literal('')),
 }).refine(
     (data) => {
-        const targetConfirm = data.confirmPassword || data.passwordConfirm;
-        if (data.password && data.password !== targetConfirm) {
+        if (data.password && data.password !== data.passwordConfirm) {
             return false;
         }
         return true;

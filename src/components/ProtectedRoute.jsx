@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import {useAuth} from "../context/AuthContext.jsx";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ children }) => {
     const { user } = useAuth();
 
     // If no user is logged in, redirect to login
@@ -10,7 +10,7 @@ const ProtectedRoute = () => {
     }
 
     // If logged in, automatically render whatever child route matches
-    return <Outlet />;
+    return children;
 };
 
 export default ProtectedRoute;
