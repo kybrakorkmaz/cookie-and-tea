@@ -1,13 +1,15 @@
-import { Navigate } from "react-router";
+import { Navigate, Outlet } from "react-router-dom";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
-    // Check for a real auth state (e.g., token in localStorage)
-    const isAuthenticated = !!localStorage.getItem("token");
+    const { user } = useAuth();
 
-    if (!isAuthenticated) {
+    // If no user is logged in, redirect to login
+    if (!user) {
         return <Navigate to="/login" replace />;
     }
 
+    // If logged in, automatically render whatever child route matches
     return children;
 };
 

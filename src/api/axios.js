@@ -1,12 +1,11 @@
 import axios from "axios";
-
-// Pull the correct environment variable injected automatically by Vite
-const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+import {ENV} from "../validations/envValidation.js";
 
 // Create a custom instance with global configuration parameters
 const apiClient = axios.create({
-    baseURL: baseUrl,
+        baseURL: ENV.VITE_API_BASE_URL,
     timeout: 10000, // Safe standard: cancels requests if server takes longer than 10 secs
+    withCredentials: true,
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
