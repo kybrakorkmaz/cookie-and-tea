@@ -1,60 +1,61 @@
-import {useState} from "react";
-import {loginSchema} from "../../../validations/userRegisterLoginValidation.js";
+import { useState } from "react";
+import { loginSchema } from "../../../validations/userRegisterLoginValidation.js";
 import apiClient from "../../../api/axios.js";
-import {useNavigate} from "react-router";
-import {useAuth} from "../../../context/AuthContext.jsx";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 const useLogin = () => {
     const navigate = useNavigate();
     const { setAuth } = useAuth();
-    const [formData, setFormData] = useState({
-        identifier:"",
-        password:""
-    });
-    const [errors, setErrors]= useState({});
+    const [formData, setFormData] = useState({ identifier: "", password: "" });
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false); // 🌟 Added loading tracking state
 
-    const handleChange=(e)=>{
-        const {name, value}=e.target;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
+    };
 
-        setFormData(prev=>({...prev, [name]:value}));
-        if(errors[name]) setErrors(prev=>({...prev, [name]:null}));
-    }
-
-    const handleSubmit= async (e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return; // 🌟 Prevent double execution
 
         const result = loginSchema.safeParse(formData);
-        if(!result.success){
+        if (!result.success) {
             setErrors(result.error.flatten().fieldErrors);
             return;
         }
-        const payload = result.data;
-        try {
-            const response = await apiClient.post("/api/v1/auth/login", payload);
 
-            if(response.status === 200){
-                console.log("logged successfully!");
+        try {
+            setIsSubmitting(true);
+            const response = await apiClient.post("/api/v1/auth/login", result.data);
+
+            if (response.status === 200) {
                 setAuth(response.data.user);
-                setFormData({identifier: "", password: ""});
+                setFormData({ identifier: "", password: "" });
                 setErrors({});
                 navigate("/feed");
             }
-
-
         } catch (error) {
-            // Surface backend rejection responses back to UI states cleanly
             const backendMessage = error.response?.data?.message || "Something went wrong. Please try again.";
             setErrors({ server: [backendMessage] });
-            console.error("Login connection failure context:", error.message);
+        } finally {
+            setIsSubmitting(false); // 🌟 Reset submission state
         }
-    }
+    };
 
-    return{
+    // Helper method to clear server errors when the toast 'X' is clicked
+    const clearServerErrors = () => setErrors(prev => ({ ...prev, server: null }));
+
+    return {
         formData,
         handleSubmit,
         handleChange,
-        errors
-    }
-}
+        errors,
+        isSubmitting,        // 🌟 Returned
+        clearServerErrors    // 🌟 Returned
+    };
+};
 
 export default useLogin;

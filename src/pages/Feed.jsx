@@ -1,4 +1,4 @@
-import UserNavbar from "../components/nav-footer/UserNavbar.jsx";
+import UserNavbar from "../components/nav-footer/user/UserNavbar.jsx";
 import {FaImage, FaVideo, FaTimes, FaNewspaper} from "react-icons/fa";
 import { GrSend } from "react-icons/gr";
 import { useState, useEffect } from "react";
@@ -6,7 +6,7 @@ import UploadImageFile from "../components/media/UploadImageFile.jsx";
 import UploadVideoFile from "../components/media/UploadFile.jsx";
 import PostCard from "./Posts/PostCard.jsx";
 import { posts, following } from "../constants/index.js";
-import UserFooter from "../components/nav-footer/UserFooter.jsx";
+import UserFooter from "../components/nav-footer/user/UserFooter.jsx";
 import PageUpButton from "../components/PageUpButton.jsx";
 
 const Feed = () => {

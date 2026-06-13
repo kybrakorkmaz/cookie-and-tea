@@ -1,7 +1,7 @@
-import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
 import Panel from "./Panel.jsx";
 import Intro from "./Intro.jsx";
-import UserFooter from "../../components/nav-footer/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
 import Gallery from "./Gallery.jsx";
 import Posts from "../Posts/Posts.jsx";
 import { useProfile } from "./hooks/useProfile.js";

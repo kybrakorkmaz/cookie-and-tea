@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router";
-import Logo from "./Logo.jsx";
-import SearchBar from "./SearchBar.jsx";
-import HamburgerMenu from "./HamburgerMenu.jsx";
-import MobileNavbar from "./MobileNavbar.jsx";
+import Logo from "../Logo.jsx";
+import SearchBar from "../SearchBar.jsx";
+import HamburgerMenu from "../HamburgerMenu.jsx";
+import MobileNavbar from "../MobileNavbar.jsx";
 
 const Navbar = ({
                     textColor = "text-white",

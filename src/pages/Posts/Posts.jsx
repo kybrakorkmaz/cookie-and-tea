@@ -1,8 +1,8 @@
-import UserNavbar from "../../components/nav-footer/UserNavbar.jsx";
+import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
 import { useEffect, useMemo, useState } from "react";
 import { posts } from "../../constants/index.js";
 import PostCard from "./PostCard.jsx";
-import UserFooter from "../../components/nav-footer/UserFooter.jsx";
+import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
 import Panel from "../Profile/Panel.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
 

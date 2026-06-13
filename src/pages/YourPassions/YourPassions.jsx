@@ -1,6 +1,6 @@
-import Navbar from "../../components/nav-footer/Navbar.jsx";
+import Navbar from "../../components/nav-footer/guest/Navbar.jsx";
 import FromYou from "./FromYou.jsx";
-import Footer from "../../components/nav-footer/Footer.jsx";
+import Footer from "../../components/nav-footer/guest/Footer.jsx";
 
 const YourPassions=()=>{
     return(
