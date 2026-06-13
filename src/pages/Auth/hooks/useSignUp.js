@@ -12,6 +12,8 @@ export const useSignUp = () =>{
     });
     const [errors, setErrors] = useState({});
 
+    console.log("password:", formData.password, " confirm: ", formData.confirmPassword);
+
     const handleChange=(e)=>{
         const {value, name}= e.target;
         setFormData(prev=>({...prev, [name]:value}));
@@ -27,15 +29,17 @@ export const useSignUp = () =>{
             return;
         }
 
+        // Safe payload extraction from validated Zod safe data results
         const payload = {
             name: result.data.name,
             username: result.data.username,
             password: result.data.password,
+            confirmPassword: result.data.confirmPassword,
             email: result.data.email
         }
 
        try{
-            const response = await apiClient.post("api/v1/auth/sign-up", payload);
+           const response = await apiClient.post("/api/v1/auth/sign-up", payload);
             if (response.status !== 201) {
                 console.log("couldn't register, try again");
                 return;
@@ -45,7 +49,7 @@ export const useSignUp = () =>{
            setFormData({ name: "", username: "", email: "", password: "", confirmPassword: "" });
            setErrors({});
        }catch (err){
-           console.error("Registration error:", error.response?.data || error.message);
+           console.error("Registration error:", err.response?.data || err.message);
            // İleride backend'den dönen hataları (örn: email zaten kayıtlı) setErrors'a eşleyebilirsiniz.
        }
     }

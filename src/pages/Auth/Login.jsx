@@ -1,50 +1,18 @@
 import Navbar from "../../components/nav-footer/Navbar.jsx";
 import {PrimaryButton} from "../../components/Buttons.jsx";
-import {Link} from "react-router";
-import {useState} from "react";
-import Input from "../../components/Input.jsx";
-import {loginSchema} from "../../validations/userRegisterLoginValidation.js";
+import {Link} from "react-router-dom";
+import Input from "../../components/Input.jsx"
 import Footer from "../../components/nav-footer/Footer.jsx";
+import useLogin from "./hooks/useLogin.js";
+import Password from "./components/Password.jsx";
 
 const Login = () =>{
-    const [formData, setFormData] = useState({
-        username:"",
-        password:""
-    });
-    const [errors, setErrors]= useState({});
-
-    const handleChange=(e)=>{
-        const {name, value}=e.target;
-
-        setFormData(prev=>({...prev, [name]:value}));
-        if(errors[name]) setErrors(prev=>({...prev, [name]:null}));
-    }
-
-    const handleSubmit= async (e)=>{
-        e.preventDefault();
-
-        const result = loginSchema.safeParse(formData);
-
-        if(!result.success){
-            setErrors(result.error.flatten().fieldErrors);
-            return;
-        }
-
-        const payload = result.data;
-
-        console.log("Login attempt for user:", payload.username);
-
-        try {
-            //todo login payload API call
-            setFormData({username: "", password: ""});
-            console.log("Login form cleared.");
-
-        } catch (error) {
-            console.error("Login failed:", error.message);
-        }
-    }
-
-
+    const {
+        formData,
+        handleSubmit,
+        handleChange,
+        errors
+    } = useLogin();
     return(
         <div className="bg-cream min-h-screen">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
@@ -52,14 +20,14 @@ const Login = () =>{
                 <h2 className="font-header text-h-2 text-center text-primary-dark">Login</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     <Input
-                        name="username"
+                        name="identifier"
                         label="Username/Email"
-                        value={formData.username}
+                        value={formData.identifier}
                         onChange={handleChange}
                         placeholder="Username/Email"
-                        error={errors.username?.[0]}
+                        error={errors.identifier?.[0]}
                     />
-                    <Input
+                    <Password
                         type="password"
                         name="password"
                         label="Password"

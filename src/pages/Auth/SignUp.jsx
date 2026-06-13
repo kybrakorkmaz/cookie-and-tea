@@ -3,7 +3,7 @@ import Input from "../../components/Input.jsx";
 import {PrimaryButton} from "../../components/Buttons.jsx";
 import Footer from "../../components/nav-footer/Footer.jsx";
 import {Link} from "react-router";
-import {useSignUp} from "./hooks/useSignUp.jsx";
+import {useSignUp} from "./hooks/useSignUp.js";
 import Password from "./components/Password.jsx";
 const SignUp = ()=>{
    const {
