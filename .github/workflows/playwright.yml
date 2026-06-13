@@ -9,13 +9,13 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # Pin to v4.2.2 tag commit SHA and explicitly remove token persistence
+      # Keep your valid checkout commit pin intact
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
 
-      # Pin to v4.2.0 tag commit SHA
-      - uses: actions/setup-node@39225d467ee2295d8853236206e0b06fe26e87f8
+      # Updated to official v4 release tag
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
@@ -28,8 +28,8 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
-      # Pin to v4.6.0 tag commit SHA
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45b530
+      # Updated to official v4 release tag
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
