@@ -26,6 +26,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
 
     const { handleDelete } = useDeleteProfilePost(username, setAllPosts);
 
+
     const totalPosts = allPosts?.length || 0;
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
 

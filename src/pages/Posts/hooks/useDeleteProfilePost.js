@@ -14,7 +14,7 @@ const useDeleteProfilePost = (username, setAllPosts) => {
             if (response.status === 200 || response.status === 204) {
                 // 2. Clear it from the UI state list immediately on success
                 setAllPosts((prevPosts) =>
-                    prevPosts.filter((post) => post.id !== postId && post.post_id !== postId)
+                    prevPosts.filter((post) => post.id !== postId)
                 );
                 alert("Post deleted successfully!");
             }

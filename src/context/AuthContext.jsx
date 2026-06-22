@@ -54,7 +54,7 @@ const AuthProvider = ({children}) =>{
                 const response = await apiClient.get("/api/v1/auth/me");
                 if (response.status === 200 && response.data.user){
                     // Sync up state if backend has updated user fields
-                    setUser(response.data.user);
+                    setAuth(response.data.user);
                 }
             }catch (err){
                 // If the secure HTTP-only cookie expired or is missing, log out silently
