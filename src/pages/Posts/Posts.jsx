@@ -1,56 +1,34 @@
-import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
-import { useEffect, useMemo, useState } from "react";
-import { posts } from "../../constants/index.js";
+import { useEffect,  useState } from "react";
 import PostCard from "./PostCard.jsx";
-import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
-import Panel from "../Profile/Panel.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
+import useAllPosts from "./hooks/useAllPosts.js";
+import {useParams} from "react-router";
+import {useAuth} from "../../context/AuthContext.jsx";
+import useDeleteProfilePost from "./hooks/useDeleteProfilePost.js";
+import LoadMore from "../../components/LoadMore.jsx";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
-    //const [allPosts, setAllPosts] = useState([]);
-    //const [loading, setLoading] = useState(true);
+    const {username} = useParams(); // extract username from URL
+    const { user } = useAuth(); // The logged-in authenticated user context
+
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
-    const allPosts = posts[0].posts;
+    // Fetch initial post data stream
+    const {posts: fetchedPosts, loading} = useAllPosts(username);
+    //Local state list so we can update it immediately on deletion
+    const [allPosts, setAllPosts] = useState([]);
+    // Sync fetched posts into state when they load
+    useEffect(() => {
+        if (fetchedPosts) setAllPosts(fetchedPosts);
+    }, [fetchedPosts]);
 
-    /*
-        useEffect(() => {
-            const fetchPosts = async () => {
-                try {
-                    // Simulate API call or use real fetch
-                    // const response = await fetch('/api/profile/posts');
-                    // const data = await response.json();
+    const { handleDelete } = useDeleteProfilePost(username, setAllPosts);
 
-                    // Using your mock data for now:
-                    setAllPosts(posts[0].posts);
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchPosts();
-        }, []);
-     */
-    const sortedPostsByDate = useMemo(() => {
-        const formatDate = (dateStr) => {
-            const [day, month, year] = dateStr.split("/");
-            return new Date(`${year}-${month}-${day}`);
-        };
 
-        return [...allPosts].sort(
-            (a, b) => formatDate(b.post_date) - formatDate(a.post_date)
-        );
-    }, [allPosts]);
-
-    const totalPosts = sortedPostsByDate.length;
-    const visiblePosts = sortedPostsByDate.slice(0, visibleCount);
-
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => prev + 5);
-    };
+    const totalPosts = allPosts?.length || 0;
+    const visiblePosts = allPosts?.slice(0, visibleCount) || [];
 
     // 1. Sync external targetPostId to internal state and clear it in parent immediately.
     // This prevents the "intent" from leaking across manual tab changes.
@@ -64,11 +42,10 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     // 2. Handle scrolling and highlighting based on the captured internalTarget.
     // This decoupled approach ensures the scroll timer isn't cleared when the parent state resets.
     useEffect(() => {
-        //if (!internalTarget || loading) return; // Wait for loading to finish!
-        if (!internalTarget) return;
+        if (!internalTarget || loading || totalPosts === 0) return;
 
-        const targetIndex = sortedPostsByDate.findIndex(
-            (post) => post.post_id === internalTarget
+        const targetIndex = allPosts.findIndex(
+            (post) => post.id === internalTarget
         );
 
         if (targetIndex === -1) {
@@ -104,27 +81,33 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
             clearTimeout(timer);
             clearTimeout(highlightTimer);
         };
-    }, [internalTarget, visibleCount, sortedPostsByDate]);
-    //if (loading) return <div className="text-center py-20">Loading...</div>;
+    }, [internalTarget, visibleCount, allPosts, loading, totalPosts]);
+
+    if (loading) return <div className="text-center py-20 font-header text-gray-500">Loading...</div>;
+
     return (
         <div className="min-h-screen ">
             <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
-                {visiblePosts.map((post) => (
-                    <PostCard
-                        key={post.post_id}
-                        post={post}
-                        highlightedId={highlightedId}
-                    />
-                ))}
-
+                {visiblePosts.length > 0 ? (
+                    visiblePosts.map((post) => {
+                        const isMyOwnPost = user && user.id === post.userId;
+                        return(
+                            <PostCard
+                                key={post.id}
+                                post={post}
+                                highlightedId={highlightedId}
+                                isPermitted= {isMyOwnPost} // Pass exact permission down
+                                onDelete={handleDelete}
+                            />
+                        )
+                    })
+                ): (
+                    <div className="text-center py-20 text-gray-400 font-paragraph">
+                        No posts published yet.
+                    </div>
+                )}
                 {visibleCount < totalPosts && (
-                    <button
-                        type="button"
-                        onClick={handleLoadMore}
-                        className="mx-auto px-10 py-3 bg-primary-dark text-white rounded-full font-bold hover:bg-opacity-90 transition-all"
-                    >
-                        Load More
-                    </button>
+                    <LoadMore setVisibleCount={setVisibleCount}/>
                 )}
             </div>
             <PageUpButton />

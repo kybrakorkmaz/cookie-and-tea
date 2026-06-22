@@ -1,182 +1,113 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaMessage, FaPenToSquare } from "react-icons/fa6";
-import { GiTwoCoins } from "react-icons/gi";
-import {comments, DONATE_ICON, profile} from "../../constants/index.js";
+import { FaPenToSquare } from "react-icons/fa6";
+import { comments, profile } from "../../constants/index.js";
 import VideoPost from "./VideoPost.jsx";
 import ImagePost from "./ImagePost.jsx";
 import HybridPost from "./HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./PostCommenters.jsx";
-import PostComment from "./PostComment.jsx";
 import EditPost from "./EditPost.jsx";
-import Donation from "../../components/Donation.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
-import RoundedImage from "../../components/RoundedImage.jsx";
 import InteractionBar from "./InteractionBar.jsx";
+import apiClient from "../../api/axios.js";
+import { MdDelete } from "react-icons/md";
+import User from "./User.jsx";
+import PostBody from "./structure/PostBody.jsx";
 
-
-const PostCard = ({ post, highlightedId }) => {
-    // Every cards hold its own state
-    const [activeType, setActiveType] = useState(null); // 'comments', 'donations' or null
-    const isFocused = highlightedId === `post-${post.post_id}`;
+const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
+    const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
 
-    // preview comment
-    const postComments = comments.filter(c => c.commented_to_post_id === post.post_id);
+    const isFocused = highlightedId === `post-${post.id}`;
+    const currentPostId = post.id;
+
+    // Preview comment tracking logic
+    const postComments = comments.filter(c => c.commented_to_post_id === post.id);
     let previewComment = null;
     if (postComments.length > 0) {
         const firstComment = postComments[0];
-        const user = profile.find(u => u.user_id === firstComment.commenter_id);
-        previewComment = { ...firstComment, user };
+        const userMatch = profile.find(u => u.user_id === firstComment.commenter_id);
+        previewComment = { ...firstComment, user: userMatch };
     }
-
-    const postUser = profile.find(p => p.user_id === post.user_id);
-
-    // todo import api from "../../api/axiosConfig";
 
     const handleUpdate = async (updatedPost) => {
         try {
-            // Replace console.log with a real PUT or PATCH request
-            // Using backticks for the specific post ID
-            const response = await fetch(`/api/posts/${updatedPost.post_id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedPost)
-            });
-
-            if (!response.ok) throw new Error("Failed to update post");
-
-            // Success: Trigger a refresh or update parent state
-            // If your parent component passed a refresh function:
-            // await refreshPosts();
-
-            setIsEditing(false); // Only close on success
-            alert("Post updated successfully!");
+            const response = await apiClient.put(`/api/v1/posts/${currentPostId}`, updatedPost);
+            if (response.status === 200) {
+                setIsEditing(false);
+                alert("Post updated successfully!");
+            }
         } catch (error) {
             console.error("Update Error:", error);
-            // UI Feedback: Don't close the modal so the user doesn't lose their edits
-            alert("Could not save changes. Please try again.");
-        }
-    };
-
-    const handleDelete = async (postId) => {
-        try {
-            // Replace console.log with a real DELETE request
-            const response = await fetch(`/api/posts/${postId}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) throw new Error("Failed to delete post");
-
-            // Success: Close modal and remove from UI
-            // If using an upstream callback:
-            // onPostDeleted(postId);
-
-            setIsEditing(false);
-            alert("Post deleted.");
-        } catch (error) {
-            console.error("Delete Error:", error);
-            alert("Failed to delete post. Please check your connection.");
+            alert(error?.response?.data?.message || "Could not save changes. Please try again.");
         }
     };
 
     return (
         <>
             <motion.div
-                id={`post-${post.post_id}`}
+                id={`post-${post.id}`}
                 animate={{
                     scale: isFocused ? 1.01 : 1,
-                    backgroundColor: isFocused ? "#FFFBEB" : "#ffffff", // Subtle amber tint for focus
+                    backgroundColor: isFocused ? "#FFFBEB" : "#ffffff",
                     borderColor: isFocused ? "var(--color-primary-dark)" : "#f3f4f6",
                 }}
                 className="p-5 md:p-7 rounded-2xl border-2 shadow-sm relative scroll-mt-32 transition-all duration-300 hover:shadow-md hover:border-gray-200 group"
             >
                 <div className="flex flex-col gap-4">
-                    {/* Top Bar: User Info & Actions */}
+                    {/* Top Bar */}
                     <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-3">
-                            <RoundedImage image={postUser?.profileImage} alt={postUser?.name || ''} w={"w-11"} h={"h-11"}/>
-                            <div className="flex flex-col">
-                                <span className="font-header font-bold text-gray-900 text-sm leading-tight">{postUser?.name}</span>
-                                <span className="font-paragraph text-xs text-gray-500">@{postUser?.username}</span>
+                        <User profileImage={post.authorProfileImage} alt={post.authorName} name={post.authorName} username={post.authorUsername}/>
+                        {isPermitted && (
+                            <div className="flex">
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="p-2 text-gray-300 hover:text-primary-dark hover:bg-gray-50 rounded-lg transition-all"
+                                >
+                                    <FaPenToSquare className="w-4 h-4"/>
+                                </button>
+                                <button onClick={() => onDelete(currentPostId)} className="p-2 text-gray-300 hover:text-primary-dark">
+                                    <MdDelete className="w-4 h-4"/>
+                                </button>
                             </div>
-                        </div>
-                        <button
-                            onClick={()=>setIsEditing(true)}
-                            className="p-2 text-gray-300 hover:text-primary-dark hover:bg-gray-50 rounded-lg transition-all"
-                        >
-                            <FaPenToSquare className="w-4 h-4"/>
-                        </button>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="space-y-1">
-                        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-                            <h3 className="text-xl md:text-2xl font-header font-extrabold text-primary-dark tracking-tight">
-                                {post.post_header}
-                            </h3>
-                            <span className="font-paragraph text-[11px] uppercase tracking-wider text-gray-400 font-bold">
-                                {post.post_date}
-                            </span>
-                        </div>
-
-                        {post.post_detail && (
-                            <p className="font-paragraph text-gray-600 mt-2 leading-relaxed text-sm md:text-base whitespace-pre-line">
-                                {post.post_detail}
-                            </p>
                         )}
                     </div>
 
-                    {/* Media Section */}
+                    <PostBody header={post.header} date={post.createdAt} content={post.content}/>
+
+                    {/* Media Display */}
                     <div className="mt-2 rounded-xl overflow-hidden border border-gray-50">
-                        {post.post_type === "video" && <VideoPost video={post.post_video}/>}
-                        {post.post_type === "image" && <ImagePost images={post.post_image}/>}
-                        {post.post_type === "hybrid" && <HybridPost videos={post.post_video} images={post.post_image} />}
+                        {post.type === "video" && <VideoPost video={post.videos}/>}
+                        {post.type === "image" && <ImagePost images={post.images}/>}
+                        {post.type === "hybrid" && <HybridPost videos={post.videos} images={post.images} />}
                     </div>
 
-                    {/* Interaction Bar */}
-                    <InteractionBar
-                        post={post}
-                        activeType={activeType}
-                        setActiveType={setActiveType}
-                        setDonateAmount={setDonateAmount}
-                    />
+                    <InteractionBar post={post} activeType={activeType} setActiveType={setActiveType} setDonateAmount={setDonateAmount}/>
 
-                    {/* Preview Comment (Minimalist) */}
                     {previewComment && !activeType && (
                         <div className="mt-1">
-                            <PostCommenters
-                                imgSrc={previewComment.user?.profileImage}
-                                name={previewComment.user?.name}
-                                comment={previewComment.comment}
-                            />
+                            <PostCommenters imgSrc={previewComment.user?.profileImage} name={previewComment.user?.name} comment={previewComment.comment}/>
                         </div>
                     )}
 
-                    <ShowSupporters
-                        showComments={activeType === 'comments'}
-                        showDonations={activeType === 'donations'}
-                        postId={post.post_id}
-                        userId={post.user_id}
-                    />
+                    <ShowSupporters showComments={activeType === 'comments'} showDonations={activeType === 'donations'} postId={post.id} userId={post.userId}/>
                 </div>
             </motion.div>
+
             {isEditing && (
                 <EditPost
                     post={post}
                     onClose={() => setIsEditing(false)}
                     onUpdate={handleUpdate}
-                    onDelete={handleDelete}
+                    onDelete={() => {
+                        setIsEditing(false);
+                        onDelete(currentPostId);
+                    }}
                 />
             )}
-            {donateAmount && (
-                <DonateMessage
-                    amount={donateAmount}
-                    onClose={() => setDonateAmount(null)}
-                />
-            )}
+            {donateAmount && <DonateMessage amount={donateAmount} onClose={() => setDonateAmount(null)}/>}
         </>
     );
 };
