@@ -12,8 +12,8 @@ import People from "./pages/People/People.jsx";
 import Feed from "./pages/Feed.jsx";
 import Settings from  "./pages/Settings/Settings.jsx";
 import Activity from "./pages/Activity.jsx";
-import AuthProvider from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import AuthProvider from "./context/AuthContext.jsx";
 
 
 const App = () => {
