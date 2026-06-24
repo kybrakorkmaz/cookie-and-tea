@@ -1,9 +1,9 @@
 /**
  * Headless Helper: Registers and prepares a user profile for active login flows.
- * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Page} request
  * @returns {Promise<{username: string, email: string, password: string}>}
  */
-export async function registerUserViaApi(page) {
+export async function registerUserViaApi(request) {
     const uniqueId = `tester_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const email = `${uniqueId}@cookieandtea.com`;
     const password = "Secret123!";
@@ -12,7 +12,7 @@ export async function registerUserViaApi(page) {
     const backendUrl = process.env.VITE_API_BASE_URL || 'http://localhost:8001';
 
     // 1. Create the user profile across the router wire
-    const response = await page.request.post(`${backendUrl}/api/v1/auth/sign-up`, {
+    const response = await request.post(`${backendUrl}/api/v1/auth/sign-up`, {
         data: {
             name: "Kubra Integration Test",
             username: uniqueId,

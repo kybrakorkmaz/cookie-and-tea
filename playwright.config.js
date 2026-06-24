@@ -11,6 +11,8 @@ const loadedEnvVars = loadEnv(envMode, process.cwd(), '');
 
 Object.assign(process.env, loadedEnvVars);
 
+const authFile = 'playwright/.auth/user.json';
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -34,14 +36,33 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    // Apply the bypass headers globally to all contexts, pages, and projects
+    extraHTTPHeaders: {
+      'x-test-bypass': process.env.BYPASS_SECRET
+    }
   },
 
   /* Configure projects for major browsers */
   projects: [
-
+      // 1. Define the isolated Authentication Setup Project
+    {
+      name: 'setup',
+      testMatch: /auth\.setup\.js/, // Specifically targets your setup file
+      use: {
+        browserName: "firefox"
+      }
+    },
+      // 2. Update your main browser configuration to use the session state
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        // Automatically injects the generated cookies and localStorage tokens
+        storageState: authFile
+      },
+      // Blocks execution until your 'setup' project completes successfully
+      dependencies: ['setup'],
     },
   ],
 

@@ -1,5 +1,5 @@
-import { DONATE_ICON } from "../../constants/index.js";
-import Donation from "../../components/Donation.jsx";
+import { DONATE_ICON } from "../../../constants/index.js";
+import Donation from "../../../components/Donation.jsx";
 import { FaMessage } from "react-icons/fa6";
 import { GiTwoCoins } from "react-icons/gi";
 

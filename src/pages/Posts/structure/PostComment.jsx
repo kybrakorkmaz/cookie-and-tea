@@ -1,25 +1,34 @@
 import { GrSend } from "react-icons/gr";
 import { z } from "zod";
 import { useState, useMemo } from "react";
+import {commentSchema, MAX_CHARS} from "../../../validations/postStructure.validation.js";
+import useWriteComment from "../hooks/useWriteComment.js";
+import {useAuth} from "../../../context/AuthContext.jsx";
 
-const PostComment = ({oldComment="", onSend, update}) => {
+
+const PostComment = ({oldComment="", onSend, update, postId}) => {
     const [newComment, setNewComment] = useState(oldComment);
     const [status, setStatus] = useState({ message: "", type: "" });
-    const MAX_CHARS = 500;
+    const { handleWriteComment } = useWriteComment();
 
-    const commentSchema = useMemo(() =>
-        z.string()
-            .min(1, "Comment cannot be empty!")
-            .max(MAX_CHARS, `Too long! (Max ${MAX_CHARS})`), []);
+    const characterCounterColor = useMemo(() => {
+        return newComment.length >= MAX_CHARS ? "text-red-500 font-bold" : "text-gray-400";
+    }, [newComment]);
 
     const handleChange = (e) => {
         const value = e.target.value;
-        if (value.length <= MAX_CHARS + 10) setNewComment(value);
-        if (status.type === "error") setStatus({ message: "", type: "" });
+        // Allows a small buffer so they can type and then backspace/edit down to the limit
+        if (value.length <= MAX_CHARS + 10) {
+            setNewComment(value);
+        }
+        if (status.type === "error") {
+            setStatus({ message: "", type: "" });
+        }
     };
 
     const handleSend = async () => {
         const trimmed = newComment.trim();
+
         const result = commentSchema.safeParse(trimmed);
 
         if (!result.success) {
@@ -28,20 +37,20 @@ const PostComment = ({oldComment="", onSend, update}) => {
             return;
         }
 
-        // Success Logic
-        setStatus({ message: "Comment posted!", type: "success" });
-        setNewComment("");
-        setTimeout(() => setStatus({ message: "", type: "" }), 4000);
-        if (update) {
-            // Mode: EDITING
-            update(trimmed); // Send back to parent
-        } else {
-            // Mode: NEW COMMENT
-            console.log("Posting new comment...");
-            setNewComment("");
-        }
+        try {
+            if (update) {
+                update(trimmed);
+            } else {
+                await handleWriteComment(postId, { comment: trimmed });
+                setNewComment("");
+                setStatus({ message: "Comment posted!", type: "success" });
+                setTimeout(() => setStatus({ message: "", type: "" }), 4000);
+            }
 
-        if (onSend) onSend(); // Closes the edit toggle
+            if (onSend) onSend();
+        } catch (error) {
+            setStatus({ message: "Failed to publish comment.", type: "error" });
+        }
     };
 
     // --- NEW: Key Handling Logic ---

@@ -2,20 +2,21 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
 import { comments, profile } from "../../constants/index.js";
-import VideoPost from "./VideoPost.jsx";
-import ImagePost from "./ImagePost.jsx";
-import HybridPost from "./HybridPost.jsx";
+import VideoPost from "./type/VideoPost.jsx";
+import ImagePost from "./type/ImagePost.jsx";
+import HybridPost from "./type/HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
-import PostCommenters from "./PostCommenters.jsx";
+import PostCommenters from "./structure/PostCommenters.jsx";
 import EditPost from "./EditPost.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
-import InteractionBar from "./InteractionBar.jsx";
-import apiClient from "../../api/axios.js";
+import InteractionBar from "./structure/InteractionBar.jsx";;
 import { MdDelete } from "react-icons/md";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
+import useUpdateProfilePost from "./hooks/useUpdateProfilePost.js";
+import PostComment from "./structure/PostComment.jsx";
 
-const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
+const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
@@ -32,16 +33,10 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
         previewComment = { ...firstComment, user: userMatch };
     }
 
-    const handleUpdate = async (updatedPost) => {
-        try {
-            const response = await apiClient.put(`/api/v1/posts/${currentPostId}`, updatedPost);
-            if (response.status === 200) {
-                setIsEditing(false);
-                alert("Post updated successfully!");
-            }
-        } catch (error) {
-            console.error("Update Error:", error);
-            alert(error?.response?.data?.message || "Could not save changes. Please try again.");
+    const handleUpdateSuccess = async (postId, updatedFields) => {
+        const isSuccess = await onUpdate(postId, updatedFields);
+        if (isSuccess) {
+            setIsEditing(false); // Only close the modal panel if the API responded with 200 OK
         }
     };
 
@@ -85,7 +80,7 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
                     </div>
 
                     <InteractionBar post={post} activeType={activeType} setActiveType={setActiveType} setDonateAmount={setDonateAmount}/>
-
+                    <PostComment/>
                     {previewComment && !activeType && (
                         <div className="mt-1">
                             <PostCommenters imgSrc={previewComment.user?.profileImage} name={previewComment.user?.name} comment={previewComment.comment}/>
@@ -100,7 +95,7 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
                 <EditPost
                     post={post}
                     onClose={() => setIsEditing(false)}
-                    onUpdate={handleUpdate}
+                    onUpdate={handleUpdateSuccess}
                     onDelete={() => {
                         setIsEditing(false);
                         onDelete(currentPostId);

@@ -6,6 +6,7 @@ import {useParams} from "react-router";
 import {useAuth} from "../../context/AuthContext.jsx";
 import useDeleteProfilePost from "./hooks/useDeleteProfilePost.js";
 import LoadMore from "../../components/LoadMore.jsx";
+import useUpdateProfilePost from "./hooks/useUpdateProfilePost.js";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
     const {username} = useParams(); // extract username from URL
@@ -14,6 +15,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
+
 
     // Fetch initial post data stream
     const {posts: fetchedPosts, loading} = useAllPosts(username);
@@ -25,7 +27,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     }, [fetchedPosts]);
 
     const { handleDelete } = useDeleteProfilePost(username, setAllPosts);
-
+    const { handleUpdate } = useUpdateProfilePost(username, setAllPosts);
 
     const totalPosts = allPosts?.length || 0;
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
@@ -98,6 +100,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
                                 highlightedId={highlightedId}
                                 isPermitted= {isMyOwnPost} // Pass exact permission down
                                 onDelete={handleDelete}
+                                onUpdate={handleUpdate}
                             />
                         )
                     })

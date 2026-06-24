@@ -3,22 +3,22 @@ import UploadImageFile from "../../components/media/UploadImageFile.jsx";
 import UploadFile from "../../components/media/UploadFile.jsx";
 import MediaManager from "../../components/media/MediaManager.jsx";
 
-const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
+const EditPost = ({ post, onClose, onDelete, onUpdate }) => {
     const createdUrlsRef = useRef([]);
 
     const [editPost, setEditPost] = useState({
         ...post,
-        post_header: post.post_header || "",
-        post_detail: post.post_detail || "",
-        post_image: post.post_image || [],
-        post_video: post.post_video || []
+        header: post.header || "",
+        content: post.content || "",
+        images: post.images || [],
+        videos: post.videos || []
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEditPost(prev => ({
             ...prev,
-            [name]: (name === "post_image" || name === "post_video")
+            [name]: (name === "images" || name === "videos")
                 ? value.split("\n")
                 : value
         }));
@@ -68,8 +68,8 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                     <div>
                         <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Title</label>
                         <input
-                            name="post_header"
-                            value={editPost.post_header}
+                            name="header"
+                            value={editPost.header}
                             onChange={handleChange}
                             className="w-full mt-2 p-3 border rounded-xl outline-primary-dark"
                         />
@@ -78,20 +78,20 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                     <div>
                         <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Content</label>
                         <textarea
-                            name="post_detail"
-                            value={editPost.post_detail}
+                            name="content"
+                            value={editPost.content}
                             onChange={handleChange}
                             className="w-full mt-2 p-3 border rounded-xl h-32 resize-none outline-primary-dark"
                         />
                     </div>
 
                     <MediaManager
-                        label="Images" name="post_image" value={editPost.post_image}
+                        label="Images" name="post_image" value={editPost.images}
                         onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadImageFile}
                     />
 
                     <MediaManager
-                        label="Videos" name="post_video" value={editPost.post_video}
+                        label="Videos" name="post_video" value={editPost.videos}
                         onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadFile}
                     />
                 </div>
@@ -101,7 +101,7 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                     <button
                         onClick={() => {
                             if(window.confirm("Delete this post permanently?")) {
-                                onDelete(editPost.post_id);
+                                onDelete(editPost.id);
                             }
                         }}
                         className="flex-1 py-3 px-4 border-2 border-red-500 text-red-500 font-bold rounded-2xl hover:bg-red-50 transition-colors"
@@ -109,7 +109,7 @@ const EditPost = ({ post, onClose, onUpdate, onDelete }) => {
                         Delete Post
                     </button>
                     <button
-                        onClick={() => onUpdate(editPost)}
+                        onClick={() => onUpdate(post.id, editPost)} // Fires your interceptor seamlessly
                         className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl hover:opacity-90 transition-opacity shadow-lg"
                     >
                         Update Post

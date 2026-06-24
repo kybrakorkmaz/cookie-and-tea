@@ -1,5 +1,5 @@
-import VideoPost from "./VideoPost";
-import ImagePost from "./ImagePost";
+import VideoPost from "./VideoPost.jsx";
+import ImagePost from "./ImagePost.jsx";
 
 const HybridPost = ({ videos = [], images = [] }) => {
     const videosArray = Array.isArray(videos) ? videos : [videos];

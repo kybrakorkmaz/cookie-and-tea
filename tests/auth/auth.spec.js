@@ -1,16 +1,12 @@
 import { test, expect } from "@playwright/test";
 //Import your headless helpers alongside your UI action
-import { loginUserViaUI, registerUserViaApi } from "./utils/register.js";
+import { loginUserViaUI, registerUserViaApi } from "./register.js";
 
 test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
-
+    // Force this file to bypass the global pre-authenticated user session state JSON
+    test.use({storageState: {cookies: [], origins: []}});
     // Pull 'context' from the Playwright fixtures object explicitly
-    test.beforeEach(async ({ page, context }) => {
-        // Set systemic headers globally across the sandbox context
-        await context.setExtraHTTPHeaders({
-            'x-test-bypass': 'secret-test-key'
-        });
-
+    test.beforeEach(async ({ page }) => {
         page.on('console', msg => {
             if (msg.type() === 'error') console.log(`Browser Error: ${msg.text()}`);
         });
@@ -42,9 +38,9 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
     });
 
     // Use API generation to isolate the login scenario
-    test("Should log in users using username as identifier", async ({ page }) => {
+    test("Should log in users using username as identifier", async ({ page, request }) => {
         // Use headless helper to seed the backend database instantly
-        const credentials = await registerUserViaApi(page);
+        const credentials = await registerUserViaApi(request);
 
         const loginResponsePromise = page.waitForResponse(response =>
             response.url().includes("/api/v1/auth/login") && response.request().method() === "POST"
@@ -63,16 +59,16 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
         await expect(page).toHaveURL(/\/feed\/?$/);
     });
 
-    test("Should log in users using email as identifier", async ({ page }) => {
+    test("Should log in users using email as identifier", async ({ page, request }) => {
         // Use headless helper to seed the backend database instantly
-        const credentials = await registerUserViaApi(page);
+        const credentials = await registerUserViaApi(request);
 
         const loginResponsePromise = page.waitForResponse(response =>
             response.url().includes("/api/v1/auth/login") && response.request().method() === "POST"
         );
 
         // Run UI action with email
-        await loginUserViaUI(page, credentials.email, credentials.password);
+        await loginUserViaUI(page, credentials.username, credentials.password);
 
         const response = await loginResponsePromise;
         expect(response.status()).toBe(200);
