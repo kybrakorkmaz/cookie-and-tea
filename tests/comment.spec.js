@@ -1,64 +1,87 @@
-import {test, expect} from "@playwright/test";
-test.describe("Comment CRUD Operation Suit Test", () => {
-    // Force this file to bypass the global pre-authenticated state if creating a custom user,
-    // OR keep it if using a globally seeded user.
-    test.use({ storageState: 'playwright/.auth/user.json' });
+import { test, expect } from "@playwright/test";
+import { registerUserViaApi } from "./auth/register.js";
 
-    // If "test_user_6708" does not exist in your DB seeds, these must be updated
-    // to credentials that genuinely exist in your PostgreSQL test instance.
-    const mockUsername = "test_user_6708";
-    const mockPostId = 335;
+test.describe("Comment CRUD Operation Suit Test", () => {
     const testCommentPayload = "Very beautiful work, good job!";
 
-    test.beforeEach(async ({page, context})=>{
+    test.beforeEach(async ({ page, context }) => {
         await context.setExtraHTTPHeaders({
-            'x-test-bypass': 'secret-test-key'
+            'x-test-bypass': process.env.BYPASS_SECRET
         });
 
-        page.on("console", msg =>{
-            if(msg.type() === "error") console.log(`Browser Error: ${msg.text()}`);
+        page.on("console", msg => {
+            if (msg.type() === "error") console.log(`Browser Error: ${msg.text()}`);
         });
 
-        page.on("requestfailed", request =>{
-            console.log(`Network Failure. ${request.url()} || Error: ${request.failure()?.errorText}`)
+        page.on("requestfailed", request => {
+            console.log(`Network Failure. ${request.url()} || Error: ${request.failure()?.errorText}`);
         });
     });
 
-    test("should create a comment", async ({page}) =>{
-        // 1. Setup the Network API response spy BEFORE triggering the UI interaction
+    test("should log in newly registered user and create a comment", async ({ page, context, request }) => {
+        const backendUrl = process.env.VITE_API_BASE_URL || 'http://localhost:8001';
+
+        // 1. Dynamically register a brand new user account
+        const targetProfile = await registerUserViaApi(request);
+
+        // 2. 🔑 Headless Login: Exchange the new credentials for a fresh session token/cookie
+        const loginResponse = await request.post(`${backendUrl}/api/v1/auth/login`, {
+            data: {
+                username: targetProfile.username,
+                password: targetProfile.password || "TestPassword123!" // Ensure this matches your generator
+            }
+        });
+        expect(loginResponse.status()).toBe(200);
+
+        // 3. Inject cookies/tokens into the active browser context so the UI recognizes the logged-in state
+        const loginResponseBody = await loginResponse.json();
+        if (loginResponseBody.token) {
+            await context.addInitScript((token) => {
+                window.localStorage.setItem("token", token);
+            }, loginResponseBody.token);
+        }
+
+        // 4. Headless Seeding via Feed Router: Create the post under this user's account
+        const postResponse = await request.post(`${backendUrl}/api/v1/feed/${targetProfile.username}`, {
+            data: {
+                title: "Automated Integration Test Post",
+                content: "Verifying comment operations on profile views.",
+                type: "text"
+            }
+        });
+        expect(postResponse.status()).toBe(201);
+
+        const postResponseBody = await postResponse.json();
+        const dynamicPostId = postResponseBody.data.id;
+
+        // 5. Setup the network spy watching the specific comment endpoint
         const commentResponsePromise = page.waitForResponse(response =>
-        response.url()
-            .includes(`/api/v1/profile/${mockUsername}/posts/${mockPostId}/comment`)
+            response.url().includes(`/api/v1/profile/${targetProfile.username}/posts/${dynamicPostId}/comment`)
             && response.request().method() === "POST"
         );
-        // 2. Navigate to your target profile page matching your routing structure
-        await page.goto(`/profile/${mockUsername}`);
 
-        // 3. Locate the comment box text area using accessible aria role selectors
+        // 6. Navigate to the Profile Page (Now safely authenticated as the owner!)
+        await page.goto(`/profile/${targetProfile.username}`);
+
+        // 7. Select, focus, and fill out the text input area inside the <PostCard />
         const commentInput = page.locator('textarea[id="comment"]');
-
-        // 4. Ensure it's fully visible and focusable, then fill it with data strings
-        await expect(commentInput).toBeVisible();
+        await expect(commentInput).toBeVisible({ timeout: 10000 });
         await commentInput.fill(testCommentPayload);
 
-        // 5. Click the submit send button to trigger the network mutation dispatch
-        const sendButton = page.locator('button:has(svg)'); // Targets your GrSend container layout
+        // 8. Submit the comment mutation layout
+        const sendButton = page.locator('button:has(svg)');
         await sendButton.click();
 
-        // 6. Await the server network resolution hook from step 1
-        const response = commentResponsePromise;
-
-        // 7. Assert that your backend application responded with a successful status
+        // 9. Await and verify network execution confirmation
+        const response = await commentResponsePromise;
         expect(response.status()).toBe(201);
 
-        // 8. Unpack JSON body output to verify transactional integrity
         const jsonBody = await response.json();
         expect(jsonBody.status).toBe("success");
 
-        // 9. Assert frontend UI changes (Check that input cleared and success notice appeared)
+        // 10. Assert local view updates are cleared down cleanly
         await expect(commentInput).toHaveValue("");
-
         const successMessage = page.locator('span:has-text("Comment posted!")');
         await expect(successMessage).toBeVisible();
-    })
-})
+    });
+});

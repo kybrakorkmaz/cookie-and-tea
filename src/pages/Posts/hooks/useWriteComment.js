@@ -1,6 +1,5 @@
 import apiClient from "../../../api/axios.js";
 import {useParams} from "react-router";
-import {errors} from "@playwright/test";
 
 const useWriteComment = () =>{
     const {username} = useParams();

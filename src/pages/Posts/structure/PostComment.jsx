@@ -39,7 +39,7 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
 
         try {
             if (update) {
-                update(trimmed);
+                await update(trimmed);
             } else {
                 await handleWriteComment(postId, { comment: trimmed });
                 setNewComment("");

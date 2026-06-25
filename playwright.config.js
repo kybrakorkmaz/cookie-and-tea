@@ -39,7 +39,7 @@ export default defineConfig({
 
     // Apply the bypass headers globally to all contexts, pages, and projects
     extraHTTPHeaders: {
-      'x-test-bypass': process.env.BYPASS_SECRET
+      'x-test-bypass': process.env.BYPASS_SECRET || 'test-dev-bypass-key-123!'
     }
   },
 

@@ -68,7 +68,7 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
         );
 
         // Run UI action with email
-        await loginUserViaUI(page, credentials.username, credentials.password);
+        await loginUserViaUI(page, credentials.email, credentials.password);
 
         const response = await loginResponsePromise;
         expect(response.status()).toBe(200);

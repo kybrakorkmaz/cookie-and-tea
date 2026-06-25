@@ -1,6 +1,6 @@
 /**
  * Headless Helper: Registers and prepares a user profile for active login flows.
- * @param {import('@playwright/test').Page} request
+ * @param {import('@playwright/test').APIRequestContext} request
  * @returns {Promise<{username: string, email: string, password: string}>}
  */
 export async function registerUserViaApi(request) {

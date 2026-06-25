@@ -9,7 +9,7 @@ import Login from "./pages/Auth/Login.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Posts from "./pages/Posts/Posts.jsx";
 import People from "./pages/People/People.jsx";
-import Feed from "./pages/Feed.jsx";
+import Feed from "./pages/Feed/Feed.jsx";
 import Settings from  "./pages/Settings/Settings.jsx";
 import Activity from "./pages/Activity.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -36,7 +36,7 @@ const App = () => {
                     <Route path="/posts/:userId?" element={<Posts />} />
 
                     {/* Protected Routes wrapped individually with <ProtectedRoute> */}
-                    <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
+                    <Route path={"/feed/:username"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
                     <Route path={"/settings"} element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
                     <Route path={"/activity"} element={<ProtectedRoute><Activity/></ProtectedRoute>}/>
                 </Routes>

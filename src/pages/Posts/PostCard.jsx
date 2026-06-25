@@ -80,7 +80,7 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
                     </div>
 
                     <InteractionBar post={post} activeType={activeType} setActiveType={setActiveType} setDonateAmount={setDonateAmount}/>
-                    <PostComment/>
+                    <PostComment postId={post.id}/>
                     {previewComment && !activeType && (
                         <div className="mt-1">
                             <PostCommenters imgSrc={previewComment.user?.profileImage} name={previewComment.user?.name} comment={previewComment.comment}/>
