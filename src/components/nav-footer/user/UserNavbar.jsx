@@ -1,58 +1,58 @@
 import Logo from "../Logo.jsx";
 import SearchBar from "../SearchBar.jsx";
-import Badge from '@mui/material/Badge'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import {FaHome} from "react-icons/fa";
-import {useState, useMemo} from "react";
-import {RiListSettingsFill} from "react-icons/ri";
-import {NavLink} from "react-router";
+import Badge from '@mui/material/Badge';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { FaHome } from "react-icons/fa";
+import { useState, useMemo } from "react";
+import { RiListSettingsFill } from "react-icons/ri";
+import { NavLink } from "react-router-dom"; // 🚀 Clean parameter tracking
 import Notifications from "../../Notifications.jsx";
-import {getSortedActivities} from "../../../helpers/followingNotifications.js";
+import { getSortedActivities } from "../../../helpers/followingNotifications.js";
 import HamburgerMenu from "../HamburgerMenu.jsx";
 import MobileNavbar from "../MobileNavbar.jsx";
-import {IoLogOut} from "react-icons/io5";
-import {useLogout} from "./useLogout.js";
-import {useAuth} from "../../../context/AuthContext.jsx"; // todo change navbar profile for authenticated user
+import { IoLogOut } from "react-icons/io5";
+import { useLogout } from "./useLogout.js";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 const UserNavbar = () => {
-    const { user } = useAuth(); // Pulling live session data dynamically
+    // 🚀 INDUSTRY APPROACH: Source identity from global session data, never the volatile URL parameters
+    const { user } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    // Establish fallbacks in case the fields are initially null or loading
+    // Establish clean safe fallbacks directly tied to the session state
     const currentUserId = user?.id || null;
-    const username = user?.username || "";
+    const sessionUsername = user?.username || "";
     const name = user?.name || "User";
 
     // Fallback avatar image if the user has not uploaded a profileImage yet
-    // const image = user?.profileImage || "/images/people/default-avatar.jpg"; todo create default image for users
-    const image = "/images/people/angel.jpg";
+    const image = user?.profileImage || "/images/people/angel.jpg";
 
     // Compute notifications based on the dynamic logged-in user id
     const sortedActivities = useMemo(() => getSortedActivities(currentUserId, image), [currentUserId, image]);
     const activityLength = sortedActivities.length;
 
+    const { handleClick } = useLogout();
 
-    const {handleClick} = useLogout();
-
-    // Inject the dynamic username into your sidebar navigation layout links
+    // 🚀 FIXED: Links now use the stable sessionUsername, and the literal syntax colon ':' was removed from feed
     const links = [
-        { to: `/profile/${username}?tab=intro`, label: "Profile" },
+        { to: `/profile/${sessionUsername}?tab=intro`, label: "Profile" },
         { to: "/activity", label: "Activity" },
-        { to: "/feed", label: "Feed" },
+        { to: `/feed/${sessionUsername}`, label: "Feed" },
         { to: "/settings", label: "Settings" },
-        { to: "/logout", label: "Logout"}
+        { to: "/logout", label: "Logout" }
     ];
 
     return (
-        <nav className="navbar w-full px-4  md:px-8 py-4 md:py-6 lg:px-28 font-paragraph text-p">
+        <nav className="navbar w-full px-4 md:px-8 py-4 md:py-6 lg:px-28 font-paragraph text-p">
             {/* Mobile Layout */}
             <div className="lg:hidden">
                 <div className="flex justify-between items-center">
                     <div className="text-primary-dark mb-6">
-                        <Logo to="/feed"/>
+                        {/* 🚀 Changed to dynamic routing path based on available user session */}
+                        <Logo to={sessionUsername ? `/feed/${sessionUsername}` : "/login"} />
                     </div>
                     <HamburgerMenu onClick={toggleMenu} isOpen={isMenuOpen} />
                 </div>
@@ -68,7 +68,7 @@ const UserNavbar = () => {
             {/* Desktop Layout */}
             <div className="hidden lg:flex flex-row justify-between items-center gap-6">
                 <div className="flex-1/3 justify-start text-primary-dark">
-                    <Logo to="/feed" />
+                    <Logo to={sessionUsername ? `/feed/${sessionUsername}` : "/login"} />
                 </div>
 
                 <div className="flex flex-1/3 justify-center text-primary-dark font-bold">
@@ -77,7 +77,7 @@ const UserNavbar = () => {
 
                 <div className="flex flex-1/3 justify-end items-center gap-4 px-4">
                     {/* Profile Link Card */}
-                    <NavLink to={`/profile/${username}?tab=intro`} className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
+                    <NavLink to={`/profile/${sessionUsername}?tab=intro`} className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
                         <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-100">
                             <img src={image} alt={name} className="w-full h-full object-cover object-top" />
                         </div>
@@ -105,7 +105,7 @@ const UserNavbar = () => {
                         )}
                     </div>
 
-                    <NavLink to="/feed" className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
+                    <NavLink to={`/feed/${sessionUsername}`} className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
                         <FaHome style={{ width: "1.8rem", height: "1.8rem" }} />
                     </NavLink>
 
@@ -122,8 +122,6 @@ const UserNavbar = () => {
                     </button>
                 </div>
             </div>
-
-
         </nav>
     );
 };

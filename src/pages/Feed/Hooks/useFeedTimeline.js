@@ -5,11 +5,9 @@ import { createPost, updatePost, deletePost } from "./handlePostActions.js";
 
 const useFeedTimeline = (username) => {
     const queryClient = useQueryClient();
-
-    // Core shared cache tracking key
     const timelineCacheKey = ["feedTimeline", username];
 
-    // 1. READ: Automatic cache synchronization pipeline
+    // 1. READ: Safe Cache Synchronization Pipeline
     const timelineQuery = useQuery({
         queryKey: timelineCacheKey,
         queryFn: async () => {
@@ -18,51 +16,60 @@ const useFeedTimeline = (username) => {
             return response.data?.data || [];
         },
         enabled: !!username,
-        staleTime: 1000 * 60 * 5, // Consider cache data fresh for 5 minutes
+        staleTime: 1000 * 60 * 5,
     });
 
-    // 2. CREATE: Action execution + query cache clearance
+    // 2. CREATE: Bound Action Execution Block
     const createMutation = useMutation({
-        mutationFn: (payload) => createPost(username, payload),
+        mutationFn: (payload) => {
+            if (!username) throw new Error("Unauthorized action dispatch blocked by cache orchestration runtime.");
+            return createPost(username, payload);
+        },
         onSuccess: () => {
-            // 🚀 Invalidate forces immediate refetching of the joined user profile data
             queryClient.invalidateQueries({ queryKey: timelineCacheKey });
         },
     });
 
-    // 3. UPDATE: Modification tracking + query cache clearance
+    // 3. UPDATE: Bound Modification Block
     const updateMutation = useMutation({
-        mutationFn: ({ postId, payload }) => updatePost(username, postId, payload),
+        mutationFn: ({ postId, payload }) => {
+            if (!username) throw new Error("Unauthorized modification dispatch blocked.");
+            return updatePost(username, postId, payload);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: timelineCacheKey });
         },
     });
 
-    // 4. DELETE: Removal execution + query cache clearance
+    // 4. DELETE: Bound Removal Block
     const deleteMutation = useMutation({
-        mutationFn: (postId) => deletePost(username, postId),
+        mutationFn: (postId) => {
+            if (!username) throw new Error("Unauthorized exclusion dispatch blocked.");
+            return deletePost(username, postId);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: timelineCacheKey });
         },
     });
 
     return {
-        // Data and descriptive boolean execution states
         feedTimeline: timelineQuery.data || [],
         loading: timelineQuery.isLoading,
-        isRefetching: timelineQuery.isFetching && !timelineQuery.isLoading, // 🔄 Drives the reload spinner
+        isRefetching: timelineQuery.isFetching && !timelineQuery.isLoading,
         isPublishing: createMutation.isPending,
         error: timelineQuery.error,
 
-        // Wrapped clean action dispatch references
         handleAddPost: createMutation.mutateAsync,
+
+        // Convert the backend's updated post payload result directly to an authentic truthy/falsy boolean
         handleUpdatePost: async (postId, updatedFields) => {
-            await updateMutation.mutateAsync({ postId, payload: updatedFields });
-            return true;
+            const result = await updateMutation.mutateAsync({ postId, payload: updatedFields });
+            return Boolean(result);
         },
+
+        // Directly return the true/false response received from deletePost
         handleDeletePost: async (postId) => {
-            await deleteMutation.mutateAsync(postId);
-            return true;
+            return await deleteMutation.mutateAsync(postId);
         },
     };
 };

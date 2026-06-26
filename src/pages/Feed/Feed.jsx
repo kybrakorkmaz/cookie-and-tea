@@ -33,7 +33,8 @@ const Feed = () => {
     // Local presentational offset limits
     const [visibleCount, setVisibleCount] = useState(5);
 
-    // Consume the enterprise-ready custom cache provider
+    // 🚀 FIXED: Conditionally pass username down. If it's not my own feed, pass null
+    // to stop unauthorized network requests from firing.
     const {
         feedTimeline: allPosts,
         loading,
@@ -42,7 +43,7 @@ const Feed = () => {
         handleAddPost,
         handleUpdatePost,
         handleDeletePost
-    } = useFeedTimeline(username);
+    } = useFeedTimeline(isMyOwnFeed ? username : null);
 
     const totalPosts = allPosts?.length || 0;
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
@@ -68,7 +69,6 @@ const Feed = () => {
         };
 
         try {
-            // Await mutation execution and automatic client cache clearance
             await handleAddPost(payload);
 
             // UI elements reset only upon confirmed server synchronization
@@ -88,7 +88,7 @@ const Feed = () => {
         return () => {
             uploadedVideos.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [uploadedVideos]);
+    }, []);
 
     const handleImageUpload = (file) => {
         if (file && uploadedImages.length < 10) {
@@ -212,7 +212,7 @@ const Feed = () => {
                                     type="button"
                                     onClick={handleCreatePost}
                                     className="bg-primary-dark text-white p-2.5 rounded-full hover:bg-primary-dark/90 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm cursor-pointer"
-                                    disabled={isPublishing || (!header && !content)}
+                                    disabled={isPublishing || (!header.trim() && !content.trim())}
                                 >
                                     <GrSend className="rotate-45" size={20} />
                                 </button>
@@ -224,7 +224,6 @@ const Feed = () => {
                             <FaNewspaper className="text-primary-dark transition-transform duration-300 group-hover:rotate-12" size={22} />
                             <hr className="flex-1 border-t-2 border-gray-200" />
 
-                            {/* 🔄 THE SPINNER: This animates automatically during background cache refetches */}
                             {isRefetching && (
                                 <div className="w-5 h-5 border-2 border-primary-dark border-t-transparent rounded-full animate-spin transition-all" />
                             )}
@@ -234,7 +233,6 @@ const Feed = () => {
                         <div className="flex flex-col gap-8">
                             <h2 className="text-xl font-header font-bold text-gray-800 mb-2">Your Feed</h2>
 
-                            {/* In-Flight Insertion Skeleton Indicator */}
                             {isPublishing && (
                                 <div className="p-5 md:p-7 rounded-2xl border border-dashed border-gray-300 bg-white/80 animate-pulse flex flex-col gap-4 shadow-sm">
                                     <div className="flex items-center gap-3">
@@ -250,6 +248,7 @@ const Feed = () => {
 
                             {visiblePosts.length > 0 ? (
                                 visiblePosts.map((post) => {
+                                    // Clean standard ownership validation
                                     const isMyOwnPost = user && user.id === post.userId;
                                     return (
                                         <PostCard

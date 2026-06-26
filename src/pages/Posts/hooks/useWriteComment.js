@@ -1,8 +1,6 @@
-// Hooks/useWriteComment.js
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../../../api/axios.js";
 import { useParams } from "react-router";
-import {useAuth} from "../../../context/AuthContext.jsx";
 
 const useWriteComment = () => {
     const { username } = useParams();
@@ -10,7 +8,9 @@ const useWriteComment = () => {
 
     const commentMutation = useMutation({
         mutationFn: async ({ postId, comment }) => {
-            console.log("post id:", postId, "comment:", comment);
+            // Dropped sensitive raw user text logging, tracking only the structural postId metadata
+            console.log("Submitting comment payload for post id:", postId);
+
             const response = await apiClient.post(
                 `/api/v1/profile/${username}/posts/${postId}/comment`,
                 { comment }

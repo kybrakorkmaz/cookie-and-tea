@@ -42,6 +42,6 @@ export const deletePost = async (username, postId) => {
         return false;
     } catch (e) {
         console.error("Error occurred while deleting post:", e.message);
-        return false;
+        throw e;
     }
 };

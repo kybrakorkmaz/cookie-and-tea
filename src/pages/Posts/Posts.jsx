@@ -1,4 +1,4 @@
-// Posts.jsx
+// Posts.jsx (Snippet around lines 45 - 60 and the return render map block)
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -11,32 +11,32 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import apiClient from "../../api/axios.js";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
-    const { username } = useParams();
+    const { userId } = useParams();
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
-    const profileCacheKey = ["profilePosts", username];
+    const profileCacheKey = ["profilePosts", userId];
 
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
-    // 1. 🎯 READ PIPELINE: Automated Profile Posts Caching
+    // 1. READ PIPELINE: Automated Profile Posts Caching
     const { data: allPosts = [], isLoading: loading } = useQuery({
         queryKey: profileCacheKey,
         queryFn: async () => {
-            if (!username) return [];
-            const response = await apiClient.get(`/api/v1/profile/${username}/posts`);
+            if (!userId) return [];
+            const response = await apiClient.get(`/api/v1/profile/${userId}/posts`);
             if (response.status === 204) return [];
             return response.data?.data ?? [];
         },
-        enabled: !!username,
+        enabled: !!userId,
     });
 
-    // 2. 🎯 MUTATION PIPELINE: Delete & Auto-Bust Cache
+    // 2. MUTATION PIPELINE: Delete & Auto-Bust Cache
     const deleteMutation = useMutation({
         mutationFn: async (postId) => {
-            await apiClient.delete(`/api/v1/profile/${username}/posts/${postId}`);
+            await apiClient.delete(`/api/v1/profile/${userId}/posts/${postId}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: profileCacheKey });
@@ -48,10 +48,11 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         }
     });
 
-    // 3. 🎯 MUTATION PIPELINE: Update & Auto-Bust Cache
+    // 3. MUTATION PIPELINE: Update & Auto-Bust Cache
     const updateMutation = useMutation({
+        // Return the axios response object from the promise chain instead of discarding it
         mutationFn: async ({ postId, updatedFields }) => {
-            await apiClient.put(`/api/v1/profile/${username}/posts/${postId}`, updatedFields);
+            return await apiClient.put(`/api/v1/profile/${userId}/posts/${postId}`, updatedFields);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: profileCacheKey });
@@ -66,7 +67,7 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     const totalPosts = allPosts.length;
     const visiblePosts = allPosts.slice(0, visibleCount);
 
-    // --- Core Highlighting & Scrolling Logic (Preserved Perfectly) ---
+    // --- Core Highlighting & Scrolling Logic ---
     useEffect(() => {
         if (targetPostId) {
             setInternalTarget(targetPostId);
@@ -123,7 +124,11 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
                                 highlightedId={highlightedId}
                                 isPermitted={isMyOwnPost}
                                 onDelete={(id) => deleteMutation.mutate(id)}
-                                onUpdate={(id, fields) => updateMutation.mutateAsync({ postId: id, updatedFields: fields })}
+                                // Coerce the mutation result into a clean Boolean truthy/falsy response
+                                onUpdate={async (id, fields) => {
+                                    const res = await updateMutation.mutateAsync({ postId: id, updatedFields: fields });
+                                    return Boolean(res);
+                                }}
                             />
                         );
                     })
