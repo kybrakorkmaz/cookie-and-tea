@@ -1,70 +1,70 @@
+// Hooks/useFeedTimeline.js
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../../../api/axios.js";
-import {useState, useEffect, useCallback} from "react";
+import { createPost, updatePost, deletePost } from "./handlePostActions.js";
 
 const useFeedTimeline = (username) => {
-    const [feedTimeline, setFeedTimeline] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    const [offset, setOffset] = useState(0);
+    const queryClient = useQueryClient();
 
-    const LIMIT = 5;
+    // Core shared cache tracking key
+    const timelineCacheKey = ["feedTimeline", username];
 
-    const fetchTimeline = useCallback(async (currentOffset, clearExisting = false) => {
-        if(!username) return;
+    // 1. READ: Automatic cache synchronization pipeline
+    const timelineQuery = useQuery({
+        queryKey: timelineCacheKey,
+        queryFn: async () => {
+            if (!username) return [];
+            const response = await apiClient.get(`/api/v1/feed/${username}`);
+            return response.data?.data || [];
+        },
+        enabled: !!username,
+        staleTime: 1000 * 60 * 5, // Consider cache data fresh for 5 minutes
+    });
 
-        setLoading(true);
-        try{
-            const response = await apiClient.get(`/api/v1/feed/${username}`, {
-                params: {
-                    limit: LIMIT,
-                    offset: currentOffset
-                }
-            });
+    // 2. CREATE: Action execution + query cache clearance
+    const createMutation = useMutation({
+        mutationFn: (payload) => createPost(username, payload),
+        onSuccess: () => {
+            // 🚀 Invalidate forces immediate refetching of the joined user profile data
+            queryClient.invalidateQueries({ queryKey: timelineCacheKey });
+        },
+    });
 
-            if(response.status === 200) {
-                const incomingPosts = response.data?.data || [];
+    // 3. UPDATE: Modification tracking + query cache clearance
+    const updateMutation = useMutation({
+        mutationFn: ({ postId, payload }) => updatePost(username, postId, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: timelineCacheKey });
+        },
+    });
 
-                if(clearExisting) {
-                    setFeedTimeline(incomingPosts);
-                }else {
-                    // Append new posts onto the end of our current list state
-                    setFeedTimeline(prev => [...prev, ...incomingPosts]);
-                }
-                // If the backend sent fewer posts than our limit, we hit the end of the line
-                if(incomingPosts.length < LIMIT){
-                    setHasMore(false);
-                }else {
-                    setHasMore(true);
-                }
-            }
-        }catch (e) {
-            console.error("Internal Server Error while fetching feed timeline:", e.message);
-        } finally {
-            setLoading(false);
-        }
-    }, [username]);
+    // 4. DELETE: Removal execution + query cache clearance
+    const deleteMutation = useMutation({
+        mutationFn: (postId) => deletePost(username, postId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: timelineCacheKey });
+        },
+    });
 
-    // Initial load: whenever username changes, reset everything completely
-    useEffect(() => {
-        setOffset(0);
-        setHasMore(true);
-        fetchTimeline(0, true);
-    }, [username]); // Re-fetches automatically if the profile changes
+    return {
+        // Data and descriptive boolean execution states
+        feedTimeline: timelineQuery.data || [],
+        loading: timelineQuery.isLoading,
+        isRefetching: timelineQuery.isFetching && !timelineQuery.isLoading, // 🔄 Drives the reload spinner
+        isPublishing: createMutation.isPending,
+        error: timelineQuery.error,
 
-    // Triggers when the user clicks Load More
-    const loadMorePosts = () => {
-        if(loading || !hasMore) return;
-        const nextOffset = offset + LIMIT;
-        setOffset(nextOffset);
-        fetchTimeline(nextOffset, false);
-    }
-    return{
-        feedTimeline,
-        setFeedTimeline, // Exposed so handleCreatePost / handleDelete can update local state instantly
-        loading,
-        hasMore,
-        loadMorePosts
-    }
+        // Wrapped clean action dispatch references
+        handleAddPost: createMutation.mutateAsync,
+        handleUpdatePost: async (postId, updatedFields) => {
+            await updateMutation.mutateAsync({ postId, payload: updatedFields });
+            return true;
+        },
+        handleDeletePost: async (postId) => {
+            await deleteMutation.mutateAsync(postId);
+            return true;
+        },
+    };
 };
 
 export default useFeedTimeline;

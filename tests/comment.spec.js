@@ -6,7 +6,7 @@ test.describe("Comment CRUD Operation Suit Test", () => {
 
     test.beforeEach(async ({ page, context }) => {
         await context.setExtraHTTPHeaders({
-            'x-test-bypass': process.env.BYPASS_SECRET
+            'x-test-bypass': process.env.BYPASS_SECRET || 'test-dev-bypass-key-123!'
         });
 
         page.on("console", msg => {
@@ -24,11 +24,11 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         // 1. Dynamically register a brand new user account
         const targetProfile = await registerUserViaApi(request);
 
-        // 2. 🔑 Headless Login: Exchange the new credentials for a fresh session token/cookie
+        // 2.  Headless Login: Exchange the new credentials for a fresh session token/cookie
         const loginResponse = await request.post(`${backendUrl}/api/v1/auth/login`, {
             data: {
-                username: targetProfile.username,
-                password: targetProfile.password || "TestPassword123!" // Ensure this matches your generator
+                identifier: targetProfile.username,
+                password: targetProfile.password || "test-dev-bypass-key-123!"
             }
         });
         expect(loginResponse.status()).toBe(200);
@@ -44,7 +44,7 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         // 4. Headless Seeding via Feed Router: Create the post under this user's account
         const postResponse = await request.post(`${backendUrl}/api/v1/feed/${targetProfile.username}`, {
             data: {
-                title: "Automated Integration Test Post",
+                header: "Automated Integration Test Post",
                 content: "Verifying comment operations on profile views.",
                 type: "text"
             }
@@ -60,8 +60,14 @@ test.describe("Comment CRUD Operation Suit Test", () => {
             && response.request().method() === "POST"
         );
 
-        // 6. Navigate to the Profile Page (Now safely authenticated as the owner!)
-        await page.goto(`/profile/${targetProfile.username}`);
+        // 6. 🎯 FIX: Corrected query parameter syntax format (?tab=posts instead of /tab?=posts)
+        await page.goto(`/profile/${targetProfile.username}?tab=posts`);
+
+        // 🎯 FIX: Explicitly target and click the Posts tab button to force the conditional tab layout to mount
+        const postsTabButton = page.getByRole('button', { name: /posts/i });
+        if (await postsTabButton.isVisible()) {
+            await postsTabButton.click();
+        }
 
         // 7. Select, focus, and fill out the text input area inside the <PostCard />
         const commentInput = page.locator('textarea[id="comment"]');
@@ -69,7 +75,8 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         await commentInput.fill(testCommentPayload);
 
         // 8. Submit the comment mutation layout
-        const sendButton = page.locator('button:has(svg)');
+        //  Changed from generic 'button:has(svg)' to strict accessible role-and-name identifier
+        const sendButton = page.getByRole('button', { name: "Send comment" });
         await sendButton.click();
 
         // 9. Await and verify network execution confirmation

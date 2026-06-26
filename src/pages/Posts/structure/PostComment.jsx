@@ -1,15 +1,13 @@
 import { GrSend } from "react-icons/gr";
 import { z } from "zod";
 import { useState, useMemo } from "react";
-import {commentSchema, MAX_CHARS} from "../../../validations/postStructure.validation.js";
+import { commentSchema, MAX_CHARS } from "../../../validations/postStructure.validation.js";
 import useWriteComment from "../hooks/useWriteComment.js";
-import {useAuth} from "../../../context/AuthContext.jsx";
 
-
-const PostComment = ({oldComment="", onSend, update, postId}) => {
+const PostComment = ({ oldComment = "", onSend, update, postId }) => {
     const [newComment, setNewComment] = useState(oldComment);
     const [status, setStatus] = useState({ message: "", type: "" });
-    const { handleWriteComment } = useWriteComment();
+    const { handleWriteComment, isSubmittingComment } = useWriteComment(); // 🚀 Added isSubmittingComment to prevent double submissions
 
     const characterCounterColor = useMemo(() => {
         return newComment.length >= MAX_CHARS ? "text-red-500 font-bold" : "text-gray-400";
@@ -17,7 +15,6 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
 
     const handleChange = (e) => {
         const value = e.target.value;
-        // Allows a small buffer so they can type and then backspace/edit down to the limit
         if (value.length <= MAX_CHARS + 10) {
             setNewComment(value);
         }
@@ -28,7 +25,6 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
 
     const handleSend = async () => {
         const trimmed = newComment.trim();
-
         const result = commentSchema.safeParse(trimmed);
 
         if (!result.success) {
@@ -41,7 +37,12 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
             if (update) {
                 await update(trimmed);
             } else {
-                await handleWriteComment(postId, { comment: trimmed });
+                // 🎯 THE FIX: Wrapped parameters into a single payload object
+                await handleWriteComment({
+                    postId: postId,
+                    comment: trimmed
+                });
+
                 setNewComment("");
                 setStatus({ message: "Comment posted!", type: "success" });
                 setTimeout(() => setStatus({ message: "", type: "" }), 4000);
@@ -53,15 +54,11 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
         }
     };
 
-    // --- NEW: Key Handling Logic ---
     const handleKeyDown = (e) => {
-        // If user presses Enter without Shift
         if (e.key === "Enter" && !e.shiftKey) {
-            // Prevent default behavior (new line) and trigger send
             e.preventDefault();
             handleSend();
         }
-        // If user presses Shift + Enter, it will naturally create a new line
     };
 
     return (
@@ -73,19 +70,19 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
                     rows="1"
                     value={newComment}
                     onChange={handleChange}
-                    onKeyDown={handleKeyDown} // Triggered on Enter
+                    onKeyDown={handleKeyDown}
+                    disabled={isSubmittingComment} // Disable textarea while sending
 
-                    /* --- MOBILE OPTIMIZATIONS --- */
-                    enterKeyHint="send"      // Changes mobile 'Return' button to 'Send'
-                    autoComplete="off"       // Prevents weird browser overlays
-                    spellCheck="true"        // Helpful for mobile typing
+                    enterKeyHint="send"
+                    autoComplete="off"
+                    spellCheck="true"
 
                     aria-invalid={status.type === "error"}
                     className={`peer w-full min-h-13 rounded-xl border-2 bg-white p-4 pr-14 text-sm outline-none transition-all resize-y
                         ${status.type === "error"
                         ? "border-red-400 focus:border-red-500"
                         : "border-gray-200 focus:border-gray-900"
-                    }`}
+                    } ${isSubmittingComment ? "opacity-50 cursor-not-allowed" : ""}`}
                 />
 
                 <label
@@ -101,7 +98,9 @@ const PostComment = ({oldComment="", onSend, update, postId}) => {
                 <button
                     type="button"
                     onClick={handleSend}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-90"
+                    disabled={isSubmittingComment || !newComment.trim()} // 🚀 Disable send button during active submission
+                    aria-label="Send comment"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-90 disabled:opacity-30 disabled:pointer-events-none"
                 >
                     <GrSend className="rotate-45" size={20} />
                 </button>

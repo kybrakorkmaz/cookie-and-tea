@@ -1,12 +1,12 @@
+// Feed.jsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { FaImage, FaVideo, FaTimes, FaNewspaper } from "react-icons/fa";
 import { GrSend } from "react-icons/gr";
 
-// State and context handlers
+// Context & custom state cache orchestrator hooks
 import { useAuth } from "../../context/AuthContext.jsx";
 import useFeedTimeline from "./Hooks/useFeedTimeline.js";
-import { createPost, updatePost, deletePost } from "./Hooks/handlePostActions.js";
 
 // Layout presentation components
 import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
@@ -20,60 +20,76 @@ import LoadMore from "../../components/LoadMore.jsx";
 const Feed = () => {
     const { username } = useParams();
     const { user } = useAuth();
-
     const isMyOwnFeed = user?.username === username;
 
-    // Form inputs and media file tracking hooks
-    const [title, setTitle] = useState("");
+    // Form inputs and local visibility control states
+    const [header, setHeader] = useState("");
     const [content, setContent] = useState("");
     const [uploadedImages, setUploadedImages] = useState([]);
     const [uploadedVideos, setUploadedVideos] = useState([]);
     const [showImageUpload, setShowImageUpload] = useState(false);
     const [showVideoUpload, setShowVideoUpload] = useState(false);
 
-    // Paginated hook manager data structure
+    // Local presentational offset limits
+    const [visibleCount, setVisibleCount] = useState(5);
+
+    // Consume the enterprise-ready custom cache provider
     const {
         feedTimeline: allPosts,
-        setFeedTimeline: setAllPosts,
         loading,
-        hasMore,
-        loadMorePosts
+        isRefetching,
+        isPublishing,
+        handleAddPost,
+        handleUpdatePost,
+        handleDeletePost
     } = useFeedTimeline(username);
 
-    // Create pipeline handler
+    const totalPosts = allPosts?.length || 0;
+    const visiblePosts = allPosts?.slice(0, visibleCount) || [];
+
+    const determinePostType = () => {
+        const hasImages = uploadedImages.length > 0;
+        const hasVideos = uploadedVideos.length > 0;
+        if (hasImages && hasVideos) return "hybrid";
+        if (hasImages) return "image";
+        if (hasVideos) return "video";
+        return "text";
+    };
+
     const handleCreatePost = async () => {
-        if (!title && !content) return;
+        if (!header.trim() && !content.trim()) return;
+
+        const payload = {
+            header: header.trim(),
+            content: content.trim(),
+            type: determinePostType(),
+            images: uploadedImages,
+            videos: uploadedVideos
+        };
+
         try {
-            const newPost = await createPost(username, {
-                title,
-                content,
-                images: uploadedImages,
-                videos: uploadedVideos
-            });
+            // Await mutation execution and automatic client cache clearance
+            await handleAddPost(payload);
 
-            if (newPost) setAllPosts(prev => [newPost, ...prev]);
-
-            // Clean dynamic references out of browser cache allocation blocks
+            // UI elements reset only upon confirmed server synchronization
             uploadedVideos.forEach(url => URL.revokeObjectURL(url));
-            setTitle("");
+            setHeader("");
             setContent("");
             setUploadedImages([]);
             setUploadedVideos([]);
             setShowImageUpload(false);
             setShowVideoUpload(false);
         } catch (err) {
-            console.error("Failed to append created post:", err.message);
+            console.error("Post processing action was aborted by handler:", err.message);
         }
     };
 
-    // Component unmount layout optimization handler
     useEffect(() => {
         return () => {
             uploadedVideos.forEach(url => URL.revokeObjectURL(url));
         };
     }, [uploadedVideos]);
 
-    // Local media tracking modifiers
     const handleImageUpload = (file) => {
         if (file && uploadedImages.length < 10) {
             const reader = new FileReader();
@@ -85,7 +101,7 @@ const Feed = () => {
     const handleVideoUpload = (file) => {
         if (file && uploadedVideos.length < 5) {
             const videoUrl = URL.createObjectURL(file);
-            setUploadedVideos([...uploadedVideos, videoUrl]);
+            setUploadedVideos(prev => [...prev, videoUrl]);
         }
     };
 
@@ -95,29 +111,6 @@ const Feed = () => {
         setUploadedVideos(uploadedVideos.filter((_, i) => i !== index));
     };
 
-    // Real-time inline timeline mutators
-    const handleDelete = async (postId) => {
-        try {
-            const success = await deletePost(postId);
-            if (success) {
-                setAllPosts(prev => prev.filter(post => post.id !== postId));
-            }
-        } catch (err) {
-            console.error("Failed to delete post:", err.message);
-        }
-    };
-
-    const handleUpdate = async (postId, updatedFields) => {
-        try {
-            const updatedPost = await updatePost(postId, updatedFields);
-            if (updatedPost) {
-                setAllPosts(prev => prev.map(post => post.id === postId ? updatedPost : post));
-            }
-        } catch (err) {
-            console.error("Failed to apply post update parameters:", err.message);
-        }
-    };
-
     return (
         <>
             {isMyOwnFeed ? (
@@ -125,15 +118,15 @@ const Feed = () => {
                     <UserNavbar />
                     <div className="max-w-3xl mx-auto px-4 py-8 mb-10 md:mb-40">
 
-                        {/* Create Post Form */}
+                        {/* Create Post Form Wrapper */}
                         <div className="w-full flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8 transition-shadow duration-300 hover:shadow-md">
                             <div className="p-4 flex flex-col gap-3">
                                 <input
                                     type="text"
                                     placeholder="Title"
                                     className="text-xl font-bold outline-none border-b border-gray-50 pb-2 focus:border-primary-dark/30 transition-colors"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    value={header}
+                                    onChange={(e) => setHeader(e.target.value)}
                                     required
                                 />
                                 <textarea
@@ -143,7 +136,6 @@ const Feed = () => {
                                     onChange={(e) => setContent(e.target.value)}
                                 />
 
-                                {/* Image Preview Grid Container */}
                                 {uploadedImages.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         {uploadedImages.map((img, index) => (
@@ -161,7 +153,6 @@ const Feed = () => {
                                     </div>
                                 )}
 
-                                {/* Video Preview Container */}
                                 {uploadedVideos.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         {uploadedVideos.map((video, index) => (
@@ -221,37 +212,56 @@ const Feed = () => {
                                     type="button"
                                     onClick={handleCreatePost}
                                     className="bg-primary-dark text-white p-2.5 rounded-full hover:bg-primary-dark/90 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-sm cursor-pointer"
-                                    disabled={!title && !content}
+                                    disabled={isPublishing || (!header && !content)}
                                 >
                                     <GrSend className="rotate-45" size={20} />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Newspaper Section with Decorative Break Line */}
+                        {/* Title Bar Section with Synchronized Background Spinner */}
                         <div className="flex items-center gap-4 mb-10 group">
                             <FaNewspaper className="text-primary-dark transition-transform duration-300 group-hover:rotate-12" size={22} />
                             <hr className="flex-1 border-t-2 border-gray-200" />
+
+                            {/* 🔄 THE SPINNER: This animates automatically during background cache refetches */}
+                            {isRefetching && (
+                                <div className="w-5 h-5 border-2 border-primary-dark border-t-transparent rounded-full animate-spin transition-all" />
+                            )}
                         </div>
 
-                        {/* Interactive Timeline Stream Feed Section */}
+                        {/* Stream Timeline Container */}
                         <div className="flex flex-col gap-8">
                             <h2 className="text-xl font-header font-bold text-gray-800 mb-2">Your Feed</h2>
 
-                            {allPosts.length > 0 ? (
-                                allPosts.map((post) => {
+                            {/* In-Flight Insertion Skeleton Indicator */}
+                            {isPublishing && (
+                                <div className="p-5 md:p-7 rounded-2xl border border-dashed border-gray-300 bg-white/80 animate-pulse flex flex-col gap-4 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200" />
+                                        <div className="flex flex-col gap-2">
+                                            <div className="h-4 w-28 bg-gray-200 rounded" />
+                                            <div className="h-3 w-16 bg-gray-100 rounded" />
+                                        </div>
+                                    </div>
+                                    <div className="h-6 w-1/2 bg-gray-200 rounded mt-1" />
+                                </div>
+                            )}
+
+                            {visiblePosts.length > 0 ? (
+                                visiblePosts.map((post) => {
                                     const isMyOwnPost = user && user.id === post.userId;
                                     return (
                                         <PostCard
                                             key={post.id}
                                             post={post}
                                             isPermitted={isMyOwnPost}
-                                            onDelete={handleDelete}
-                                            onUpdate={handleUpdate}
+                                            onDelete={handleDeletePost}
+                                            onUpdate={handleUpdatePost}
                                         />
                                     );
                                 })
-                            ) : !loading ? (
+                            ) : (!loading && !isPublishing) ? (
                                 <div className="text-center py-10 text-gray-400 font-paragraph">
                                     No posts to show on your timeline yet.
                                 </div>
@@ -263,8 +273,8 @@ const Feed = () => {
                                 </div>
                             )}
 
-                            {hasMore && !loading && (
-                                <LoadMore onClick={loadMorePosts} />
+                            {visibleCount < totalPosts && !loading && (
+                                <LoadMore onClick={() => setVisibleCount(prev => prev + 5)} />
                             )}
                         </div>
                     </div>
@@ -272,7 +282,6 @@ const Feed = () => {
                     <PageUpButton />
                 </div>
             ) : (
-                /* Fallback structural context frame when path route parameters mismatch authorization */
                 <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
                     <div className="text-center max-w-sm bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
                         <h2 className="text-xl font-header font-bold text-gray-800 mb-2">Private Timeline</h2>

@@ -19,9 +19,9 @@ setup("authenticate and seed user session context", async ({page, request}) => {
     expect(response.status()).toBe(200);
 
     // 3. Confirm route matching
-    await page.waitForURL(/\/feed\/?$/);
-    await expect(page).toHaveURL(/\/feed\/?$/);
+    await page.waitForURL(/\/feed\/[^/]+\/?$/);
+    await expect(page).toHaveURL(/\/feed\/[^/]+\/?$/);
 
-    // 4. ENTERPRISE FIX: Save cookies and localStorage states cleanly into the JSON state map
+    // 4. save cookies and localStorage states cleanly into the JSON state map
     await page.context().storageState({ path: authFile });
 })

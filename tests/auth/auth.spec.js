@@ -55,8 +55,8 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
         // Replace 'text=Feed' or 'nav' with an actual selector on your feed view.
         // Example: await page.waitForSelector('main'); or await page.getByRole('heading', { name: /feed/i }).waitFor();
 
-        await page.waitForURL(/\/feed\/?$/); // Let Playwright patiently wait for the route to catch up
-        await expect(page).toHaveURL(/\/feed\/?$/);
+        await page.waitForURL(/\/feed\/[^/]+\/?$/); // Let Playwright patiently wait for the route to catch up
+        await expect(page).toHaveURL(/\/feed\/[^/]+\/?$/);
     });
 
     test("Should log in users using email as identifier", async ({ page, request }) => {
@@ -73,7 +73,7 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
         const response = await loginResponsePromise;
         expect(response.status()).toBe(200);
 
-        await page.waitForURL(/\/feed\/?$/); // Let Playwright patiently wait for the route to catch up
-        await expect(page).toHaveURL(/\/feed\/?$/);
+        await page.waitForURL(/\/feed\/[^/]+\/?$/); // Let Playwright patiently wait for the route to catch up
+        await expect(page).toHaveURL(/\/feed\/[^/]+\/?$/);
     });
 });
