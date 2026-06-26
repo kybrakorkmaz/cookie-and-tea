@@ -1,46 +1,46 @@
 import Logo from "../Logo.jsx";
 import SearchBar from "../SearchBar.jsx";
-import Badge from '@mui/material/Badge';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { FaHome } from "react-icons/fa";
-import { useState, useMemo } from "react";
-import { RiListSettingsFill } from "react-icons/ri";
-import { NavLink } from "react-router-dom"; // 🚀 Clean parameter tracking
+import Badge from '@mui/material/Badge'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import {FaHome} from "react-icons/fa";
+import {useState, useMemo} from "react";
+import {RiListSettingsFill} from "react-icons/ri";
+import {NavLink} from "react-router";
 import Notifications from "../../Notifications.jsx";
-import { getSortedActivities } from "../../../helpers/followingNotifications.js";
+import {getSortedActivities} from "../../../helpers/followingNotifications.js";
 import HamburgerMenu from "../HamburgerMenu.jsx";
 import MobileNavbar from "../MobileNavbar.jsx";
-import { IoLogOut } from "react-icons/io5";
-import { useLogout } from "./useLogout.js";
-import { useAuth } from "../../../context/AuthContext.jsx";
+import {IoLogOut} from "react-icons/io5";
+import {useLogout} from "./useLogout.js";
+import {useAuth} from "../../../context/AuthContext.jsx"; // todo change navbar profile for authenticated user
+
+// @src/components/nav-footer/user/UserNavbar.jsx
 
 const UserNavbar = () => {
-    // 🚀 INDUSTRY APPROACH: Source identity from global session data, never the volatile URL parameters
     const { user } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    // Establish clean safe fallbacks directly tied to the session state
     const currentUserId = user?.id || null;
     const sessionUsername = user?.username || "";
     const name = user?.name || "User";
-
-    // Fallback avatar image if the user has not uploaded a profileImage yet
     const image = user?.profileImage || "/images/people/angel.jpg";
 
-    // Compute notifications based on the dynamic logged-in user id
     const sortedActivities = useMemo(() => getSortedActivities(currentUserId, image), [currentUserId, image]);
     const activityLength = sortedActivities.length;
 
     const { handleClick } = useLogout();
 
-    // 🚀 FIXED: Links now use the stable sessionUsername, and the literal syntax colon ':' was removed from feed
+    // Dynamic route targets fall back to "/login" if sessionUsername is empty
+    const profileTo = sessionUsername ? `/profile/${sessionUsername}?tab=intro` : "/login";
+    const feedTo = sessionUsername ? `/feed/${sessionUsername}` : "/login";
+
     const links = [
-        { to: `/profile/${sessionUsername}?tab=intro`, label: "Profile" },
+        { to: profileTo, label: "Profile" },
         { to: "/activity", label: "Activity" },
-        { to: `/feed/${sessionUsername}`, label: "Feed" },
+        { to: feedTo, label: "Feed" },
         { to: "/settings", label: "Settings" },
         { to: "/logout", label: "Logout" }
     ];
@@ -51,7 +51,6 @@ const UserNavbar = () => {
             <div className="lg:hidden">
                 <div className="flex justify-between items-center">
                     <div className="text-primary-dark mb-6">
-                        {/* 🚀 Changed to dynamic routing path based on available user session */}
                         <Logo to={sessionUsername ? `/feed/${sessionUsername}` : "/login"} />
                     </div>
                     <HamburgerMenu onClick={toggleMenu} isOpen={isMenuOpen} />
@@ -76,8 +75,8 @@ const UserNavbar = () => {
                 </div>
 
                 <div className="flex flex-1/3 justify-end items-center gap-4 px-4">
-                    {/* Profile Link Card */}
-                    <NavLink to={`/profile/${sessionUsername}?tab=intro`} className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
+                    {/* 🚀 FIXED: Updated to use the safe profileTo route fallback pointer */}
+                    <NavLink to={profileTo} className="flex justify-center max-w-64 max-h-12 p-2 items-center gap-2.5 bg-white rounded-3xl border border-gray-50 shadow-sm hover:border-primary transition-colors group">
                         <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-100">
                             <img src={image} alt={name} className="w-full h-full object-cover object-top" />
                         </div>
@@ -105,7 +104,8 @@ const UserNavbar = () => {
                         )}
                     </div>
 
-                    <NavLink to={`/feed/${sessionUsername}`} className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
+                    {/* 🚀 FIXED: Updated to use the safe feedTo route fallback pointer */}
+                    <NavLink to={feedTo} className="text-primary-dark hover:text-primary transition-colors" aria-label="Home">
                         <FaHome style={{ width: "1.8rem", height: "1.8rem" }} />
                     </NavLink>
 

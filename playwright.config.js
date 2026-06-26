@@ -1,15 +1,15 @@
-// @ts-check
 import { defineConfig, devices } from '@playwright/test';
-import {loadEnv} from "vite";
-import path from "path";
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
+import { loadEnv } from "vite";
+
 const envMode = 'test';
 const loadedEnvVars = loadEnv(envMode, process.cwd(), '');
 
 Object.assign(process.env, loadedEnvVars);
+
+//  Enforce absolute fail-closed check for the configuration file execution
+if (!process.env.BYPASS_SECRET) {
+  throw new Error(" CRITICAL: BYPASS_SECRET environment variable is not defined in the loaded test environment.");
+}
 
 const authFile = 'playwright/.auth/user.json';
 
@@ -18,7 +18,10 @@ const authFile = 'playwright/.auth/user.json';
  */
 export default defineConfig({
   testDir: './tests',
-  testMatch: '**/*.spec.js', // Deep-scan all nested subfolders for spec files
+
+  //  Broaden scope to match both *.test.js and *.spec.js filenames cleanly
+  testMatch: ['**/*.test.js', '**/*.spec.js'],
+
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -38,14 +41,15 @@ export default defineConfig({
     trace: 'on-first-retry',
 
     // Apply the bypass headers globally to all contexts, pages, and projects
+    //  Removed the hardcoded fallback value string pattern entirely
     extraHTTPHeaders: {
-      'x-test-bypass': process.env.BYPASS_SECRET || 'test-dev-bypass-key-123!'
+      'x-test-bypass': process.env.BYPASS_SECRET
     }
   },
 
   /* Configure projects for major browsers */
   projects: [
-      // 1. Define the isolated Authentication Setup Project
+    // 1. Define the isolated Authentication Setup Project
     {
       name: 'setup',
       testMatch: /auth\.setup\.js/, // Specifically targets your setup file
@@ -53,7 +57,7 @@ export default defineConfig({
         browserName: "firefox"
       }
     },
-      // 2. Update your main browser configuration to use the session state
+    // 2. Update your main browser configuration to use the session state
     {
       name: 'firefox',
       use: {
@@ -75,4 +79,3 @@ export default defineConfig({
     timeout: 120000, // Safe buffer window for Vite compilations metrics
   },
 });
-

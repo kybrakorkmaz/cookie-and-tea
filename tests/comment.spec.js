@@ -1,3 +1,4 @@
+// tests/comment.spec.js
 import { test, expect } from "@playwright/test";
 import { registerUserViaApi } from "./auth/register.js";
 
@@ -5,8 +6,13 @@ test.describe("Comment CRUD Operation Suit Test", () => {
     const testCommentPayload = "Very beautiful work, good job!";
 
     test.beforeEach(async ({ page, context }) => {
+        const bypassSecret = process.env.BYPASS_SECRET;
+        if (!bypassSecret) {
+            throw new Error("❌ CRITICAL: BYPASS_SECRET environment variable is missing in comment.spec.js setup.");
+        }
+
         await context.setExtraHTTPHeaders({
-            'x-test-bypass': process.env.BYPASS_SECRET || 'test-dev-bypass-key-123!'
+            'x-test-bypass': bypassSecret
         });
 
         page.on("console", msg => {
@@ -33,8 +39,11 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         expect(loginResponse.status()).toBe(200);
 
         const loginResponseBody = await loginResponse.json();
+
+        // Route to base domain first to establish origin control, then seed storage securely
+        await page.goto("/");
         if (loginResponseBody.token) {
-            await context.addInitScript((token) => {
+            await page.evaluate((token) => {
                 window.localStorage.setItem("token", token);
             }, loginResponseBody.token);
         }
@@ -56,11 +65,24 @@ test.describe("Comment CRUD Operation Suit Test", () => {
             && response.request().method() === "POST"
         );
 
+        // Initial direct navigation to target profile tab
         await page.goto(`/profile/${targetProfile.username}?tab=posts`);
 
-        const postsTabButton = page.getByRole('button', { name: /posts/i });
-        if (await postsTabButton.isVisible()) {
+        const postsTabButton = page.getByRole('button', { name: /^posts$/i });
+        await postsTabButton.waitFor({ state: "visible" });
+        await postsTabButton.click();
+
+        // 🚀 FIXED: Robust cache recovery logic. Hard-route directly back to the tab query
+        // to fully update synchronous hook parameters if a TanStack cache race occurs.
+        try {
+            await expect(page.getByText("Automated Integration Test Post")).toBeVisible({ timeout: 4000 });
+        } catch (e) {
+            console.log("⚠️ TanStack cache race detected. Hard routing back to target tab viewpoint...");
+            await page.goto(`/profile/${targetProfile.username}?tab=posts`);
+
+            await postsTabButton.waitFor({ state: "visible" });
             await postsTabButton.click();
+            await expect(page.getByText("Automated Integration Test Post")).toBeVisible({ timeout: 6000 });
         }
 
         const commentInput = page.locator('textarea[id="comment"]');

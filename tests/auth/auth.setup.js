@@ -4,7 +4,11 @@ import { loginUserViaUI, registerUserViaApi } from "./register.js";
 const authFile = "playwright/.auth/user.json";
 
 setup("authenticate and seed user session context", async ({ page, request }) => {
-    const bypassSecret = process.env.BYPASS_SECRET || 'test-dev-bypass-key-123!';
+    //  Fail fast by requiring the env variable to be present instead of falling back to a committed string
+    const bypassSecret = process.env.BYPASS_SECRET;
+    if (!bypassSecret) {
+        throw new Error("CRITICAL: BYPASS_SECRET environment variable is missing in auth.setup.js configuration.");
+    }
 
     await page.context().setExtraHTTPHeaders({
         'x-test-bypass': bypassSecret
