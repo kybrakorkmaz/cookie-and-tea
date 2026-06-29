@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import UploadImageFile from "../../components/media/UploadImageFile.jsx";
-import UploadFile from "../../components/media/UploadFile.jsx";
 import MediaManager from "../../components/media/MediaManager.jsx";
+import UploadVideoFile from "../../components/media/UploadVideoFile.jsx";
 
 const EditPost = ({ post, onClose, onDelete, onUpdate }) => {
     const createdUrlsRef = useRef([]);
@@ -10,34 +10,69 @@ const EditPost = ({ post, onClose, onDelete, onUpdate }) => {
         ...post,
         header: post.header || "",
         content: post.content || "",
+        type: post.type,
         images: post.images || [],
         videos: post.videos || []
     });
 
+    // 1. ADD THIS: State for pending binary files
+    const [pendingFiles, setPendingFiles] = useState({ images: [], videos: [] });
+
+    // 2. ADD THIS: Standard change handler for text inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditPost(prev => ({
-            ...prev,
-            [name]: (name === "images" || name === "videos")
-                ? value.split("\n")
-                : value
-        }));
+        setEditPost(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileUpdate = (name, files) => {
-        // In a real app, upload to S3/Cloudinary here and get a URL.
-        // For now, we'll create a local preview URL or use the file name
-        // to ensure the state is no longer "empty".
-        const newFiles = Array.from(files).map(file => {
-            const url = URL.createObjectURL(file);
-            createdUrlsRef.current.push(url);
-            return url;
-        });
+    // Inside EditPost.jsx
+    const handleRemoveMedia = (name, index) => {
+        setEditPost(prev => {
+            const updatedArray = prev[name].filter((_, i) => i !== index);
+            const newState = {
+                ...prev,
+                [name]: updatedArray
+            };
 
-        setEditPost(prev => ({
+            // --- AUTO-RESOLVER LOGIC ---
+            const hasImages = newState.images.length > 0;
+            const hasVideos = newState.videos.length > 0;
+
+            let newType = "text";
+            if (hasImages && hasVideos) newType = "hybrid";
+            else if (hasImages) newType = "image";
+            else if (hasVideos) newType = "video";
+
+            return { ...newState, type: newType };
+        });
+    };
+
+    const handleNewFile = (name, file) => {
+        setPendingFiles(prev => ({
             ...prev,
-            [name]: [...prev[name], ...newFiles]
+            [name]: [...prev[name], file]
         }));
+
+        // Add to local preview if needed
+        const previewUrl = URL.createObjectURL(file);
+        createdUrlsRef.current.push(previewUrl);
+
+        setEditPost(prev => {
+            const newState = {
+                ...prev,
+                [name]: [...prev[name], previewUrl]
+            };
+
+            // Update type based on the new total
+            const hasImages = newState.images.length > 0;
+            const hasVideos = newState.videos.length > 0;
+
+            let newType = "text";
+            if (hasImages && hasVideos) newType = "hybrid";
+            else if (hasImages) newType = "image";
+            else if (hasVideos) newType = "video";
+
+            return { ...newState, type: newType };
+        });
     };
 
     useEffect(() => {
@@ -86,13 +121,21 @@ const EditPost = ({ post, onClose, onDelete, onUpdate }) => {
                     </div>
 
                     <MediaManager
-                        label="Images" name="post_image" value={editPost.images}
-                        onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadImageFile}
+                        label="Images"
+                        name="images"
+                        value={editPost.images}
+                        onRemove={handleRemoveMedia} // Your removal function
+                        onFileSelect={handleNewFile} // Your new file handler
+                        UploadComponent={UploadImageFile}
                     />
 
                     <MediaManager
-                        label="Videos" name="post_video" value={editPost.videos}
-                        onChange={handleChange} onFilesSelected={handleFileUpdate} UploadComponent={UploadFile}
+                        label="Videos"
+                        name="videos"
+                        value={editPost.videos}
+                        onRemove={handleRemoveMedia}
+                        onFileSelect={handleNewFile}
+                        UploadComponent={UploadVideoFile}
                     />
                 </div>
 
@@ -109,8 +152,8 @@ const EditPost = ({ post, onClose, onDelete, onUpdate }) => {
                         Delete Post
                     </button>
                     <button
-                        onClick={() => onUpdate(post.id, editPost)} // Fires your interceptor seamlessly
-                        className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl hover:opacity-90 transition-opacity shadow-lg"
+                        onClick={() => onUpdate(post.id, editPost, pendingFiles)}
+                        className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl"
                     >
                         Update Post
                     </button>

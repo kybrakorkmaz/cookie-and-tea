@@ -1,73 +1,33 @@
-// Posts.jsx (Snippet around lines 45 - 60 and the return render map block)
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { useParams } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Core UI Presentational Components
 import PostCard from "./PostCard.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
 import LoadMore from "../../components/LoadMore.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-import apiClient from "../../api/axios.js";
+import {preparePostFormData} from "../../helpers/postUtils.js";
+import {useDeletePost, useFetchProfilePosts, useUpdatePost} from "./hooks/usePostActions.js";
+import {usePreviewComments} from "../Hooks/useComments.js";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
-    const { userId } = useParams();
+    //  Change to 'username' to perfectly match your frontend router profile segment layout
+    const { username } = useParams();
     const { user } = useAuth();
-    const queryClient = useQueryClient();
-
-    const profileCacheKey = ["profilePosts", userId];
 
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
-    // 1. READ PIPELINE: Automated Profile Posts Caching
-    const { data: allPosts = [], isLoading: loading } = useQuery({
-        queryKey: profileCacheKey,
-        queryFn: async () => {
-            if (!userId) return [];
-            const response = await apiClient.get(`/api/v1/profile/${userId}/posts`);
-            if (response.status === 204) return [];
-            return response.data?.data ?? [];
-        },
-        enabled: !!userId,
-    });
+    const { data: allPosts = [], isLoading: loading } = useFetchProfilePosts(username);
+    const { data: commentsMap, isLoading } = usePreviewComments(username);
 
-    // 2. MUTATION PIPELINE: Delete & Auto-Bust Cache
-    const deleteMutation = useMutation({
-        mutationFn: async (postId) => {
-            await apiClient.delete(`/api/v1/profile/${userId}/posts/${postId}`);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: profileCacheKey });
-            alert("Post deleted successfully!");
-        },
-        onError: (err) => {
-            console.error(err);
-            alert("Failed to delete post.");
-        }
-    });
-
-    // 3. MUTATION PIPELINE: Update & Auto-Bust Cache
-    const updateMutation = useMutation({
-        // Return the axios response object from the promise chain instead of discarding it
-        mutationFn: async ({ postId, updatedFields }) => {
-            return await apiClient.put(`/api/v1/profile/${userId}/posts/${postId}`, updatedFields);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: profileCacheKey });
-            alert("Post updated successfully!");
-        },
-        onError: (err) => {
-            console.error(err);
-            alert("Could not save changes.");
-        }
-    });
+    const { handleDelete } = useDeletePost(username);
+    const { handleUpdate } = useUpdatePost(username);
 
     const totalPosts = allPosts.length;
     const visiblePosts = allPosts.slice(0, visibleCount);
 
-    // --- Core Highlighting & Scrolling Logic ---
+    // --- Highlighting & Scrolling Logic ---
     useEffect(() => {
         if (targetPostId) {
             setInternalTarget(targetPostId);
@@ -79,7 +39,6 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         if (!internalTarget || loading || totalPosts === 0) return;
 
         const targetIndex = allPosts.findIndex((post) => post.id === internalTarget);
-
         if (targetIndex === -1) {
             setInternalTarget(null);
             return;
@@ -109,7 +68,13 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         };
     }, [internalTarget, visibleCount, allPosts, loading, totalPosts]);
 
-    if (loading) return <div className="text-center py-20 font-header text-gray-500">Loading profile posts...</div>;
+    if (loading) {
+        return (
+            <div className="text-center py-20 font-header text-gray-500" data-testid="posts-loading">
+                Loading profile posts...
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen">
@@ -121,13 +86,13 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
                             <PostCard
                                 key={post.id}
                                 post={post}
+                                previewComments={commentsMap[post.id] || []}
                                 highlightedId={highlightedId}
                                 isPermitted={isMyOwnPost}
-                                onDelete={(id) => deleteMutation.mutate(id)}
-                                // Coerce the mutation result into a clean Boolean truthy/falsy response
-                                onUpdate={async (id, fields) => {
-                                    const res = await updateMutation.mutateAsync({ postId: id, updatedFields: fields });
-                                    return Boolean(res);
+                                onDelete={handleDelete}
+                                onUpdate={(id, editPost, pendingFiles) => {
+                                    const formData = preparePostFormData(editPost, pendingFiles);
+                                    return handleUpdate({ postId: id, formData });
                                 }}
                             />
                         );

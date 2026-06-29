@@ -1,5 +1,4 @@
 import { GrSend } from "react-icons/gr";
-import { z } from "zod";
 import { useState, useMemo } from "react";
 import { commentSchema, MAX_CHARS } from "../../../validations/postStructure.validation.js";
 import useWriteComment from "../hooks/useWriteComment.js";
@@ -7,7 +6,7 @@ import useWriteComment from "../hooks/useWriteComment.js";
 const PostComment = ({ oldComment = "", onSend, update, postId }) => {
     const [newComment, setNewComment] = useState(oldComment);
     const [status, setStatus] = useState({ message: "", type: "" });
-    const { handleWriteComment, isSubmittingComment } = useWriteComment(); // 🚀 Added isSubmittingComment to prevent double submissions
+    const { handleWriteComment, isSubmittingComment } = useWriteComment(); // Added isSubmittingComment to prevent double submissions
 
     const characterCounterColor = useMemo(() => {
         return newComment.length >= MAX_CHARS ? "text-red-500 font-bold" : "text-gray-400";
@@ -35,9 +34,8 @@ const PostComment = ({ oldComment = "", onSend, update, postId }) => {
 
         try {
             if (update) {
-                await update(trimmed);
+                await update(result.data);
             } else {
-                // 🎯 THE FIX: Wrapped parameters into a single payload object
                 await handleWriteComment({
                     postId: postId,
                     comment: trimmed
@@ -98,7 +96,7 @@ const PostComment = ({ oldComment = "", onSend, update, postId }) => {
                 <button
                     type="button"
                     onClick={handleSend}
-                    disabled={isSubmittingComment || !newComment.trim()} // 🚀 Disable send button during active submission
+                    disabled={isSubmittingComment || !newComment.trim()} //  Disable send button during active submission
                     aria-label="Send comment"
                     className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-90 disabled:opacity-30 disabled:pointer-events-none"
                 >

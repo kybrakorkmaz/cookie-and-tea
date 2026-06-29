@@ -62,7 +62,7 @@ const ImageUploadModal = ({ title, onClose, onConfirm }) => {
                     </button>
                 </div>
 
-                <UploadImageFile onImageUpload={(file) => setSelectedFile(file)} />
+                <UploadImageFile onFileSelect={(file) => setSelectedFile(file)} />
 
                 <div className="flex gap-3 mt-6">
                     <button

@@ -11,11 +11,13 @@ import useFeedTimeline from "./Hooks/useFeedTimeline.js";
 // Layout presentation components
 import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
 import UploadImageFile from "../../components/media/UploadImageFile.jsx";
-import UploadVideoFile from "../../components/media/UploadFile.jsx";
+import UploadVideoFile from "../../components/media/UploadVideoFile.jsx";
 import PostCard from "../Posts/PostCard.jsx";
 import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
 import LoadMore from "../../components/LoadMore.jsx";
+import {validatePost} from "../../validations/postValidator.validation.js";
+import {usePreviewComments} from "../Hooks/useComments.js";
 
 const Feed = () => {
     const { username } = useParams();
@@ -33,7 +35,7 @@ const Feed = () => {
     // Local presentational offset limits
     const [visibleCount, setVisibleCount] = useState(5);
 
-    // 🚀 FIXED: Conditionally pass username down. If it's not my own feed, pass null
+    // Conditionally pass username down. If it's not my own feed, pass null
     // to stop unauthorized network requests from firing.
     const {
         feedTimeline: allPosts,
@@ -44,6 +46,8 @@ const Feed = () => {
         handleUpdatePost,
         handleDeletePost
     } = useFeedTimeline(isMyOwnFeed ? username : null);
+
+    const { data: commentsMap, isLoading } = usePreviewComments(username, "feed");
 
     const totalPosts = allPosts?.length || 0;
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
@@ -58,29 +62,43 @@ const Feed = () => {
     };
 
     const handleCreatePost = async () => {
-        if (!header.trim() && !content.trim()) return;
-
         const payload = {
             header: header.trim(),
             content: content.trim(),
             type: determinePostType(),
-            images: uploadedImages,
-            videos: uploadedVideos
+            images: uploadedImages, // Array of File objects
+            videos: uploadedVideos  // Array of File objects
         };
 
-        try {
-            await handleAddPost(payload);
+        // --- CLIENT-SIDE VALIDATION ---
+        const { isValid, errors } = validatePost(payload);
+        if (!isValid) {
+            alert(errors.join("\n")); // Or use a toast library
+            return;
+        }
 
-            // UI elements reset only upon confirmed server synchronization
-            uploadedVideos.forEach(url => URL.revokeObjectURL(url));
+        // --- FORM PREP ---
+        const formData = new FormData();
+        formData.append("header", header.trim());
+        formData.append("content", content.trim());
+        formData.append("type", determinePostType());
+
+        // 2. Append files to FormData
+        payload.images.forEach((file) => formData.append("images", file));
+        payload.videos.forEach((file) => formData.append("videos", file));
+
+        try {
+            await handleAddPost(formData); // Now sending FormData
+
+            // Reset UI
             setHeader("");
             setContent("");
             setUploadedImages([]);
             setUploadedVideos([]);
             setShowImageUpload(false);
             setShowVideoUpload(false);
-        } catch (err) {
-            console.error("Post processing action was aborted by handler:", err.message);
+        }catch (err){
+            console.error("Post creation failed:", err.message);
         }
     };
 
@@ -92,9 +110,8 @@ const Feed = () => {
 
     const handleImageUpload = (file) => {
         if (file && uploadedImages.length < 10) {
-            const reader = new FileReader();
-            reader.onload = (e) => setUploadedImages(prev => [...prev, e.target.result]);
-            reader.readAsDataURL(file);
+            // Store the File object directly, not a URL
+            setUploadedImages(prev => [...prev, file]);
         }
     };
 
@@ -140,7 +157,7 @@ const Feed = () => {
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         {uploadedImages.map((img, index) => (
                                             <div key={index} className="relative w-20 h-20 group">
-                                                <img src={img} alt="" className="w-full h-full object-cover rounded-lg border border-gray-200" />
+                                                <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover rounded-lg border border-gray-200" />
                                                 <button
                                                     type="button"
                                                     onClick={() => removeImage(index)}
@@ -248,18 +265,18 @@ const Feed = () => {
 
                             {visiblePosts.length > 0 ? (
                                 visiblePosts.map((post) => {
-                                    // Clean standard ownership validation
-                                    const isMyOwnPost = user && user.id === post.userId;
-                                    return (
-                                        <PostCard
-                                            key={post.id}
-                                            post={post}
-                                            isPermitted={isMyOwnPost}
-                                            onDelete={handleDeletePost}
-                                            onUpdate={handleUpdatePost}
-                                        />
-                                    );
-                                })
+                                        const isMyOwnPost = user && user.id === post.userId;
+                                        return (
+                                            <PostCard
+                                                key={post.id}
+                                                post={post}
+                                                previewComments={commentsMap?.[post.id] || []} // Fixed prop name & extracted array
+                                                isPermitted={isMyOwnPost}
+                                                onDelete={handleDeletePost}
+                                                onUpdate={handleUpdatePost}
+                                            />
+                                        );
+                                    })
                             ) : (!loading && !isPublishing) ? (
                                 <div className="text-center py-10 text-gray-400 font-paragraph">
                                     No posts to show on your timeline yet.

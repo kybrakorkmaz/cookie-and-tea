@@ -1,4 +1,4 @@
-const UploadImageFile = ({ onImageUpload=null }) => {
+const UploadImageFile = ({ onFileSelect }) => {
     return (
         <div className="flex justify-center mt-4">
             <div className="rounded-lg border bg-gray-50 w-full">
@@ -15,9 +15,8 @@ const UploadImageFile = ({ onImageUpload=null }) => {
                             <input
                                 type="file"
                                 className="hidden"
-                                multiple // Allow multiple if your state supports it
                                 accept="image/*"
-                                onChange={(e) => onImageUpload?.(e.target.files?.[0] ?? null)}
+                                onChange={(e) => onFileSelect?.(e.target.files?.[0] ?? null)}
                             />
                         </label>
                     </div>

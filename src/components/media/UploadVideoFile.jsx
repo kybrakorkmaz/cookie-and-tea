@@ -1,4 +1,4 @@
-const UploadVideoFile = ({ onVideoSelect }) => {
+const UploadVideoFile = ({ onFileSelect }) => {
     return (
         <div className="flex justify-center mt-4">
             <div className="w-full rounded-lg border bg-gray-50">
@@ -22,7 +22,7 @@ const UploadVideoFile = ({ onVideoSelect }) => {
                                 type="file"
                                 accept="video/*"
                                 className="hidden"
-                                onChange={(e) => onVideoSelect?.(e.target.files?.[0] ?? null)}
+                                onChange={(e) => onFileSelect?.(e.target.files?.[0] ?? null)} // Updated here
                             />
                         </label>
                     </div>

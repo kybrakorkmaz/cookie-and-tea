@@ -9,14 +9,14 @@ import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./structure/PostCommenters.jsx";
 import EditPost from "./EditPost.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
-import InteractionBar from "./structure/InteractionBar.jsx";;
+import InteractionBar from "./structure/InteractionBar.jsx";
 import { MdDelete } from "react-icons/md";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
-import useUpdateProfilePost from "./hooks/useUpdateProfilePost.js";
 import PostComment from "./structure/PostComment.jsx";
 
-const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
+
+const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDelete, onUpdate }) => {
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
@@ -24,17 +24,10 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
     const isFocused = highlightedId === `post-${post.id}`;
     const currentPostId = post.id;
 
-    // Preview comment tracking logic
-    const postComments = comments.filter(c => c.commented_to_post_id === post.id);
-    let previewComment = null;
-    if (postComments.length > 0) {
-        const firstComment = postComments[0];
-        const userMatch = profile.find(u => u.user_id === firstComment.commenter_id);
-        previewComment = { ...firstComment, user: userMatch };
-    }
 
-    const handleUpdateSuccess = async (postId, updatedFields) => {
-        const isSuccess = await onUpdate(postId, updatedFields);
+    const handleUpdateSuccess = async (postId, editPosts, updatedFields) => {
+        // onUpdate now expects 3 arguments, passed from the EditPost component
+        const isSuccess = await onUpdate(postId, editPosts,  updatedFields);
         if (isSuccess) {
             setIsEditing(false); // Only close the modal panel if the API responded with 200 OK
         }
@@ -79,11 +72,26 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
                         {post.type === "hybrid" && <HybridPost videos={post.videos} images={post.images} />}
                     </div>
 
-                    <InteractionBar post={post} activeType={activeType} setActiveType={setActiveType} setDonateAmount={setDonateAmount}/>
+                    <InteractionBar
+                        postId={post.id}
+                        commentCount={post.commentCount}
+                        donationAmount={post.donationSum}
+                        activeType={activeType}
+                        setActiveType={setActiveType}
+                        setDonateAmount={setDonateAmount}
+                    />
                     <PostComment postId={post.id}/>
-                    {previewComment && !activeType && (
-                        <div className="mt-1">
-                            <PostCommenters imgSrc={previewComment.user?.profileImage} name={previewComment.user?.name} comment={previewComment.comment}/>
+                    {/* 2. Traverse the comments array using .map() */}
+                    {previewComments.length > 0 && !activeType && (
+                        <div className="mt-1 flex flex-col gap-3">
+                            {previewComments.map((comment, index) => (
+                                <PostCommenters
+                                    key={`${comment.authorUsername}-${index}`}
+                                    imgSrc={comment.authorProfileImage}
+                                    name={comment.authorName}
+                                    comment={comment.comment}
+                                />
+                            ))}
                         </div>
                     )}
 
@@ -95,7 +103,7 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete, onUpdate }) => {
                 <EditPost
                     post={post}
                     onClose={() => setIsEditing(false)}
-                    onUpdate={handleUpdateSuccess}
+                    onUpdate={handleUpdateSuccess} // Pass the 3-arg function
                     onDelete={() => {
                         setIsEditing(false);
                         onDelete(currentPostId);

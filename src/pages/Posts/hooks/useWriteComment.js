@@ -8,7 +8,6 @@ const useWriteComment = () => {
 
     const commentMutation = useMutation({
         mutationFn: async ({ postId, comment }) => {
-            // Dropped sensitive raw user text logging, tracking only the structural postId metadata
             console.log("Submitting comment payload for post id:", postId);
 
             const response = await apiClient.post(
@@ -17,10 +16,21 @@ const useWriteComment = () => {
             );
             return response.data;
         },
-        onSuccess: () => {
-            // Clear caches holding post metrics or feeds so counters refresh instantly!
+        onSuccess: (data, variables) => {
+            const { postId } = variables;
+
+            // 1. Refresh profile feed/posts query
             queryClient.invalidateQueries({ queryKey: ["profilePosts", username] });
+
+            // 2. Refresh home/timeline feed query if it exists
             queryClient.invalidateQueries({ queryKey: ["feedTimeline", username] });
+
+            // 3. Refresh deep comments list if open
+            queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+
+            // 4. THE FIX: Invalidate the preview comment caches so the Feed updates instantly
+            queryClient.invalidateQueries({ queryKey: ["preview", "feed", username] });
+            queryClient.invalidateQueries({ queryKey: ["preview", "profile", username] });
         }
     });
 

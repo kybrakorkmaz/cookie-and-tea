@@ -1,32 +1,26 @@
 import apiClient from "../../../api/axios.js";
 
-export const createPost = async (username, payload) => {
+export const createPost = async (username, formData) => {
     try {
-        console.log("Sending payload to backend:", payload);
-        const response = await apiClient.post(`/api/v1/feed/${username}/`, payload);
-        if (response.status === 201) {
-            console.log("Post shared successfully!");
-            return response.data?.data || response.data;
-        }
-        console.log("New post couldn't be created!", response.status);
-        return null;
+        // Do NOT set headers manually. Axios detects FormData and sets 'multipart/form-data' + boundary
+        const response = await apiClient.post(`/api/v1/feed/${username}/`, formData);
+        return response.data?.data || response.data;
     } catch (e) {
-        console.error("Error occurred while publishing post:", e.message);
+        console.error("Error publishing post:", e.response?.data || e.message);
         throw e;
     }
 };
 
-export const updatePost = async (username, postId, payload) => {
+export const updatePost = async (username, postId, formData) => {
     try {
-        const response = await apiClient.put(`/api/v1/feed/${username}/posts/${postId}`, payload);
-        if (response.status === 200) {
-            console.log("Post updated successfully!");
-            return response.data?.data || response.data;
-        }
-        console.log("New post couldn't be updated", response.status);
-        return null;
+        // Do NOT set Content-Type header manually here!
+        const response = await apiClient.put(
+            `/api/v1/feed/${username}/posts/${postId}`,
+            formData
+        );
+        return response.data;
     } catch (e) {
-        console.error("Error occurred while updating post:", e.message);
+        console.error("Error updating post:", e.response?.data || e.message);
         throw e;
     }
 };
