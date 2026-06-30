@@ -16,7 +16,8 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 import { getSortedActivities } from "../../../helpers/followingNotifications.js";
 
 const UserNavbar = () => {
-    const { user, loading } = useAuth();
+    // Fix: Removed 'loading' from destructuring to match the AuthContext contract
+    const { user } = useAuth();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -34,16 +35,10 @@ const UserNavbar = () => {
     const feedTo = user ? `/feed/${user.username}` : "/login";
     const isCurrentlyOnProfile = location.pathname === `/profile/${user?.username}`;
 
-    if (loading || !user) {
-        return (
-            <nav className="navbar w-full px-4 md:px-8 py-4 md:py-6 lg:px-28 font-paragraph text-p animate-pulse">
-                <div className="flex justify-between items-center w-full">
-                    <div className="h-8 w-24 bg-gray-200 rounded" />
-                    <div className="h-10 w-1/3 bg-gray-200 rounded hidden lg:block" />
-                    <div className="h-10 w-40 bg-gray-200 rounded-3xl" />
-                </div>
-            </nav>
-        );
+    // Fix: Prevent rendering an infinite skeleton pulse loop when the user is unauthenticated.
+    // Yields rendering to the route layer's auth/login redirect guard.
+    if (!user) {
+        return null;
     }
 
     return (

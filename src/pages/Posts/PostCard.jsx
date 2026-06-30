@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
-import { comments, profile } from "../../constants/index.js";
+import { MdDelete } from "react-icons/md";
+
 import VideoPost from "./type/VideoPost.jsx";
 import ImagePost from "./type/ImagePost.jsx";
 import HybridPost from "./type/HybridPost.jsx";
@@ -10,26 +11,32 @@ import PostCommenters from "./structure/PostCommenters.jsx";
 import EditPost from "./EditPost.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
 import InteractionBar from "./structure/InteractionBar.jsx";
-import { MdDelete } from "react-icons/md";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
 import PostComment from "./structure/PostComment.jsx";
-
 
 const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDelete, onUpdate }) => {
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
-
+    const [isSaving, setIsSaving] = useState(false);// 1. Add loading state
     const isFocused = highlightedId === `post-${post.id}`;
     const currentPostId = post.id;
 
-
     const handleUpdateSuccess = async (postId, editPosts, updatedFields) => {
-        // onUpdate now expects 3 arguments, passed from the EditPost component
-        const isSuccess = await onUpdate(postId, editPosts,  updatedFields);
-        if (isSuccess) {
-            setIsEditing(false); // Only close the modal panel if the API responded with 200 OK
+        try {
+            // Hardened Check: Ensure your parent component's onUpdate handler
+            // explicitly returns true (or a truthy value) on a successful 200 OK API response.
+            setIsSaving(true);// 2. Turn on loading indicator immediately
+            const isSuccess = await onUpdate(postId, editPosts, updatedFields);
+            // If the parent handler returns nothing (undefined), fallback safely or enforce strict boolean checking
+            if (isSuccess !== false) {
+                setIsEditing(false);
+            }
+        } catch (error) {
+            console.error("Failed to update post:", error);
+        }finally {
+            setIsSaving(false);// 3. Clean up state if it fails
         }
     };
 
@@ -81,7 +88,8 @@ const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDe
                         setDonateAmount={setDonateAmount}
                     />
                     <PostComment postId={post.id}/>
-                    {/* 2. Traverse the comments array using .map() */}
+
+                    {/* Traverse the comments array using .map() */}
                     {previewComments.length > 0 && !activeType && (
                         <div className="mt-1 flex flex-col gap-3">
                             {previewComments.map((comment, index) => (
@@ -102,8 +110,9 @@ const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDe
             {isEditing && (
                 <EditPost
                     post={post}
+                    isSaving={isSaving}
                     onClose={() => setIsEditing(false)}
-                    onUpdate={handleUpdateSuccess} // Pass the 3-arg function
+                    onUpdate={handleUpdateSuccess}
                     onDelete={() => {
                         setIsEditing(false);
                         onDelete(currentPostId);

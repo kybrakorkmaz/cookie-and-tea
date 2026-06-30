@@ -8,16 +8,25 @@ test.describe("Comment CRUD Operation Suit Test", () => {
 
         // 1. Setup Auth & Seed Data
         const targetProfile = await registerUserViaApi(request);
+
         const loginResponse = await request.post(`${backendUrl}/api/v1/auth/login`, {
             data: { identifier: targetProfile.username, password: targetProfile.password }
         });
-        const { token } = await loginResponse.json();
+        // Verify login response success and payload integrity
+        expect(loginResponse.ok(), `Login failed with status ${loginResponse.status()}`).toBeTruthy();
+        const loginBody = await loginResponse.json();
+        expect(loginBody.token, "Login response must include token").toBeTruthy();
+        const { token } = loginBody;
 
         const postResponse = await request.post(`${backendUrl}/api/v1/feed/${targetProfile.username}`, {
             data: { header: "Test Post", content: "Testing...", type: "text" },
             headers: { Authorization: `Bearer ${token}` }
         });
-        const { data: post } = await postResponse.json();
+        // Verify post creation response success and payload integrity
+        expect(postResponse.ok(), `Post seed failed with status ${postResponse.status()}`).toBeTruthy();
+        const postBody = await postResponse.json();
+        expect(postBody.data?.id, "Post seed response must include data.id").toBeTruthy();
+        const { data: post } = postBody;
 
         // 2. Auth State Injection
         await page.goto("/");

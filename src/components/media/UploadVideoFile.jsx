@@ -1,4 +1,7 @@
-const UploadVideoFile = ({ onFileSelect }) => {
+const UploadVideoFile = ({ onFileSelect, onVideoSelect }) => {
+    // Fallback strategy to safely support unmigrated callers like Feed.jsx
+    const handleFileSelect = onFileSelect ?? onVideoSelect;
+
     return (
         <div className="flex justify-center mt-4">
             <div className="w-full rounded-lg border bg-gray-50">
@@ -22,7 +25,7 @@ const UploadVideoFile = ({ onFileSelect }) => {
                                 type="file"
                                 accept="video/*"
                                 className="hidden"
-                                onChange={(e) => onFileSelect?.(e.target.files?.[0] ?? null)} // Updated here
+                                onChange={(e) => handleFileSelect?.(e.target.files?.[0] ?? null)}
                             />
                         </label>
                     </div>

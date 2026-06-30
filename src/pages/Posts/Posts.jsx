@@ -19,7 +19,9 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     const [internalTarget, setInternalTarget] = useState(null);
 
     const { data: allPosts = [], isLoading: loading } = useFetchProfilePosts(username);
-    const { data: commentsMap, isLoading } = usePreviewComments(username);
+
+    // Fix: Default commentsMap to an empty object to guard against undefined runtime reads
+    const { data: commentsMap = {}, isLoading } = usePreviewComments(username);
 
     const { handleDelete } = useDeletePost(username);
     const { handleUpdate } = useUpdatePost(username);
