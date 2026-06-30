@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PostComment from "./PostComment.jsx";
-import {deleteComment, updateComment} from "../../Hooks/useCommentActions.js";
+import { deleteComment, updateComment } from "../../Hooks/useCommentActions.js";
 
-const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment}) => {
+const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment }) => {
     const [currentComment, setCurrentComment] = useState(comment);
     const [isEditing, setIsEditing] = useState(false);
-    const [isVisible, setIsVisible] = useState(true); // Local mock for deletion
+    const [isVisible, setIsVisible] = useState(true);
 
-    const { handleUpdateComment, isUpdatingComment } = updateComment();
+    const { handleUpdateComment } = updateComment(); // Removed unused isUpdatingComment
     const { handleDeleteComment, isDeletingComment } = deleteComment();
+
+    useEffect(() => {
+        if (!isEditing) {
+            setCurrentComment(comment);
+        }
+    }, [comment, isEditing]);
 
     const handleUpdate = async (updatedText) => {
         try {
@@ -30,11 +36,13 @@ const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment}) => {
                 postId,
                 commentId
             });
-            // React Query will instantly drop this from UI during invalidation sync
+            setIsVisible(false); // Instantly hide component locally upon successful deletion
         } catch (error) {
             console.error("Failed to execute comment removal:", error);
         }
     };
+
+    if (!isVisible) return null;
 
     return (
         <div className="mt-4 p-3 bg-gray-50 rounded-xl border-l-4 border-primary-dark/50 transition-all">
@@ -55,21 +63,23 @@ const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment}) => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="text-[11px] text-gray-400 hover:text-gray-900 font-medium transition-colors"
+                        disabled={isDeletingComment}
+                        className="text-[11px] text-gray-400 hover:text-gray-900 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isEditing ? "Cancel" : "Edit"}
                     </button>
                     <button
                         onClick={handleDelete}
-                        className="text-[11px] text-gray-400 hover:text-red-500 font-medium transition-colors"
+                        disabled={isDeletingComment}
+                        className="text-[11px] text-gray-400 hover:text-red-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Delete
+                        {isDeletingComment ? "Deleting..." : "Delete"}
                     </button>
                 </div>
             </div>
 
             {isEditing ? (
-                <div className="-mt-4"> {/* Tighten spacing for edit mode */}
+                <div className="-mt-4">
                     <PostComment
                         oldComment={currentComment}
                         onSend={() => setIsEditing(false)}

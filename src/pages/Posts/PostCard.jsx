@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
-
 import VideoPost from "./type/VideoPost.jsx";
 import ImagePost from "./type/ImagePost.jsx";
 import HybridPost from "./type/HybridPost.jsx";

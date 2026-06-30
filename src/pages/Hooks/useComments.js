@@ -25,7 +25,7 @@ export const usePreviewComments = (username, type = "profile") => {
                 if (!acc[comment.postId]) {
                     acc[comment.postId] = [];
                 }
-                acc[comment.postId].push({comment});
+                acc[comment.postId].push(comment);
                 return acc;
             }, {});
         }
