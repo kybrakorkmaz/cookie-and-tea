@@ -183,7 +183,7 @@ const EditPost = ({ post, isSaving, onClose, onDelete, onUpdate }) => {
                     <button
                         disabled={isSaving}
                         onClick={() => onUpdate(post.id, editPost, pendingFiles)}
-                        className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl flex items-center justify-center transition-all disabled:opacity-80 disabled:cursor-not-allowed minimum-w-[120px]"
+                        className="flex-1 py-3 px-4 bg-primary-dark text-white font-bold rounded-2xl flex items-center justify-center transition-all disabled:opacity-80 disabled:cursor-not-allowed min-w-[120px]"
                     >
                         {isSaving ? (
                             <FaCircleNotch className="w-5 h-5 animate-spin" />

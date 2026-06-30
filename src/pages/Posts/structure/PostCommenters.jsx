@@ -1,23 +1,40 @@
 import { useState } from "react";
 import PostComment from "./PostComment.jsx";
+import {deleteComment, updateComment} from "../../Hooks/useCommentActions.js";
 
-const PostCommenters = ({ imgSrc, name, date, comment, onDelete }) => {
+const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment}) => {
     const [currentComment, setCurrentComment] = useState(comment);
     const [isEditing, setIsEditing] = useState(false);
     const [isVisible, setIsVisible] = useState(true); // Local mock for deletion
 
-    const handleUpdate = (updatedText) => {
-        setCurrentComment(updatedText);
-        setIsEditing(false);
+    const { handleUpdateComment, isUpdatingComment } = updateComment();
+    const { handleDeleteComment, isDeletingComment } = deleteComment();
+
+    const handleUpdate = async (updatedText) => {
+        try {
+            await handleUpdateComment({
+                postId,
+                commentId,
+                comment: updatedText
+            });
+            setCurrentComment(updatedText);
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to apply comment modifications:", error);
+        }
     };
 
-    const handleDelete = () => {
-        //todo api call
-        // onDelete(id);
-        setIsVisible(false);
+    const handleDelete = async () => {
+        try {
+            await handleDeleteComment({
+                postId,
+                commentId
+            });
+            // React Query will instantly drop this from UI during invalidation sync
+        } catch (error) {
+            console.error("Failed to execute comment removal:", error);
+        }
     };
-
-    if (!isVisible) return null;
 
     return (
         <div className="mt-4 p-3 bg-gray-50 rounded-xl border-l-4 border-primary-dark/50 transition-all">

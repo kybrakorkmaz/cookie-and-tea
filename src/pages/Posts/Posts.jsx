@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import { useParams } from "react-router";
 
 import PostCard from "./PostCard.jsx";
@@ -10,7 +10,6 @@ import {useDeletePost, useFetchProfilePosts, useUpdatePost} from "./hooks/usePos
 import {usePreviewComments} from "../Hooks/useComments.js";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
-    //  Change to 'username' to perfectly match your frontend router profile segment layout
     const { username } = useParams();
     const { user } = useAuth();
 
@@ -18,10 +17,14 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
-    const { data: allPosts = [], isLoading: loading } = useFetchProfilePosts(username);
+    //  Destructure isError state to prevent falling back to empty profile view on failures
+    const {
+        data: allPosts = [],
+        isLoading: loading,
+        isError: postsError
+    } = useFetchProfilePosts(username);
 
-    // Fix: Default commentsMap to an empty object to guard against undefined runtime reads
-    const { data: commentsMap = {}, isLoading } = usePreviewComments(username);
+    const { data: commentsMap = {} } = usePreviewComments(username);
 
     const { handleDelete } = useDeletePost(username);
     const { handleUpdate } = useUpdatePost(username);
@@ -74,6 +77,15 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         return (
             <div className="text-center py-20 font-header text-gray-500" data-testid="posts-loading">
                 Loading profile posts...
+            </div>
+        );
+    }
+
+    // Render isolated explicit error fallback
+    if (postsError) {
+        return (
+            <div className="text-center py-20 font-header text-red-500" data-testid="posts-error">
+                Failed to load profile posts. Please check your connection or try again later.
             </div>
         );
     }

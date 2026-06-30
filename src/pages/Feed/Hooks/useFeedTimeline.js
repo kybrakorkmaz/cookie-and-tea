@@ -77,16 +77,30 @@ const useFeedTimeline = (username) => {
         handleAddPost: createMutation.mutateAsync,
 
         handleUpdatePost: async (postId, editPosts, updatedFields) => {
-            // 🛠️ FIX 1: Assemble as FormData to handle raw binary File transfers smoothly
+            // Assemble as FormData to handle raw binary File transfers smoothly
             const formData = new FormData();
             formData.append("header", editPosts.header);
             formData.append("type", editPosts.type);
+            formData.append("content", editPosts.content ?? "");
 
-            if (editPosts.content) {
-                formData.append("content", editPosts.content);
+            // 🛠️ FIX: Append retained/existing asset URLs so the server knows what to keep
+            if (editPosts?.images && editPosts.images.length > 0) {
+                editPosts.images.forEach((img) => {
+                    if (typeof img === "string") {
+                        formData.append("retainedImages", img);
+                    }
+                });
             }
 
-            // Append updated images if present
+            if (editPosts?.videos && editPosts.videos.length > 0) {
+                editPosts.videos.forEach((vid) => {
+                    if (typeof vid === "string") {
+                        formData.append("retainedVideos", vid);
+                    }
+                });
+            }
+
+            // Append newly added images if present
             if (updatedFields?.images && updatedFields.images.length > 0) {
                 updatedFields.images.forEach((file) => {
                     if (file instanceof File) {
@@ -95,7 +109,7 @@ const useFeedTimeline = (username) => {
                 });
             }
 
-            // Append updated videos if present
+            // Append newly added videos if present
             if (updatedFields?.videos && updatedFields.videos.length > 0) {
                 updatedFields.videos.forEach((file) => {
                     if (file instanceof File) {

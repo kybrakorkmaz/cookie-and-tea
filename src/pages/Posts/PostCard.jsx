@@ -87,7 +87,9 @@ const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDe
                         setActiveType={setActiveType}
                         setDonateAmount={setDonateAmount}
                     />
-                    <PostComment postId={post.id}/>
+                    <PostComment
+                        postId={post.id}
+                    />
 
                     {/* Traverse the comments array using .map() */}
                     {previewComments.length > 0 && !activeType && (
@@ -95,6 +97,8 @@ const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDe
                             {previewComments.map((comment, index) => (
                                 <PostCommenters
                                     key={`${comment.authorUsername}-${index}`}
+                                    postId={post.id}
+                                    commentId={comment.commentId}
                                     imgSrc={comment.authorProfileImage}
                                     name={comment.authorName}
                                     comment={comment.comment}

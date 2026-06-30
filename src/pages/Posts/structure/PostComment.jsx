@@ -1,12 +1,14 @@
 import { GrSend } from "react-icons/gr";
 import { useState, useMemo } from "react";
 import { commentSchema, MAX_CHARS } from "../../../validations/postStructure.validation.js";
-import useWriteComment from "../hooks/useWriteComment.js";
+import {createComment} from "../../Hooks/useCommentActions.js";
+
+
 
 const PostComment = ({ oldComment = "", onSend, update, postId }) => {
     const [newComment, setNewComment] = useState(oldComment);
     const [status, setStatus] = useState({ message: "", type: "" });
-    const { handleWriteComment, isSubmittingComment } = useWriteComment(); // Added isSubmittingComment to prevent double submissions
+    const {handleWriteComment, isSubmittingComment } = createComment(); // Added isSubmittingComment to prevent double submissions
 
     const characterCounterColor = useMemo(() => {
         return newComment.length >= MAX_CHARS ? "text-red-500 font-bold" : "text-gray-400";
