@@ -3,7 +3,7 @@ import Donation from "../../../components/Donation.jsx";
 import { FaMessage } from "react-icons/fa6";
 import { GiTwoCoins } from "react-icons/gi";
 
-const InteractionBar = ({ postId, commentCount, donationAmount, activeType, setActiveType, setDonateAmount }) => {
+const InteractionBar = ({commentCount, donationAmount, activeType, setActiveType, setDonateAmount }) => {
     return (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2 pt-4 border-t border-gray-50">
             {/* Donation Options */}
@@ -32,7 +32,7 @@ const InteractionBar = ({ postId, commentCount, donationAmount, activeType, setA
                     }`}>
                         <FaMessage className="w-4 h-4"/>
                     </div>
-                    <span className="text-sm font-bold">{commentCount}</span>
+                    <span className="text-sm font-bold">{commentCount ?? 0}</span>
                 </button>
 
                 {/* Donation Toggle */}
@@ -48,7 +48,7 @@ const InteractionBar = ({ postId, commentCount, donationAmount, activeType, setA
                     }`}>
                         <GiTwoCoins className="w-5 h-5 text-current"/>
                     </div>
-                    <span className="text-sm font-bold">${donationAmount}</span>
+                    <span className="text-sm font-bold">${donationAmount ?? 0}</span>
                 </button>
             </div>
         </div>
