@@ -264,18 +264,23 @@ const Feed = () => {
 
                             {visiblePosts.length > 0 ? (
                                 visiblePosts.map((post) => {
-                                        const isMyOwnPost = user && user.id === post.userId;
-                                        return (
-                                            <PostCard
-                                                key={post.id}
-                                                post={post}
-                                                previewComments={commentsMap?.[post.id] || []}
-                                                isPermitted={isMyOwnPost}
-                                                onDelete={handleDeletePost}
-                                                onUpdate={handleUpdatePost}
-                                            />
-                                        );
-                                    })
+                                    const isMyOwnPost = user && user.id === post.userId;
+
+                                    const comments = commentsMap ? commentsMap[post.id] : [];
+
+                                    console.log(`Check comments for post ${post.id}:`, comments);
+
+                                    return (
+                                        <PostCard
+                                            key={post.id}
+                                            post={post}
+                                            previewComments={comments || []}
+                                            isPermitted={isMyOwnPost}
+                                            onDelete={handleDeletePost}
+                                            onUpdate={handleUpdatePost}
+                                        />
+                                    );
+                                })
                             ) : (!loading && !isPublishing) ? (
                                 <div className="text-center py-10 text-gray-400 font-paragraph">
                                     No posts to show on your timeline yet.

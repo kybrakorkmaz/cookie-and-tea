@@ -5,13 +5,17 @@ import {useLocation, useParams} from "react-router";
 
 const checkFeedContext = (pathname) => pathname.includes("/feed");
 const serverResponse = (response) =>{
-    const commentsArray = response?.data || response || [];
-    if (!Array.isArray(commentsArray)) return {};
+    const commentsArray = Array.isArray(response?.data)
+        ? response.data
+        : (Array.isArray(response) ? response : []);
+
+    // 2. Reduce the array, not the response object
     return commentsArray.reduce((acc, comment) => {
-        if (!acc[comment.postId]) {
-            acc[comment.postId] = [];
+        const id = comment.postId;
+        if (!acc[id]) {
+            acc[id] = [];
         }
-        acc[comment.postId].push(comment);
+        acc[id].push(comment);
         return acc;
     }, {});
 }
@@ -26,6 +30,7 @@ export const usePreviewComments = (username, type = "profile") => {
                 : `/api/v1/profile/${username}/posts/preview`;
 
             const { data } = await apiClient.get(endpoint);
+            console.log("FINAL MAP STRUCTURE:", data);
             return data;
         },
         enabled: !!username,
