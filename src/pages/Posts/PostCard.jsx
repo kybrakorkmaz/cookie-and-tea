@@ -1,4 +1,3 @@
-// components/PostCard.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
@@ -14,35 +13,32 @@ import InteractionBar from "./structure/InteractionBar.jsx";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
 import PostComment from "./structure/PostComment.jsx";
-import {useAllComments} from "../Hooks/useComments.js";
 
-const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDelete, onUpdate }) => {
+const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete, onUpdate }) => {
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);// 1. Add loading state
     const isFocused = highlightedId === `post-${post.id}`;
     const currentPostId = post.id;
 
-    // Gather the bulk comments object. React Query automatically handles query deduplication across cards!
-    const { data: allCommentsLookUp, isLoading: isLoadingAllComments } = useAllComments(currentPostId);
 
-    // Determine active list: use full database sync if toggled, otherwise fall back to previews
-    const commentsToRender = activeType === 'comments'
-        ? (allCommentsLookUp?.[post.id] || [])
-        : previewComments;
+    console.log("preview comments post card value",  previewComments );
 
     const handleUpdateSuccess = async (postId, editPosts, updatedFields) => {
         try {
-            setIsSaving(true);
+            // Hardened Check: Ensure your parent component's onUpdate handler
+            // explicitly returns true (or a truthy value) on a successful 200 OK API response.
+            setIsSaving(true);// 2. Turn on loading indicator immediately
             const isSuccess = await onUpdate(postId, editPosts, updatedFields);
+            // If the parent handler returns nothing (undefined), fallback safely or enforce strict boolean checking
             if (isSuccess !== false) {
                 setIsEditing(false);
             }
         } catch (error) {
             console.error("Failed to update post:", error);
-        } finally {
-            setIsSaving(false);
+        }finally {
+            setIsSaving(false);// 3. Clean up state if it fails
         }
     };
 
@@ -87,34 +83,27 @@ const PostCard = ({ post, previewComments = [], highlightedId, isPermitted, onDe
 
                     <InteractionBar
                         postId={post.id}
-                        commentCount={post.commentCount ?? 0}
-                        donationAmount={post.donationSum ?? 0}
+                        commentCount={post.commentCount}
+                        donationAmount={post.donationSum}
                         activeType={activeType}
                         setActiveType={setActiveType}
                         setDonateAmount={setDonateAmount}
                     />
+                    <PostComment
+                        postId={post.id}
+                    />
 
-                    <PostComment postId={post.id} />
-
-                    {/* Loading Placeholder State */}
-                    {activeType === 'comments' && isLoadingAllComments && (
-                        <div className="text-xs text-gray-400 animate-pulse mt-2 pl-1">
-                            Loading all comments...
-                        </div>
-                    )}
-
-                    {/* Comment Display Engine */}
-                    {commentsToRender.length > 0 && activeType !== 'donations' && (
+                    {/* Traverse the comments array using .map() */}
+                    {previewComments.length > 0 && !activeType && (
                         <div className="mt-1 flex flex-col gap-3">
-                            {commentsToRender.map((comment, index) => (
+                            {previewComments.map((comment, index) => (
                                 <PostCommenters
-                                    key={`${comment.commentId || comment.authorUsername}-${index}`}
+                                    key={`${comment.authorUsername}-${index}`}
                                     postId={post.id}
                                     commentId={comment.commentId}
                                     imgSrc={comment.authorProfileImage}
                                     name={comment.authorName}
                                     comment={comment.comment}
-                                    date={comment.createdAt}
                                 />
                             ))}
                         </div>

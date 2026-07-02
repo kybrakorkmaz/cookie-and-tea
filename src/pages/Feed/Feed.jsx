@@ -1,4 +1,3 @@
-// Feed.jsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { FaImage, FaVideo, FaTimes, FaNewspaper } from "react-icons/fa";
@@ -270,7 +269,7 @@ const Feed = () => {
                                             <PostCard
                                                 key={post.id}
                                                 post={post}
-                                                previewComments={commentsMap?.[post.id] || []} // Fixed prop name & extracted array
+                                                previewComments={commentsMap?.[post.id] || []}
                                                 isPermitted={isMyOwnPost}
                                                 onDelete={handleDeletePost}
                                                 onUpdate={handleUpdatePost}

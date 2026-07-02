@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import PostComment from "./PostComment.jsx";
-import { deleteComment, updateComment } from "../../Hooks/useCommentActions.js";
+import { useDeleteComment, useUpdateComment } from "../../Hooks/useCommentActions.js";
 
 const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment }) => {
     const [currentComment, setCurrentComment] = useState(comment);
     const [isEditing, setIsEditing] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
 
-    const { handleUpdateComment } = updateComment(); // Removed unused isUpdatingComment
-    const { handleDeleteComment, isDeletingComment } = deleteComment();
+    const { handleUpdateComment } = useUpdateComment(); // Removed unused isUpdatingComment
+    const { handleDeleteComment, isDeletingComment } = useDeleteComment();
 
     useEffect(() => {
         if (!isEditing) {

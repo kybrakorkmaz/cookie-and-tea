@@ -28,26 +28,7 @@ export const useCreateComment = () => {
             // Always update deep thread views
             queryClient.invalidateQueries({ queryKey: ["comments", postId] });
 
-            // Optimistically bump the UI counter so users see immediate feedback
-            try {
-                if (isFeed) {
-                    // Update feedTimeline cache in-place
-                    queryClient.setQueryData(["feedTimeline", username], (old) => {
-                        if (!old) return old;
-                        return old.map((p) => p.id === postId ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p);
-                    });
-                } else {
-                    // Update profilePosts cache in-place
-                    queryClient.setQueryData(["profilePosts", username], (old) => {
-                        if (!old) return old;
-                        return old.map((p) => p.id === postId ? { ...p, commentCount: (p.commentCount || 0) + 1 } : p);
-                    });
-                }
-            } catch (e) {
-                console.error('Failed to optimistically update comment count cache', e);
-            }
-
-            // Smart-invalidate matching preview caches cleanly (also refetch authoritative value)
+            // Smart-invalidate matching preview caches cleanly
             if (isFeed) {
                 queryClient.invalidateQueries({ queryKey: ["feedTimeline", username] });
                 queryClient.invalidateQueries({ queryKey: ["preview", "feed", username] });
