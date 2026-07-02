@@ -1,11 +1,8 @@
-const LoadMore = ({setVisibleCount}) =>{
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => prev + 5);
-    };
+const LoadMore = ({onClick}) =>{
     return(
         <button
             type="button"
-            onClick={handleLoadMore}
+            onClick={onClick}
             className="mx-auto px-10 py-3 bg-primary-dark text-white rounded-full font-bold hover:bg-primary-dark/90 transition-all"
         >
             Load More

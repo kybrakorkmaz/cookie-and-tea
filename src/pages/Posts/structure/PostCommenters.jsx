@@ -1,20 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PostComment from "./PostComment.jsx";
+import { useDeleteComment, useUpdateComment } from "../../Hooks/useCommentActions.js";
 
-const PostCommenters = ({ imgSrc, name, date, comment, onDelete }) => {
+const PostCommenters = ({ postId, commentId, imgSrc, name, date, comment }) => {
     const [currentComment, setCurrentComment] = useState(comment);
     const [isEditing, setIsEditing] = useState(false);
-    const [isVisible, setIsVisible] = useState(true); // Local mock for deletion
+    const [isVisible, setIsVisible] = useState(true);
 
-    const handleUpdate = (updatedText) => {
-        setCurrentComment(updatedText);
-        setIsEditing(false);
+    const { handleUpdateComment } = useUpdateComment(); // Removed unused isUpdatingComment
+    const { handleDeleteComment, isDeletingComment } = useDeleteComment();
+
+    useEffect(() => {
+        if (!isEditing) {
+            setCurrentComment(comment);
+        }
+    }, [comment, isEditing]);
+
+    const handleUpdate = async (updatedText) => {
+        try {
+            await handleUpdateComment({
+                postId,
+                commentId,
+                comment: updatedText
+            });
+            setCurrentComment(updatedText);
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to apply comment modifications:", error);
+        }
     };
 
-    const handleDelete = () => {
-        //todo api call
-        // onDelete(id);
-        setIsVisible(false);
+    const handleDelete = async () => {
+        try {
+            await handleDeleteComment({
+                postId,
+                commentId
+            });
+            setIsVisible(false); // Instantly hide component locally upon successful deletion
+        } catch (error) {
+            console.error("Failed to execute comment removal:", error);
+        }
     };
 
     if (!isVisible) return null;
@@ -38,21 +63,23 @@ const PostCommenters = ({ imgSrc, name, date, comment, onDelete }) => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="text-[11px] text-gray-400 hover:text-gray-900 font-medium transition-colors"
+                        disabled={isDeletingComment}
+                        className="text-[11px] text-gray-400 hover:text-gray-900 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isEditing ? "Cancel" : "Edit"}
                     </button>
                     <button
                         onClick={handleDelete}
-                        className="text-[11px] text-gray-400 hover:text-red-500 font-medium transition-colors"
+                        disabled={isDeletingComment}
+                        className="text-[11px] text-gray-400 hover:text-red-500 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Delete
+                        {isDeletingComment ? "Deleting..." : "Delete"}
                     </button>
                 </div>
             </div>
 
             {isEditing ? (
-                <div className="-mt-4"> {/* Tighten spacing for edit mode */}
+                <div className="-mt-4">
                     <PostComment
                         oldComment={currentComment}
                         onSend={() => setIsEditing(false)}

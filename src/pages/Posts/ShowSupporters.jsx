@@ -1,5 +1,5 @@
 import {comments, donations, profile} from "../../constants/index.js";
-import PostCommenters from "./PostCommenters.jsx";
+import PostCommenters from "./structure/PostCommenters.jsx";
 import PostDonators from "./PostDonators.jsx";
 
 const ShowSupporters = ({showDonations= false, showComments=false, postId, userId})=>{

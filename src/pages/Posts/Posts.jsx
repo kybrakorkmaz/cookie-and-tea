@@ -1,37 +1,38 @@
-import { useEffect,  useState } from "react";
+import {useEffect, useState} from "react";
+import { useParams } from "react-router";
+
 import PostCard from "./PostCard.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
-import useAllPosts from "./hooks/useAllPosts.js";
-import {useParams} from "react-router";
-import {useAuth} from "../../context/AuthContext.jsx";
-import useDeleteProfilePost from "./hooks/useDeleteProfilePost.js";
 import LoadMore from "../../components/LoadMore.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import {preparePostFormData} from "../../helpers/postUtils.js";
+import {useDeletePost, useFetchProfilePosts, useUpdatePost} from "./hooks/usePostActions.js";
+import {usePreviewComments} from "../Hooks/useComments.js";
 
 const Posts = ({ targetPostId, onTargetHandled }) => {
-    const {username} = useParams(); // extract username from URL
-    const { user } = useAuth(); // The logged-in authenticated user context
+    const { username } = useParams();
+    const { user } = useAuth();
 
     const [highlightedId, setHighlightedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(5);
     const [internalTarget, setInternalTarget] = useState(null);
 
-    // Fetch initial post data stream
-    const {posts: fetchedPosts, loading} = useAllPosts(username);
-    //Local state list so we can update it immediately on deletion
-    const [allPosts, setAllPosts] = useState([]);
-    // Sync fetched posts into state when they load
-    useEffect(() => {
-        if (fetchedPosts) setAllPosts(fetchedPosts);
-    }, [fetchedPosts]);
+    //  Destructure isError state to prevent falling back to empty profile view on failures
+    const {
+        data: allPosts = [],
+        isLoading: loading,
+        isError: postsError
+    } = useFetchProfilePosts(username);
 
-    const { handleDelete } = useDeleteProfilePost(username, setAllPosts);
+    const { data: commentsMap = {} } = usePreviewComments(username);
 
+    const { handleDelete } = useDeletePost(username);
+    const { handleUpdate } = useUpdatePost(username);
 
-    const totalPosts = allPosts?.length || 0;
-    const visiblePosts = allPosts?.slice(0, visibleCount) || [];
+    const totalPosts = allPosts.length;
+    const visiblePosts = allPosts.slice(0, visibleCount);
 
-    // 1. Sync external targetPostId to internal state and clear it in parent immediately.
-    // This prevents the "intent" from leaking across manual tab changes.
+    // --- Highlighting & Scrolling Logic ---
     useEffect(() => {
         if (targetPostId) {
             setInternalTarget(targetPostId);
@@ -39,21 +40,15 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         }
     }, [targetPostId, onTargetHandled]);
 
-    // 2. Handle scrolling and highlighting based on the captured internalTarget.
-    // This decoupled approach ensures the scroll timer isn't cleared when the parent state resets.
     useEffect(() => {
         if (!internalTarget || loading || totalPosts === 0) return;
 
-        const targetIndex = allPosts.findIndex(
-            (post) => post.id === internalTarget
-        );
-
+        const targetIndex = allPosts.findIndex((post) => post.id === internalTarget);
         if (targetIndex === -1) {
             setInternalTarget(null);
             return;
         }
 
-        // Expand visibility if needed
         if (targetIndex >= visibleCount) {
             setVisibleCount(targetIndex + 1);
             return;
@@ -64,17 +59,12 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
 
         const timer = setTimeout(() => {
             const el = document.getElementById(targetId);
-            if (el) {
-                el.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            }
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 150);
 
         const highlightTimer = setTimeout(() => {
             setHighlightedId(null);
-            setInternalTarget(null); // Finish handling the intent
+            setInternalTarget(null);
         }, 2000);
 
         return () => {
@@ -83,31 +73,51 @@ const Posts = ({ targetPostId, onTargetHandled }) => {
         };
     }, [internalTarget, visibleCount, allPosts, loading, totalPosts]);
 
-    if (loading) return <div className="text-center py-20 font-header text-gray-500">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="text-center py-20 font-header text-gray-500" data-testid="posts-loading">
+                Loading profile posts...
+            </div>
+        );
+    }
+
+    // Render isolated explicit error fallback
+    if (postsError) {
+        return (
+            <div className="text-center py-20 font-header text-red-500" data-testid="posts-error">
+                Failed to load profile posts. Please check your connection or try again later.
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen">
             <div className="flex flex-col gap-10 p-6 md:p-10 max-w-4xl mx-auto">
                 {visiblePosts.length > 0 ? (
                     visiblePosts.map((post) => {
                         const isMyOwnPost = user && user.id === post.userId;
-                        return(
+                        return (
                             <PostCard
                                 key={post.id}
                                 post={post}
+                                previewComments={commentsMap[post.id] || []}
                                 highlightedId={highlightedId}
-                                isPermitted= {isMyOwnPost} // Pass exact permission down
+                                isPermitted={isMyOwnPost}
                                 onDelete={handleDelete}
+                                onUpdate={(id, editPost, pendingFiles) => {
+                                    const formData = preparePostFormData(editPost, pendingFiles);
+                                    return handleUpdate({ postId: id, formData });
+                                }}
                             />
-                        )
+                        );
                     })
-                ): (
+                ) : (
                     <div className="text-center py-20 text-gray-400 font-paragraph">
                         No posts published yet.
                     </div>
                 )}
                 {visibleCount < totalPosts && (
-                    <LoadMore setVisibleCount={setVisibleCount}/>
+                    <LoadMore onClick={() => setVisibleCount(prev => prev + 5)} />
                 )}
             </div>
             <PageUpButton />

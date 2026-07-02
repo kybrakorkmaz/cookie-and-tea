@@ -1,47 +1,44 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
-import { comments, profile } from "../../constants/index.js";
-import VideoPost from "./VideoPost.jsx";
-import ImagePost from "./ImagePost.jsx";
-import HybridPost from "./HybridPost.jsx";
+import { MdDelete } from "react-icons/md";
+import VideoPost from "./type/VideoPost.jsx";
+import ImagePost from "./type/ImagePost.jsx";
+import HybridPost from "./type/HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
-import PostCommenters from "./PostCommenters.jsx";
+import PostCommenters from "./structure/PostCommenters.jsx";
 import EditPost from "./EditPost.jsx";
 import DonateMessage from "../../components/DonateMessage.jsx";
-import InteractionBar from "./InteractionBar.jsx";
-import apiClient from "../../api/axios.js";
-import { MdDelete } from "react-icons/md";
+import InteractionBar from "./structure/InteractionBar.jsx";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
+import PostComment from "./structure/PostComment.jsx";
 
-const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
+const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete, onUpdate }) => {
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
-
+    const [isSaving, setIsSaving] = useState(false);// 1. Add loading state
     const isFocused = highlightedId === `post-${post.id}`;
     const currentPostId = post.id;
 
-    // Preview comment tracking logic
-    const postComments = comments.filter(c => c.commented_to_post_id === post.id);
-    let previewComment = null;
-    if (postComments.length > 0) {
-        const firstComment = postComments[0];
-        const userMatch = profile.find(u => u.user_id === firstComment.commenter_id);
-        previewComment = { ...firstComment, user: userMatch };
-    }
 
-    const handleUpdate = async (updatedPost) => {
+    console.log("preview comments post card value",  previewComments );
+
+    const handleUpdateSuccess = async (postId, editPosts, updatedFields) => {
         try {
-            const response = await apiClient.put(`/api/v1/posts/${currentPostId}`, updatedPost);
-            if (response.status === 200) {
+            // Hardened Check: Ensure your parent component's onUpdate handler
+            // explicitly returns true (or a truthy value) on a successful 200 OK API response.
+            setIsSaving(true);// 2. Turn on loading indicator immediately
+            const isSuccess = await onUpdate(postId, editPosts, updatedFields);
+            // If the parent handler returns nothing (undefined), fallback safely or enforce strict boolean checking
+            if (isSuccess !== false) {
                 setIsEditing(false);
-                alert("Post updated successfully!");
             }
         } catch (error) {
-            console.error("Update Error:", error);
-            alert(error?.response?.data?.message || "Could not save changes. Please try again.");
+            console.error("Failed to update post:", error);
+        }finally {
+            setIsSaving(false);// 3. Clean up state if it fails
         }
     };
 
@@ -84,11 +81,31 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
                         {post.type === "hybrid" && <HybridPost videos={post.videos} images={post.images} />}
                     </div>
 
-                    <InteractionBar post={post} activeType={activeType} setActiveType={setActiveType} setDonateAmount={setDonateAmount}/>
+                    <InteractionBar
+                        postId={post.id}
+                        commentCount={post.commentCount}
+                        donationAmount={post.donationSum}
+                        activeType={activeType}
+                        setActiveType={setActiveType}
+                        setDonateAmount={setDonateAmount}
+                    />
+                    <PostComment
+                        postId={post.id}
+                    />
 
-                    {previewComment && !activeType && (
-                        <div className="mt-1">
-                            <PostCommenters imgSrc={previewComment.user?.profileImage} name={previewComment.user?.name} comment={previewComment.comment}/>
+                    {/* Traverse the comments array using .map() */}
+                    {previewComments.length > 0 && !activeType && (
+                        <div className="mt-1 flex flex-col gap-3">
+                            {previewComments.map((comment, index) => (
+                                <PostCommenters
+                                    key={`${comment.authorUsername}-${index}`}
+                                    postId={post.id}
+                                    commentId={comment.commentId}
+                                    imgSrc={comment.authorProfileImage}
+                                    name={comment.authorName}
+                                    comment={comment.comment}
+                                />
+                            ))}
                         </div>
                     )}
 
@@ -99,8 +116,9 @@ const PostCard = ({ post, highlightedId, isPermitted, onDelete }) => {
             {isEditing && (
                 <EditPost
                     post={post}
+                    isSaving={isSaving}
                     onClose={() => setIsEditing(false)}
-                    onUpdate={handleUpdate}
+                    onUpdate={handleUpdateSuccess}
                     onDelete={() => {
                         setIsEditing(false);
                         onDelete(currentPostId);

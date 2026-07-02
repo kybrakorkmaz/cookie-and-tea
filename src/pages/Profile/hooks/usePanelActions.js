@@ -1,15 +1,14 @@
-import {useState} from "react";
+import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext.jsx"; // Adjust path as needed
 
 export const usePanelActions = (setSelected) => {
-    const [editMode, setEditMode] = useState(null); // 'profile' | 'cover' | null
+    const { setUserData } = useAuth(); // Access the context
+    const [editMode, setEditMode] = useState(null);
     const [error, setError] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
 
     const handleUpdate = async (file) => {
-        if (!file) {
-            setError("Please select a file to upload.");
-            return;
-        }
+        if (!file) return;
 
         try {
             setIsUploading(true);
@@ -25,33 +24,21 @@ export const usePanelActions = (setSelected) => {
 
             if (!response.ok) throw new Error("Upload failed");
 
-            // Assuming response contains the new image URL
-            // const data = await response.json();
-            // updateStateOrRedux(data.url);
+            const data = await response.json(); // Assuming response: { imageUrl: "..." }
+
+            // 🔥 THE FIX: Update AuthContext immediately
+            if (editMode === 'profile') {
+                setUserData({ profileImage: data.imageUrl });
+            }
 
             setEditMode(null);
             setError(null);
         } catch (err) {
-            console.error("Update Error:", err);
             setError("Failed to upload image. Please try again.");
         } finally {
             setIsUploading(false);
         }
     };
 
-    const handleTabClick = (tab) => {
-        setSelected(tab);
-        // Reset scroll when switching tabs
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    return {
-        editMode,
-        setEditMode,
-        error,
-        setError,
-        isUploading,
-        handleUpdate,
-        handleTabClick
-    };
+    return { editMode, setEditMode, error, setError, handleUpdate, handleTabClick: (tab) => { setSelected(tab); window.scrollTo({ top: 0, behavior: "smooth" }); } };
 }
