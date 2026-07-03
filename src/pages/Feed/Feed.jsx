@@ -48,6 +48,7 @@ const Feed = () => {
 
     const { data: commentsMap, isLoading } = usePreviewComments(username, "feed");
 
+    console.log("map", commentsMap);
     const totalPosts = allPosts?.length || 0;
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
 
@@ -126,6 +127,7 @@ const Feed = () => {
         URL.revokeObjectURL(uploadedVideos[index]);
         setUploadedVideos(uploadedVideos.filter((_, i) => i !== index));
     };
+
 
     return (
         <>
@@ -266,7 +268,8 @@ const Feed = () => {
                                 visiblePosts.map((post) => {
                                     const isMyOwnPost = user && user.id === post.userId;
 
-                                    const comments = commentsMap ? commentsMap[post.id] : [];
+                                    console.log(post);
+                                    const comments = commentsMap?.[post.id] ?? [];
 
                                     console.log(`Check comments for post ${post.id}:`, comments);
 

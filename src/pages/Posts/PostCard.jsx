@@ -109,7 +109,12 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
                         </div>
                     )}
 
-                    <ShowSupporters showComments={activeType === 'comments'} showDonations={activeType === 'donations'} postId={post.id} userId={post.userId}/>
+                    <ShowSupporters
+                        showComments={activeType === 'comments'}
+                        showDonations={activeType === 'donations'}
+                        postId={post.id}
+                        userId={post.userId}
+                    />
                 </div>
             </motion.div>
 
