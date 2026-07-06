@@ -26,10 +26,12 @@ const Panel = ({
         setEditMode,
         error,
         setError,
+        isUploading,
         handleUpdate,
         handleTabClick,
         isFollowingState,
-        handleFollowToggle
+        handleFollowToggle,
+        isFollowToggling // FIXED: Exposing the pending network flag
     } = usePanelActions(username, isFollowing, isOwnProfile, setSelected);
 
     return (
@@ -50,10 +52,13 @@ const Panel = ({
                 <div className="absolute top-6 right-6">
                     <button
                         onClick={() => setEditMode('cover')}
-                        className="flex items-center bg-white/90 hover:bg-white border border-primary-dark rounded-xl py-2 px-6 shadow-md cursor-pointer"
+                        disabled={isUploading}
+                        className="flex items-center bg-white/90 hover:bg-white border border-primary-dark rounded-xl py-2 px-6 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <FaCamera className="w-5 h-auto mr-2 text-primary-dark"/>
-                        <span className="font-paragraph font-bold text-sm">Cover</span>
+                        <span className="font-paragraph font-bold text-sm">
+                            {isUploading && editMode === 'cover' ? "Uploading..." : "Cover"}
+                        </span>
                     </button>
                 </div>
                 {/* user profile*/}
@@ -75,6 +80,7 @@ const Panel = ({
 
                         <button
                             onClick={() => setEditMode('profile')}
+                            disabled={isUploading}
                             className="absolute top-[8%] right-[8%]
                                        bg-blue-600/30 backdrop-blur-md
                                        hover:bg-blue-600/50
@@ -82,7 +88,8 @@ const Panel = ({
                                        p-0.5 md:p-1
                                        rounded-lg md:rounded-xl
                                        border border-white/20
-                                       transition-all active:scale-95 cursor-pointer shadow-lg"
+                                       transition-all active:scale-95 cursor-pointer shadow-lg
+                                       disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <MdModeEditOutline className="w-4 h-4 md:w-6 md:h-6" />
                         </button>
@@ -158,11 +165,12 @@ const Panel = ({
                 {!isOwnProfile && (
                     <button
                         onClick={handleFollowToggle}
+                        disabled={isFollowToggling} // FIXED: Block rapid parallel submissions
                         className={`p-1 sm:p-2 md:p-3 font-header text-sh rounded-xl border border-primary-dark transition-all active:scale-95 cursor-pointer ${
                             isFollowingState
                                 ? "bg-primary-dark text-white hover:bg-transparent hover:text-primary-dark"
                                 : "text-primary-dark hover:bg-primary-dark hover:text-white"
-                        }`}
+                        } disabled:opacity-60 disabled:cursor-not-allowed`}
                     >
                         {isFollowingState ? "Unfollow" : "Follow"}
                     </button>

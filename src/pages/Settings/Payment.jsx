@@ -12,7 +12,7 @@ const Payment = () => {
         isConnecting,
     } = useIyzicoConnection();
 
-    const { donations, isLoading: isLoadingHistory } = useDonationHistory();
+    const { donations, isLoading: isLoadingHistory, isError: isHistoryError } = useDonationHistory();
 
     // Local form state for onboarding details
     const [showForm, setShowForm] = useState(false);
@@ -44,7 +44,8 @@ const Payment = () => {
         try {
             await handleConnectIyzico(formData);
             setShowForm(false);
-        } catch (error) {
+        } catch {
+            // FIXED: Used a bare catch block to clear the unused variable linter error
             // Error is already handled by mutation onError logic
         }
     };
@@ -180,7 +181,11 @@ const Payment = () => {
                         <div className="py-12 text-center text-gray-400">
                             <p>Loading transactions...</p>
                         </div>
-                    ) : donations.length > 0 ? (
+                    ) : isHistoryError ? (
+                        <div className="py-12 text-center text-red-500 font-medium">
+                            <p>Failed to load donation history. Please try again later.</p>
+                        </div>
+                    ) : donations?.length > 0 ? (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left font-paragraph">
                                 <thead className="bg-gray-50 border-b border-gray-100">

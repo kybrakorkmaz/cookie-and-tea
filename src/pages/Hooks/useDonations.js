@@ -10,7 +10,6 @@ const serverResponse = (response) => {
         ? response.data
         : (Array.isArray(response) ? response : []);
 
-    // 2. Reduce the array, not the response object
     return donationsArray.reduce((acc, donation) => {
         const id = donation.postId;
         if (!acc[id]) {
@@ -28,17 +27,17 @@ export const useAllDonations = (postId, limit = 5, offset = 0) => {
     const isFeed = checkFeedContext(pathname);
     const contextType = isFeed ? "feed" : "profile";
 
-    // useQuery for declarative GET requests
     return useQuery({
-        //  contextType to differentiate profile vs feed cache spaces
-        queryKey: ["donations", postId],
+        // FIXED: Partitioning the cache safely by view context, target user, post ID, and page windows
+        queryKey: ["donations", contextType, username, postId, limit, offset],
         queryFn: async () => {
             const endpoint = isFeed
                 ? `/api/v1/feed/${username}/posts/${postId}/donations`
                 : `/api/v1/profile/${username}/posts/${postId}/donations`;
 
-            const { data } = await apiClient.get(endpoint);
-            console.log(data);
+            const { data } = await apiClient.get(endpoint, {
+                params: { limit, offset }
+            });
             return data;
         },
         enabled: !!username,

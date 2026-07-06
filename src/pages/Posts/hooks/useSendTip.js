@@ -9,15 +9,15 @@ export const useSendTip = () => {
         if (amt === 5) return "/api/v1/donate/tip-tea";
         if (amt === 7) return "/api/v1/donate/tip-cookie";
         if (amt === 12) return "/api/v1/donate/tip-cookie-tea";
-        return "/api/v1/donate/tip-tea";
+
+        // Throw an explicit exception instead of routing to the wrong product endpoint
+        throw new Error(`Unsupported donation amount: $${amount}`);
     };
 
     return useMutation({
         mutationFn: async ({ recipientUsername, amount, postId }) => {
             const endpoint = getEndpointByAmount(amount);
             const response = await apiClient.post(endpoint, { recipientUsername, postId });
-            console.log(recipientUsername, amount, postId);
-            console.log(response);
             return response.data?.data;
         },
         onSuccess: () => {

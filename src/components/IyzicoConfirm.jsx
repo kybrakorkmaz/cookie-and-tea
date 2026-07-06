@@ -53,7 +53,7 @@ const IyzicoConfirm = ({ amount, recipientUsername, postId, onClose, onDonationS
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
-    }, [recipientUsername, queryClient, amount, onDonationSuccess]); // Added dependencies to avoid stale closures
+    }, [recipientUsername, queryClient, amount, onDonationSuccess]);
 
     return (
         <div
@@ -107,6 +107,7 @@ const IyzicoConfirm = ({ amount, recipientUsername, postId, onClose, onDonationS
                             title="Iyzico 3D Secure Confirmation"
                             srcDoc={htmlContent}
                             className="w-full h-96 rounded-xl border border-gray-100"
+                            sandbox="allow-scripts allow-forms" // Secured context sandbox restriction
                         />
                     </>
                 ) : (

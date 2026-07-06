@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useIyzicoCard } from "../hooks/useIyzicoCard.js";
 
-// One-time card entry form. Because of Iyzico's banking policy, the user only ever
-// enters their raw card credentials here, once - afterwards every donation reuses the
-// tokenized card (cardUserKey/cardToken) that Iyzico returns.
 const IyzicoCardForm = () => {
     const { isCardConnected, isLoading, saveCard, isSavingCard, saveCardError } = useIyzicoCard();
     const [form, setForm] = useState({
@@ -53,6 +50,7 @@ const IyzicoCardForm = () => {
             <input
                 type="text"
                 placeholder="Card Number"
+                maxLength="16"
                 value={form.cardNumber}
                 onChange={handleChange("cardNumber")}
                 required
@@ -62,26 +60,29 @@ const IyzicoCardForm = () => {
                 <input
                     type="text"
                     placeholder="MM"
+                    maxLength="2"
                     value={form.expireMonth}
                     onChange={handleChange("expireMonth")}
                     required
-                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40"
+                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40 text-center"
                 />
                 <input
                     type="text"
                     placeholder="YYYY"
+                    maxLength="4"
                     value={form.expireYear}
                     onChange={handleChange("expireYear")}
                     required
-                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40"
+                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40 text-center"
                 />
                 <input
                     type="text"
                     placeholder="CVC"
+                    maxLength="3"
                     value={form.cvc}
                     onChange={handleChange("cvc")}
                     required
-                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40"
+                    className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-dark/40 text-center"
                 />
             </div>
             {saveCardError && (

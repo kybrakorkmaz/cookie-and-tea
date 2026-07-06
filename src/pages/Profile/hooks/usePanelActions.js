@@ -45,7 +45,6 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
         if (isOwnProfile) return; // Hard guard against self-following
 
         try {
-            // Use your token-enhanced apiClient instead of raw fetch
             if (isFollowingState) {
                 await apiClient.delete(`/api/v1/profile/${username}/follow`);
             } else {
@@ -69,6 +68,7 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
         setEditMode,
         error,
         setError,
+        isUploading, // FIXED: Now exposed to your UI components
         handleUpdate,
         handleTabClick,
         isFollowingState,
