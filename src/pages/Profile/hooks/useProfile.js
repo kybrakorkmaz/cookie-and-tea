@@ -4,15 +4,14 @@ import apiClient from "../../../api/axios.js";
 
 const allowedTabs = ["intro", "posts", "gallery"];
 
-export const useProfile =() =>{
-    const {username} = useParams(); // Dynamically captures whatever is in the URL path
-    const [searchParams, setSearchParams] = useSearchParams(); // Panel Tab Header
+export const useProfile =() => {
+    const {username} = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const tabParam = searchParams.get("tab");
-    // Tab State (Defaults to "intro" at first glance)
     const selected = allowedTabs.includes(tabParam) ? tabParam : "intro";
 
-    // Decoupled Frontend States matching your individual Backend Resource Endpoints
+    // 1. Added initial properties to the State structure
     const [userPanel, setUserPanel] = useState({
         id: null,
         name:"",
@@ -21,16 +20,16 @@ export const useProfile =() =>{
         backgroundAlt:"",
         profileImage:"",
         profileAlt:"",
+        isFollowing: false, // Added field
+        isOwnProfile: false, // Added field
     });
 
-    // Intro Dashboard State
     const [userIntro, setUserIntro] = useState({
         about:"",
         socials:[],
         earnings:{}
     })
 
-    // Connection & Post Sub-states
     const [userTopDonatedPosts, setUserTopDonatedPosts] = useState([]);
     const [followers, setFollowers] = useState([]);
     const [targetPostId, setTargetPostId] = useState(null);
@@ -46,21 +45,18 @@ export const useProfile =() =>{
     };
 
     const handleNavigateToPost = (postId) => {
-        setSelected("posts"); // Switch tab
+        setSelected("posts");
         setTargetPostId(postId);
     };
 
-    // API CALL 1: Fetch Panel Header Data
     useEffect(() => {
         if (!username) return;
-        // AbortController context to eliminate race conditions on header data
         const controller = new AbortController();
 
         const fetchPanelHeader = async () => {
             try {
                 const response = await apiClient.get(`/api/v1/profile/${username}`, {
-                    // The signal property links the controller to the fetch. Calling controller.abort() stops the fetch.
-                    signal: controller.signal // Bind token instance directly to Axios
+                    signal: controller.signal
                 });
                 const data = response.data;
 
@@ -72,9 +68,10 @@ export const useProfile =() =>{
                     profileAlt: data.profileImage ? `profile-${data.username}` : "default profile",
                     backgroundImage: data.backgroundImage,
                     backgroundAlt: data.backgroundImage ? `background-${data.username}` : "default background",
+                    isFollowing: data.isFollowing, // 2. Map field from response
+                    isOwnProfile: data.isOwnProfile // 3. Map field from response
                 });
             } catch (err) {
-                // Ignore safe cancellations so they don't pollute your console logs
                 if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
                     console.error("Error fetching header details via Axios:", err.message);
                 }
@@ -83,11 +80,10 @@ export const useProfile =() =>{
 
         fetchPanelHeader();
 
-        // Cleanup: Instantly kill pending pipeline requests if user navigates away (component unmounts)
         return () => {
             controller.abort();
         };
-    }, [username]);
+    }, [username]); // Correctly triggers refetching sequence when clicking names
 
     // API Call 2: Fetch Intro Dashboard Data
     useEffect(() => {
@@ -130,7 +126,7 @@ export const useProfile =() =>{
         };
     }, [selected, username]);
 
-    return{
+    return {
         username,
         selected,
         setSelected,

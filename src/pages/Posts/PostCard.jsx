@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaPenToSquare } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
@@ -8,7 +8,7 @@ import HybridPost from "./type/HybridPost.jsx";
 import ShowSupporters from "./ShowSupporters.jsx";
 import PostCommenters from "./structure/PostCommenters.jsx";
 import EditPost from "./EditPost.jsx";
-import DonateMessage from "../../components/DonateMessage.jsx";
+import IyzicoConfirm from "../../components/IyzicoConfirm.jsx";
 import InteractionBar from "./structure/InteractionBar.jsx";
 import User from "./User.jsx";
 import PostBody from "./structure/PostBody.jsx";
@@ -18,27 +18,30 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
     const [activeType, setActiveType] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [donateAmount, setDonateAmount] = useState(null);
-    const [isSaving, setIsSaving] = useState(false);// 1. Add loading state
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Track donation sum locally to guarantee instant, seamless UI transitions
+    const [localDonationSum, setLocalDonationSum] = useState(post.donationSum);
+
     const isFocused = highlightedId === `post-${post.id}`;
     const currentPostId = post.id;
 
-
-    console.log("preview comments post card value",  previewComments );
+    // Keep state in sync if parent properties refresh from background actions
+    useEffect(() => {
+        setLocalDonationSum(post.donationSum);
+    }, [post.donationSum]);
 
     const handleUpdateSuccess = async (postId, editPosts, updatedFields) => {
         try {
-            // Hardened Check: Ensure your parent component's onUpdate handler
-            // explicitly returns true (or a truthy value) on a successful 200 OK API response.
-            setIsSaving(true);// 2. Turn on loading indicator immediately
+            setIsSaving(true);
             const isSuccess = await onUpdate(postId, editPosts, updatedFields);
-            // If the parent handler returns nothing (undefined), fallback safely or enforce strict boolean checking
             if (isSuccess !== false) {
                 setIsEditing(false);
             }
         } catch (error) {
             console.error("Failed to update post:", error);
-        }finally {
-            setIsSaving(false);// 3. Clean up state if it fails
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -84,7 +87,7 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
                     <InteractionBar
                         postId={post.id}
                         commentCount={post.commentCount}
-                        donationAmount={post.donationSum}
+                        donationAmount={localDonationSum} // Uses reactive local state variable
                         activeType={activeType}
                         setActiveType={setActiveType}
                         setDonateAmount={setDonateAmount}
@@ -93,7 +96,6 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
                         postId={post.id}
                     />
 
-                    {/* Traverse the comments array using .map() */}
                     {previewComments.length > 0 && !activeType && (
                         <div className="mt-1 flex flex-col gap-3">
                             {previewComments.map((comment, index) => (
@@ -109,7 +111,12 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
                         </div>
                     )}
 
-                    <ShowSupporters showComments={activeType === 'comments'} showDonations={activeType === 'donations'} postId={post.id} userId={post.userId}/>
+                    <ShowSupporters
+                        showComments={activeType === 'comments'}
+                        showDonations={activeType === 'donations'}
+                        postId={post.id}
+                        userId={post.userId}
+                    />
                 </div>
             </motion.div>
 
@@ -125,7 +132,18 @@ const PostCard = ({ post, previewComments, highlightedId, isPermitted, onDelete,
                     }}
                 />
             )}
-            {donateAmount && <DonateMessage amount={donateAmount} onClose={() => setDonateAmount(null)}/>}
+            {donateAmount && (
+                <IyzicoConfirm
+                    amount={donateAmount}
+                    recipientUsername={post.authorUsername}
+                    postId={post.id}
+                    onClose={() => setDonateAmount(null)}
+                    onDonationSuccess={(amountCharged) => {
+                        // The backend maps cents (e.g. 500), add the value in cent scale dynamically
+                        setLocalDonationSum(prev => Number(prev || 0) + (Number(amountCharged) * 100));
+                    }}
+                />
+            )}
         </>
     );
 };

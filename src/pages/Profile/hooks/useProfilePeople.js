@@ -18,7 +18,7 @@ export const useProfilePeople = (followers) => {
         const fetchFollowingData = async () => {
             try {
                 setLoading(true);
-                const response = await apiClient.get(`/api/v1/profile/${username}/follow`, {
+                const response = await apiClient.get(`/api/v1/profile/${username}/intro/follow`, {
                     params: { isFollower: false },
                     signal: controller.signal
                 });

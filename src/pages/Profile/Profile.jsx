@@ -34,6 +34,8 @@ const Profile = () => {
                     profileAlt={userPanel.profileAlt}
                     selected={selected}
                     setSelected={setSelected}
+                    isFollowing={userPanel.isFollowing}
+                    isOwnProfile={userPanel.isOwnProfile}
                 />
                 {/* Tabs: Welcome Tab Intro */}
                 {selected==="gallery" ? (

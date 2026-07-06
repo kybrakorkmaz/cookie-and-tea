@@ -48,7 +48,7 @@ const Settings = () =>{
                         </div>
                     ) : (
                         <div role="tabpanel" id="paymentPanel" aria-labelledby="paymentTab">
-                            <Payment userId={1} />
+                            <Payment />
                         </div>
                     )}
                 </div>
