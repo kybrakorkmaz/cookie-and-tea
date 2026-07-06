@@ -48,7 +48,7 @@ const InteractionBar = ({commentCount, donationAmount, activeType, setActiveType
                     }`}>
                         <GiTwoCoins className="w-5 h-5 text-current"/>
                     </div>
-                    <span className="text-sm font-bold">${donationAmount ?? 0}</span>
+                    <span className="text-sm font-bold">${(donationAmount / 100).toFixed(2)}</span>
                 </button>
             </div>
         </div>

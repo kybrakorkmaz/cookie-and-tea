@@ -1,17 +1,12 @@
-import {NavLink} from "react-router";
-import {useMemo} from "react";
-import {getSortedActivities} from "../helpers/followingNotifications.js";
+import { NavLink } from "react-router";
+import { useActions } from "../pages/Hooks/useActions.js";
 
+const Notifications = ({ onClose }) => {
+    const { activities, isLoading } = useActions("received", 5);
 
-const Notifications =  ({onClose}) =>{
     const dropdownBg = "bg-white/50 backdrop-blur-md border border-gray-100/50 shadow-xl rounded-2xl overflow-hidden z-50";
-    // Get latest activities (both yours and followed users)
-    const latestActivities = useMemo(() => {
-        const currentUserId = 1;
-        const image = "/images/people/angel.jpg";
-        return getSortedActivities(currentUserId, image);
-    }, []);
-    return(
+
+    return (
         <>
             <div
                 className="fixed inset-0 z-40"
@@ -22,8 +17,10 @@ const Notifications =  ({onClose}) =>{
                     <h4 className="font-bold text-primary-dark">Latest Activities</h4>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
-                    {latestActivities.length > 0 ? (
-                        latestActivities.map(activity => (
+                    {isLoading ? (
+                        <p className="p-4 text-sm text-gray-500 text-center">Loading...</p>
+                    ) : activities.length > 0 ? (
+                        activities.map(activity => (
                             <div key={activity.id} className="p-3 flex items-center gap-3 hover:bg-white/40 transition-colors border-b border-gray-100/10">
                                 <img src={activity.img} alt="" className="w-8 h-8 rounded-full object-cover" />
                                 <div className="flex flex-col">
@@ -43,7 +40,7 @@ const Notifications =  ({onClose}) =>{
                 </NavLink>
             </div>
         </>
-    )
-}
+    );
+};
 
 export default Notifications;

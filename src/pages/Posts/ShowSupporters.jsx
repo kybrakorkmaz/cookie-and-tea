@@ -1,17 +1,17 @@
-import { comments, donations, profile } from "../../constants/index.js";
 import PostCommenters from "./structure/PostCommenters.jsx";
 import PostDonators from "./PostDonators.jsx";
-import {useAllComments} from "../Hooks/useComments.js";
+import { useAllComments } from "../Hooks/useComments.js";
+import { useAllDonations } from "../Hooks/useDonations.js";
 
 const ShowSupporters = ({ showDonations = false, showComments = false, postId, userId }) => {
-
     if (!showDonations && !showComments) return null;
 
     const { data: commentsMap, isLoading: isLoadingComments } = useAllComments(postId);
-    // todo const { data: donationsList, isLoading: isLoadingDonations } = usePostDonations(postId);
+    const { data: donationsMap, isLoading: isLoadingDonations } = useAllDonations(postId);
 
+    // Identical data extraction flow for both domains
     const liveComments = commentsMap?.[postId] || [];
-    // todo const liveDonations = donationsList || [];
+    const liveDonations = donationsMap?.[postId] || [];
 
     return (
         <div className="mt-1 flex flex-col gap-1">
@@ -45,11 +45,11 @@ const ShowSupporters = ({ showDonations = false, showComments = false, postId, u
                     liveDonations.map((donation, index) => (
                         <PostDonators
                             key={`live-donate-${donation.id || index}`}
-                            imgSrc={donation.authorProfileImage}
-                            name={donation.authorName}
-                            username={donation.authorUsername}
-                            donatedAmount={donation.amount}
-                            date={donation.createdAt}
+                            imgSrc={donation.donator?.profileImage}
+                            name={donation.donator?.name}
+                            username={donation.donator?.username}
+                            donatedAmount={donation.amountDollars}
+                            date={new Date(donation.createdAt).toLocaleDateString()}
                         />
                     ))
                 ) : (

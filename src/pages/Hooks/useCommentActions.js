@@ -36,6 +36,7 @@ export const useCreateComment = () => {
                 queryClient.invalidateQueries({ queryKey: ["profilePosts", username] });
                 queryClient.invalidateQueries({ queryKey: ["preview", "profile", username] });
             }
+            queryClient.invalidateQueries({ queryKey: ["actions"] });
         }
     });
 
@@ -77,6 +78,7 @@ export const useUpdateComment = () => {
                 queryClient.invalidateQueries({ queryKey: ["profilePosts", username] });
                 queryClient.invalidateQueries({ queryKey: ["preview", "profile", username] });
             }
+            queryClient.invalidateQueries({ queryKey: ["actions"] });
         }
     });
 
@@ -119,6 +121,7 @@ export const useDeleteComment = () => {
                 queryClient.invalidateQueries({ queryKey: ["profilePosts", username] });
                 queryClient.invalidateQueries({ queryKey: ["preview", "profile", username] });
             }
+            queryClient.invalidateQueries({ queryKey: ["actions"] });
         }
     });
 

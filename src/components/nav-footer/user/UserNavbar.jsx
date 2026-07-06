@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router";
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -13,22 +13,16 @@ import HamburgerMenu from "../HamburgerMenu.jsx";
 import MobileNavbar from "../MobileNavbar.jsx";
 import { useLogout } from "./useLogout.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
-import { getSortedActivities } from "../../../helpers/followingNotifications.js";
+import { useActions } from "../../../pages/Hooks/useActions.js";
 
 const UserNavbar = () => {
-    // Fix: Removed 'loading' from destructuring to match the AuthContext contract
     const { user } = useAuth();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
+    const { unreadCount } = useActions("received", 20);
 
     const { handleClick } = useLogout();
-
-    // 1. Memoized derived state: React will now update these automatically
-    // when 'user' changes in the AuthContext.
-    const sortedActivities = useMemo(() =>
-            getSortedActivities(user?.id, user?.profileImage),
-        [user?.id, user?.profileImage]);
 
     // 2. Navigation logic using optional chaining
     const profileTo = user ? `/profile/${user.username}?tab=intro` : "/login";
@@ -91,7 +85,7 @@ const UserNavbar = () => {
                     {/* Notifications */}
                     <div className="relative">
                         <button onClick={() => setShowNotifications(!showNotifications)} className="cursor-pointer bg-transparent border-none p-0">
-                            <Badge badgeContent={sortedActivities.length} color="primary">
+                            <Badge badgeContent={unreadCount || null} color="primary">
                                 <NotificationsIcon className="text-primary-dark hover:text-primary transition-colors" sx={{ width: '1.8rem', height: '1.8rem' }} />
                             </Badge>
                         </button>

@@ -1,24 +1,38 @@
 import { FaCamera } from "react-icons/fa";
-import {MdModeEditOutline} from "react-icons/md";
-import {useState} from "react";
+import { MdModeEditOutline } from "react-icons/md";
 import ImageUploadModal from "../../components/media/ImageUploadModal.jsx";
-import {usePanelActions} from "./hooks/usePanelActions.js";
+import { usePanelActions } from "./hooks/usePanelActions.js";
 
-const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, profileAlt, selected, setSelected}) => {
+const Panel = ({
+                   name,
+                   username,
+                   backgroundImage,
+                   backgroundAlt,
+                   profileImage,
+                   profileAlt,
+                   selected,
+                   setSelected,
+                   isFollowing = false,
+                   isOwnProfile = false
+               }) => {
     const strokeStyle = {
         WebkitTextStroke: `0.7px black`,
         textShadow: "0 0.5px 0.7px rgba(0,0,0,0.3)"
     };
-    // Inject your streamlined behavioral control layer
+
+    // Forward props into your behavioral hook layer
     const {
         editMode,
         setEditMode,
         error,
         setError,
         handleUpdate,
-        handleTabClick
-    } = usePanelActions(setSelected);
-    return(
+        handleTabClick,
+        isFollowingState,
+        handleFollowToggle
+    } = usePanelActions(username, isFollowing, isOwnProfile, setSelected);
+
+    return (
         <div className="w-5/6 mx-auto mt-10 rounded-2xl overflow-hidden border border-primary-dark bg-white shadow-soft">
             {/* cover area */}
             <div className="relative w-full h-60 md:h-80 lg:h-100">
@@ -30,7 +44,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                         alt={backgroundAlt}
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-primary-dark/10" /> // a placeholder for an account w/ none bg image
+                    <div className="absolute inset-0 bg-primary-dark/10" />
                 )}
                 {/* Cover Edit Button */}
                 <div className="absolute top-6 right-6">
@@ -59,11 +73,6 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                             )}
                         </div>
 
-                        {/*
-                            The Responsive Rectangular Button
-                            - Using percentage-based positioning (top-[10%]) to stay on the edge
-                            - Glassmorphism blue style
-                        */}
                         <button
                             onClick={() => setEditMode('profile')}
                             className="absolute top-[8%] right-[8%]
@@ -108,7 +117,6 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
             {/* Panel Navbar */}
             <div className="w-full flex justify-between items-center h-20 bg-white px-8 md:px-12">
                 <div className="flex font-header text-sh text-primary-dark p-4 pl-0 md:pl-24 gap-4 md:gap-8">
-
                     {/* Intro Tab */}
                     <button
                         onClick={() => handleTabClick("intro")}
@@ -135,9 +143,7 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
 
                     {/* Posts Tab */}
                     <button
-                        onClick={() => {
-                            handleTabClick("posts");
-                        }}
+                        onClick={() => handleTabClick("posts")}
                         className={`pb-1 transition-all duration-200 hover:text-primary cursor-pointer ${
                             selected === "posts"
                                 ? "border-b-2 border-primary-dark text-primary-dark"
@@ -148,12 +154,22 @@ const Panel = ({name, username, backgroundImage, backgroundAlt, profileImage, pr
                     </button>
                 </div>
 
-                <button className="p-1 sm:p-2 md:p-3 font-header text-sh rounded-xl text-primary-dark border border-primary-dark hover:bg-primary-dark hover:text-white transition-all active:scale-95">
-                    Follow
-                </button>
+                {/* Follow Button Action Area */}
+                {!isOwnProfile && (
+                    <button
+                        onClick={handleFollowToggle}
+                        className={`p-1 sm:p-2 md:p-3 font-header text-sh rounded-xl border border-primary-dark transition-all active:scale-95 cursor-pointer ${
+                            isFollowingState
+                                ? "bg-primary-dark text-white hover:bg-transparent hover:text-primary-dark"
+                                : "text-primary-dark hover:bg-primary-dark hover:text-white"
+                        }`}
+                    >
+                        {isFollowingState ? "Unfollow" : "Follow"}
+                    </button>
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Panel;
