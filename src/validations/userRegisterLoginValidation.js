@@ -20,9 +20,11 @@ export const registerSchema = z.object({
 export const profileUpdateSchema = z.object({
     username: z.string()
         .min(5, "Username must be at least 5 characters!")
-        .max(255, "This is too long"),
-    name: z.string().min(1, "Name is required"),
-    email: z.email("Invalid email address!"),
+        .max(255, "This is too long")
+        .optional()
+        .or(z.literal('')),
+    name: z.string().min(1, "Name is required").optional().or(z.literal('')),
+    email: z.email("Invalid email address!").optional().or(z.literal('')),
     password: z.string().min(8, "password must be at least 8 characters!").optional().or(z.literal('')),
     passwordConfirm: z.string().optional().or(z.literal('')),
 }).refine(

@@ -26,7 +26,7 @@ const UserNavbar = () => {
 
     // 2. Navigation logic using optional chaining
     const profileTo = user ? `/profile/${user.username}?tab=intro` : "/login";
-    const feedTo = user ? `/feed/${user.username}` : "/login";
+    const feedTo = user ? `/feed` : "/login";
     const isCurrentlyOnProfile = location.pathname === `/profile/${user?.username}`;
 
     // Fix: Prevent rendering an infinite skeleton pulse loop when the user is unauthenticated.

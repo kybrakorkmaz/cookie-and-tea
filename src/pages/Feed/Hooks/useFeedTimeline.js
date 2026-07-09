@@ -12,6 +12,7 @@ const useFeedTimeline = (username) => {
         queryKey: timelineCacheKey,
         queryFn: async () => {
             if (!username) return [];
+            // Hits the custom endpoint with the logged-in handle safely
             const response = await apiClient.get(`/api/v1/feed/${username}`);
             return response.data?.data || [];
         },

@@ -43,7 +43,7 @@ const useLogin = () => {
                 setAuth(response.data.user);
                 setFormData({ identifier: "", password: "" });
                 setErrors({});
-                navigate(`/feed/${response.data.user.username}`);
+                navigate(`/feed`);
             }
         } catch (error) {
             const backendMessage = error.response?.data?.message || "Something went wrong. Please try again.";
