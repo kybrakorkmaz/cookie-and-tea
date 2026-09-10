@@ -1,15 +1,15 @@
-// hooks/useComments.js
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../api/axios.js";
-import {useLocation, useParams} from "react-router";
+import { useLocation, useParams } from "react-router";
+import { useAuth } from "../../context/AuthContext.jsx"; // 1. Import your auth context
 
 const checkFeedContext = (pathname) => pathname.includes("/feed");
-const serverResponse = (response) =>{
+
+const serverResponse = (response) => {
     const commentsArray = Array.isArray(response?.data)
         ? response.data
         : (Array.isArray(response) ? response : []);
 
-    // 2. Reduce the array, not the response object
     return commentsArray.reduce((acc, comment) => {
         const id = comment.postId;
         if (!acc[id]) {
@@ -18,42 +18,15 @@ const serverResponse = (response) =>{
         acc[id].push(comment);
         return acc;
     }, {});
-}
+};
+
 export const usePreviewComments = (username, type = "profile") => {
     return useQuery({
-        // 1. Differentiate cache spaces using the type argument
         queryKey: ["preview", type, username],
         queryFn: async () => {
-            // 2. Select the right API path based on context
             const endpoint = type === "feed"
                 ? `/api/v1/feed/${username}/preview`
                 : `/api/v1/profile/${username}/posts/preview`;
-
-            const { data } = await apiClient.get(endpoint);
-            console.log("FINAL MAP STRUCTURE:", data);
-            return data;
-        },
-        enabled: !!username,
-        // 3. Centralized, shared parsing logic
-        select:  serverResponse
-    });
-};
-
-export const useAllComments = (postId) =>{
-    const { username } = useParams();
-    const { pathname } = useLocation();
-
-    const isFeed = checkFeedContext(pathname);
-    const contextType = isFeed ? "feed" : "profile";
-
-    // useQuery for declarative GET requests
-    return useQuery({
-        //  contextType to differentiate profile vs feed cache spaces
-        queryKey: ["comments", postId],
-        queryFn: async () => {
-            const endpoint = isFeed
-                ? `/api/v1/feed/${username}/posts/${postId}/comment`
-                : `/api/v1/profile/${username}/posts/${postId}/comment`;
 
             const { data } = await apiClient.get(endpoint);
             return data;
@@ -61,4 +34,32 @@ export const useAllComments = (postId) =>{
         enabled: !!username,
         select: serverResponse
     });
-}
+};
+
+export const useAllComments = (postId) => {
+    const { username: profileUsername } = useParams(); // Active on /profile/:username routes
+    const { pathname } = useLocation();
+    const { user } = useAuth(); // 2. Extract logged-in user properties
+
+    const isFeed = checkFeedContext(pathname);
+
+    // 3. Fallback: Use logged-in handle on feed, or url parameter on profile streams
+    const targetUsername = isFeed ? user?.username : profileUsername;
+
+    return useQuery({
+        // 4. Added targetUsername and context to queryKey to avoid cross-page cache contamination
+        queryKey: ["comments", isFeed ? "feed" : "profile", targetUsername, postId],
+        queryFn: async () => {
+            const endpoint = isFeed
+                ? `/api/v1/feed/${targetUsername}/posts/${postId}/comment`
+                : `/api/v1/profile/${targetUsername}/posts/${postId}/comment`;
+
+            const { data } = await apiClient.get(endpoint);
+            console.log("Fetched Full Comments Stack:", data);
+            return data;
+        },
+        // 5. Query triggers securely only when username context is fully resolved
+        enabled: !!targetUsername && !!postId,
+        select: serverResponse
+    });
+};

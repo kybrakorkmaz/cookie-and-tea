@@ -36,7 +36,7 @@ const App = () => {
                     <Route path="/posts/:userId?" element={<Posts />} />
 
                     {/* Protected Routes wrapped individually with <ProtectedRoute> */}
-                    <Route path={"/feed/:username"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
+                    <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
                     <Route path={"/settings"} element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
                     <Route path={"/activity"} element={<ProtectedRoute><Activity/></ProtectedRoute>}/>
                 </Routes>
