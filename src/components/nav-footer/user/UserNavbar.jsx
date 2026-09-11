@@ -8,6 +8,7 @@ import { IoLogOut } from "react-icons/io5";
 
 import Logo from "../Logo.jsx";
 import SearchBar from "../SearchBar.jsx";
+import Navbar from "../guest/Navbar.jsx";
 import Notifications from "../../Notifications.jsx";
 import HamburgerMenu from "../HamburgerMenu.jsx";
 import MobileNavbar from "../MobileNavbar.jsx";
@@ -20,7 +21,7 @@ const UserNavbar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
-    const { unreadCount } = useActions("received", 20);
+    const { unreadCount } = useActions("received", 20, !!user);
 
     const { handleClick } = useLogout();
 
@@ -29,10 +30,11 @@ const UserNavbar = () => {
     const feedTo = user ? `/feed` : "/login";
     const isCurrentlyOnProfile = location.pathname === `/profile/${user?.username}`;
 
-    // Fix: Prevent rendering an infinite skeleton pulse loop when the user is unauthenticated.
-    // Yields rendering to the route layer's auth/login redirect guard.
+    // Logged-out visitors (e.g. right after logout, or guests browsing public
+    // pages like /people and /profile/:username) get the default guest navbar
+    // instead of a blank gap where the user navbar used to be.
     if (!user) {
-        return null;
+        return <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />;
     }
 
     return (

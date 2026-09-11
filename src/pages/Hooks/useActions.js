@@ -10,7 +10,7 @@ const formatActionDate = (isoDate) => {
     });
 };
 
-export const useActions = (scope = "received", limit = 20) => {
+export const useActions = (scope = "received", limit = 20, enabled = true) => {
     const queryClient = useQueryClient();
 
     const { data, isLoading, isError, refetch } = useQuery({
@@ -21,6 +21,9 @@ export const useActions = (scope = "received", limit = 20) => {
             });
             return response.data?.data ?? [];
         },
+        // Skip fetching entirely for logged-out visitors — the endpoint requires
+        // auth and would otherwise 401 (and keep polling) on public pages.
+        enabled,
         // Poll periodically so new notifications (e.g. donations) show up on the
         // bell icon almost immediately, even without a manual page refresh.
         refetchInterval: 15000,
