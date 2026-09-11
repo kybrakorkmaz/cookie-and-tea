@@ -1,6 +1,6 @@
 import Navbar from "../../components/nav-footer/guest/Navbar.jsx";
 import { PrimaryButton } from "../../components/Buttons.jsx";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Input from "../../components/Input.jsx"
 import Footer from "../../components/nav-footer/guest/Footer.jsx";
 import useLogin from "./hooks/useLogin.js";
@@ -16,6 +16,12 @@ const Login = () => {
         clearServerErrors   // Destructured
     } = useLogin();
 
+    // Landing state after clicking the email verification link
+    // (backend redirects here with ?verified=1 or ?verified=0&reason=...)
+    const [searchParams] = useSearchParams();
+    const verified = searchParams.get("verified");
+    const verifiedReason = searchParams.get("reason");
+
     return (
         <div className="bg-cream min-h-screen flex flex-col">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
@@ -23,6 +29,19 @@ const Login = () => {
             <main className="grow flex items-center justify-center">
                 <div className="w-full max-w-sm mx-auto px-4 my-20">
                     <h2 className="font-header text-h-2 text-center text-primary-dark mb-4">Login</h2>
+
+                    {verified === "1" && (
+                        <div className="mb-6 rounded-lg border border-green-600/40 bg-green-50 px-4 py-3 text-green-800 font-paragraph text-p" role="status">
+                            Your email has been verified successfully! You can now log in.
+                        </div>
+                    )}
+                    {verified === "0" && (
+                        <div className="mb-6 rounded-lg border border-red-600/40 bg-red-50 px-4 py-3 text-red-800 font-paragraph text-p" role="alert">
+                            {verifiedReason === "invalid-or-expired"
+                                ? "This verification link is invalid or has expired. Please sign up again."
+                                : "Verification failed. Please try signing up again."}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="flex flex-col">
                         <Input

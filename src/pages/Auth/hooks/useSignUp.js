@@ -11,6 +11,7 @@ export const useSignUp = () =>{
         confirmPassword:""
     });
     const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState("");
 
     const handleChange=(e)=>{
         const {value, name}= e.target;
@@ -20,6 +21,7 @@ export const useSignUp = () =>{
 
     const handleSubmit=async (e)=>{
         e.preventDefault();
+        setSuccessMessage("");
         const result = registerSchema.safeParse(formData);
 
         if(!result.success){
@@ -39,23 +41,40 @@ export const useSignUp = () =>{
        try{
            const response = await apiClient.post("/api/v1/auth/sign-up", payload);
             if (response.status !== 201) {
-                console.log("couldn't register, try again");
+                setErrors(prev => ({...prev, server: ["Couldn't register, please try again."]}));
                 return;
             }
-           console.log("successfully registered: ", payload.username);
+           setSuccessMessage("Account created! We've sent a verification link to your email — please verify your account before logging in.");
            // Clean the form
            setFormData({ name: "", username: "", email: "", password: "", confirmPassword: "" });
            setErrors({});
        }catch (err){
-           console.error("Registration error:", err.response?.data || err.message);
-           // İleride backend'den dönen hataları (örn: email zaten kayıtlı) setErrors'a eşleyebilirsiniz.
+           const data = err.response?.data;
+           if (data?.errors?.length) {
+               // Backend zod validation errors: [{field: "body.email", message: "..."}]
+               // Map them onto the same per-field error shape the inputs already read.
+               const fieldErrors = {};
+               for (const {field, message} of data.errors) {
+                   const key = field.replace(/^body\./, "");
+                   (fieldErrors[key] ??= []).push(message);
+               }
+               setErrors(prev => ({...prev, ...fieldErrors}));
+           } else {
+               // Business errors (e.g. "Username is already taken.") or network failures
+               const backendMessage = data?.message || "Something went wrong. Please try again.";
+               setErrors(prev => ({...prev, server: [backendMessage]}));
+           }
        }
     }
+
+    const clearServerErrors = () => setErrors(prev => ({ ...prev, server: null }));
 
     return{
         formData,
         errors,
+        successMessage,
         handleChange,
-        handleSubmit
+        handleSubmit,
+        clearServerErrors
     }
 }
