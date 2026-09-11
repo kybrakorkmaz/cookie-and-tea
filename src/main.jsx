@@ -1,3 +1,4 @@
+import './setupErrorReporting.js' // MUST stay the first import — registers global error handlers before any other module is evaluated
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
