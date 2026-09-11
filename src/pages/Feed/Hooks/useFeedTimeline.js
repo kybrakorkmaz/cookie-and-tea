@@ -84,11 +84,12 @@ const useFeedTimeline = (username) => {
             formData.append("type", editPosts.type);
             formData.append("content", editPosts.content ?? "");
 
-            // 🛠️ FIX: Append retained/existing asset URLs so the server knows what to keep
+            // Append retained/existing asset URLs so the server knows what to keep
+            // (field names must match the backend update schema: existingImages/existingVideos)
             if (editPosts?.images && editPosts.images.length > 0) {
                 editPosts.images.forEach((img) => {
                     if (typeof img === "string") {
-                        formData.append("retainedImages", img);
+                        formData.append("existingImages", img);
                     }
                 });
             }
@@ -96,7 +97,7 @@ const useFeedTimeline = (username) => {
             if (editPosts?.videos && editPosts.videos.length > 0) {
                 editPosts.videos.forEach((vid) => {
                     if (typeof vid === "string") {
-                        formData.append("retainedVideos", vid);
+                        formData.append("existingVideos", vid);
                     }
                 });
             }
