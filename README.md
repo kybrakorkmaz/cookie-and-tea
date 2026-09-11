@@ -1,255 +1,140 @@
-# Cookie and Tea
+# Cookie and Tea — Frontend
 
-A creator support platform built with React and Vite. Cookie and Tea allows creators to build meaningful connections with their supporters through donations and supportive messages.
+React SPA for **Cookie and Tea**, a creator-support platform in the spirit of Buy Me a Coffee / Ko-fi — supporters tip creators ("tea", "cookie", or both) and leave encouraging messages. No likes, no vanity metrics: the design centers genuine support.
 
-## Overview
-
-Cookie and Tea is a web application similar to Buy Me a Coffee or Ko-fi, designed specifically for creators who want to receive support from their community. Unlike traditional social platforms that incentivize engagement metrics, Cookie and Tea focuses on genuine creator support.
-
-### Key Features
-
-- Creator profiles with customizable information
-- Three donation tier options (5, 7, and 12 dollars)
-- Support messages with donations
-- Feed displaying creator content and supporter activity
-- Activity tracking for donations and support messages
-- User authentication and authorization
-- Creator discovery and follower system
-- Content sharing (text, images, and videos)
-
-### Design Philosophy
-
-This platform intentionally excludes "like" functionality and nested comments to prevent distraction from the core purpose of supporting creators. By removing vanity metrics, the platform encourages meaningful interactions focused on genuine support rather than engagement numbers.
+- **Live App:** https://cookie-and-tea.vercel.app
+- **Backend API:** https://cookie-and-tea-backend.vercel.app
+- **Backend repo:** [cookie-and-tea-backend](https://github.com/kybrakorkmaz/cookie-and-tea-backend)
+- **Design (Figma):** [Cookie and Tea](https://www.figma.com/design/RjrtJpLfLmu4fB0rpPdoM5/cookie-and-tea)
 
 ---
 
-## Getting Started
+## Türkçe
 
-### Prerequisites
+**Cookie and Tea**, içerik üreticilerinin takipçilerinden bağış ve destek mesajları alabildiği bir platformdur (Buy Me a Coffee / Ko-fi benzeri). Bu depo, platformun web arayüzünü içerir. Beğeni sayısı gibi "gösteriş metrikleri" bilinçli olarak yoktur; amaç gerçek destek etkileşimidir.
 
-- Node.js 18+ and npm
-- A modern web browser
+### Canlı Bağlantılar
 
-### Installation
+- **Uygulama:** https://cookie-and-tea.vercel.app
+- **API:** https://cookie-and-tea-backend.vercel.app
+- **Sunucu deposu:** [cookie-and-tea-backend](https://github.com/kybrakorkmaz/cookie-and-tea-backend)
+- **Tasarım (Figma):** [Cookie and Tea](https://www.figma.com/design/RjrtJpLfLmu4fB0rpPdoM5/cookie-and-tea)
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd cookie-and-tea
-   ```
+### Öne Çıkan Özellikler
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+- Kayıt → e-posta doğrulama → giriş akışı; hata ve başarı mesajları arayüzde kart/bildirim olarak gösterilir
+- Gezinme çubuğunda **canlı kullanıcı arama**: yazarken 300 ms gecikmeyle API'den öneriler gelir, sonuca tıklayınca profile gidilir
+- Üç bağış seviyesi (Çay 5$ / Kurabiye 7$ / İkisi 12$) ve destek mesajları (şu an demo modunda)
+- Profil, gönderi akışı (feed), takipçi/takip sistemi, bildirimler, ayarlar sayfaları
+- React 19 + Vite, Tailwind CSS 4, React Query, React Router 7, Zod doğrulama
+- Tarayıcı hataları backend'e iletilir (global error reporting)
 
-3. Configure environment variables:
-   Copy `.env.example` to `.env` and update the values with your configuration:
-   ```bash
-   cp .env.example .env
-   ```
+### Hızlı Başlangıç
 
-### Development
+Gereksinim: Node.js 20.19+ (Vite 8 gereksinimi).
 
-Start the development server (Vite):
 ```bash
+npm install
+# .env dosyası oluşturun (aşağıdaki tabloya bakın)
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` (default Vite port)
+Uygulama `http://localhost:5173` adresinde açılır. Production derlemesi için `npm run build`, önizleme için `npm run preview`.
 
-### Building for Production
-
-Create an optimized production build:
-```bash
-npm run build
-```
-
-Preview the production build locally:
-```bash
-npm run preview
-```
+Detaylı İngilizce dokümantasyon aşağıdadır. ⬇️
 
 ---
 
-## Project Structure
+## English
+
+### What Is This?
+
+This is the web client for Cookie and Tea: a React 19 single-page application built with Vite, styled with Tailwind CSS 4, talking to the Express/PostgreSQL backend over a cookie-authenticated REST API. It is deployed on Vercel as a static SPA with a catch-all rewrite to `index.html`.
+
+### Feature Highlights
+
+- **Full auth flow in the UI:** sign-up with per-field validation errors, a success card prompting email verification, and a login page that understands the `?verified=1|0` redirect from the verification email
+- **Live people search:** the navbar search box debounces (300 ms) requests to `GET /api/v1/search/users`, renders avatar/name/@username suggestions, guards against stale responses, and navigates to `/profile/:username` on select
+- **Donations:** three tiers (Tea $5 / Cookie $7 / Both $12) with optional support messages — currently in mock mode on the backend, so no real charges
+- **Pages:** Home, Feed, Profile, Posts, People (followers/following), Activity (notifications), Settings, About/FAQ
+- **Error surfacing:** backend error responses render as in-page cards/toasts (not just the console); global `error`/`unhandledrejection` handlers relay browser crashes to the backend log endpoint
+- **Design philosophy:** intentionally no "like" button or nested comments — interactions stay focused on supporting creators
+
+### Tech Stack
+
+| Area | Choice |
+|---|---|
+| Framework | React 19 + Vite 8 |
+| Routing | React Router 7 |
+| Data fetching | Axios (central instance), TanStack Query |
+| Styling | Tailwind CSS 4, MUI icons, Emotion |
+| Animation | Framer Motion, GSAP |
+| Validation | Zod (forms + env vars) |
+| Email (contact form) | EmailJS |
+| Deployment | Vercel (static SPA) |
+
+### Getting Started
+
+#### Prerequisites
+
+- Node.js 20.19+ (Vite 8 requirement) and npm
+- A running backend (see the [backend repo](https://github.com/kybrakorkmaz/cookie-and-tea-backend)) or use the deployed API
+
+#### Setup
+
+```bash
+npm install
+```
+
+Create a `.env` file in the project root:
+
+```bash
+VITE_API_BASE_URL=http://localhost:8000
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+```
+
+| Variable | Purpose |
+|---|---|
+| `VITE_API_BASE_URL` | Backend origin **only** (no path) — the app appends `/api/v1/...` itself |
+| `VITE_EMAILJS_*` | Contact-form email delivery |
+
+> Env vars are validated with Zod at startup — the app fails fast with a clear message if one is missing or malformed. `VITE_*` values are baked in at build time, so rebuild after changing them.
+
+#### Run
+
+```bash
+npm run dev       # dev server on http://localhost:5173
+npm run build     # production build to dist/
+npm run preview   # serve the production build locally
+npm run lint      # ESLint
+```
+
+### Project Structure
 
 ```
 src/
-├── components/        # Reusable UI components
-├── pages/            # Page-level components
-├── api/              # API integration and axios configuration
-├── context/          # React context for state management
-├── helpers/          # Utility functions
-├── validations/      # Input validation schemas
-├── constants/        # Application constants
-├── index.css         # Global styles and color palette
-└── main.jsx          # Application entry point
+├── api/            # axios instance (base URL, credentials, interceptors)
+├── components/     # reusable UI (navbar, search bar, buttons, inputs...)
+├── constants/      # static content
+├── context/        # AuthContext (session state)
+├── helpers/        # utilities (notifications, etc.)
+├── pages/          # route-level screens (Auth, Feed, Profile, People...)
+├── utils/          # client logger, global error reporting
+├── validations/    # Zod schemas (forms, env)
+├── setupErrorReporting.js  # global error → backend relay (first import)
+└── main.jsx        # entry point
 ```
 
-### Key Pages
+### Deployment (Vercel)
 
-- **Home**: Landing page for new users
-- **Feed**: Displays creator content and supporter activity
-- **Profile**: Creator profile page with biography and support options
-- **Posts**: Creator's content management
-- **Activity**: User activity tracking and notifications
-- **People**: Creator discovery and follower management
-- **Settings**: User account settings
-- **About**: Platform information and FAQ
-- **YourPassions**: Creator onboarding and profile setup
-
----
-
-## Technology Stack
-
-### Frontend Framework
-- React 19: Modern UI library with hooks
-- Vite: Lightning-fast build tool and dev server
-
-### Styling
-- Tailwind CSS 4: Utility-first CSS framework
-- Emotion: CSS-in-JS for component styling
-- Material-UI Icons: Icon library
-
-### State Management
-- React Context API: Built-in state management
-
-### Animations & Effects
-- Framer Motion: React animation library
-- GSAP: Animation and interaction library
-
-### Form Management & Validation
-- Zod: Runtime schema validation
-- React Hook Form: Form state management (via Emotion integration)
-
-### HTTP Client
-- Axios: Promise-based HTTP client
-
-### Additional Libraries
-- React Router: Client-side routing
-- EmailJS: Client-side email sending
-- React Icons: Icon library
-
-### Development Tools
-- ESLint: Code quality and style
-- WebStorm: IDE (recommended)
-
----
-
-## Code Quality
-
-### Linting
-
-Check code quality:
-```bash
-npm run lint
-```
-
----
-
-## Environment Configuration
-
-Environment variables are managed through `.env` files. Use the `.env.example` file as a reference template.
-
-### Key Environment Variables
-
-- `VITE_API_BASE_URL`: Backend API endpoint
-- `VITE_EMAILJS_SERVICE_ID`: EmailJS service identifier
-- `VITE_EMAILJS_TEMPLATE_ID`: EmailJS email template identifier
-- `VITE_EMAILJS_PUBLIC_KEY`: EmailJS public key
-
----
-
-## API Integration
-
-API calls are configured and managed through:
-- `src/api/axios.js`: Axios instance with base configuration and interceptors
-
-All backend endpoints are called through this centralized configuration to ensure consistency and ease of maintenance.
-
----
-
-## Validation
-
-User input validation is handled through Zod schemas:
-- `src/validations/userRegisterLoginValidation.js`: Authentication validation
-- `src/validations/sendEmailValidation.js`: Email validation
-- `src/validations/envValidation.js`: Environment variable validation
-
----
-
-## Design & User Experience
-
-### Design Tools
-- Figma: UI/UX design and prototyping ([Cookie and Tea Design](https://www.figma.com/design/RjrtJpLfLmu4fB0rpPdoM5/cookie-and-tea))
-
-### Color Palette & Typography
-Global styles, color palette, and typography are defined in `src/index.css`
-
-### Component Design Patterns
-- Responsive design across all screen sizes
-- Consistent hover effects and interactive states
-- Accessible color contrasts and element sizing
-
----
-
-## Notifications
-
-Real-time notification system for:
-- Donations received
-- New support messages
-- Follower actions
-- Activity updates
-
-Notifications are managed through:
-- Helper functions in `src/helpers/followingNotifications.js`
-- Notification component in `src/components/Notifications.jsx`
-
----
-
-## Donation System
-
-### Donation Tiers
-
-Users can choose one of three support levels:
-- Tea option: $5
-- Cookie option: $7
-- Both options: $12
-
-Donation processing is handled through the backend API with optional support messages included.
-
----
-
-## Email Communication
-
-Email functionality is implemented through:
-- EmailJS integration for client-side email sending
-- Nodemailer on backend for automated email notifications
-- Validation schemas for email input
-
----
-
-## Contributing
-
-When contributing to this project:
-
-1. Follow the existing code structure and naming conventions
-2. Run ESLint before committing
-3. Ensure responsive design works across different screen sizes
-4. Maintain consistency with the design system in Figma
-5. Use meaningful commit messages
+- Static SPA; `vercel.json` rewrites all paths to `/index.html` for client-side routing
+- Set `VITE_API_BASE_URL` to the backend origin (e.g. `https://cookie-and-tea-backend.vercel.app`) in the Vercel project env vars, then redeploy
+- Cross-domain auth relies on the backend's `sameSite=none; secure` cookies, so both sides must be HTTPS
 
 ---
 
 ## License
 
-ISC
-
----
-
-## Support & Resources
-
-- Design reference: [Figma Project](https://www.figma.com/design/RjrtJpLfLmu4fB0rpPdoM5/cookie-and-tea)
-- Backend repository: [cookie-and-tea-backend](https://github.com/kybrakorkmaz/cookie-and-tea-backend)
-- Issue tracker: [GitHub Issues](https://github.com/kybrakorkmaz/cookie-and-tea/issues) 
+ISC — © Kübra Korkmaz
