@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { FaImage, FaVideo, FaTimes, FaNewspaper } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { FaImage, FaVideo, FaNewspaper } from "react-icons/fa";
 import { GrSend } from "react-icons/gr";
 
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -9,6 +9,7 @@ import useFeedTimeline from "./Hooks/useFeedTimeline.js";
 import UserNavbar from "../../components/nav-footer/user/UserNavbar.jsx";
 import UploadImageFile from "../../components/media/UploadImageFile.jsx";
 import UploadVideoFile from "../../components/media/UploadVideoFile.jsx";
+import MediaManager from "../../components/media/MediaManager.jsx";
 import PostCard from "../Posts/PostCard.jsx";
 import UserFooter from "../../components/nav-footer/user/UserFooter.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
@@ -23,11 +24,45 @@ const Feed = () => {
 
     const [header, setHeader] = useState("");
     const [content, setContent] = useState("");
-    const [uploadedImages, setUploadedImages] = useState([]);
-    const [uploadedVideos, setUploadedVideos] = useState([]);
+    // Binary File objects go to FormData; blob URLs are preview-only
+    const [mediaFiles, setMediaFiles] = useState({ images: [], videos: [] });
+    const [mediaPreviews, setMediaPreviews] = useState({ images: [], videos: [] });
     const [showImageUpload, setShowImageUpload] = useState(false);
     const [showVideoUpload, setShowVideoUpload] = useState(false);
     const [visibleCount, setVisibleCount] = useState(5);
+    const createdUrlsRef = useRef([]);
+
+    // Revoke any outstanding blob URLs when the page unmounts
+    useEffect(() => {
+        return () => {
+            createdUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, []);
+
+    const handleNewFile = (name, file) => {
+        if (!file) return;
+        const previewUrl = URL.createObjectURL(file);
+        createdUrlsRef.current.push(previewUrl);
+        setMediaFiles((prev) => ({ ...prev, [name]: [...prev[name], file] }));
+        setMediaPreviews((prev) => ({ ...prev, [name]: [...prev[name], previewUrl] }));
+    };
+
+    const handleRemoveMedia = (name, index) => {
+        const removedUrl = mediaPreviews[name][index];
+        if (removedUrl) {
+            URL.revokeObjectURL(removedUrl);
+            createdUrlsRef.current = createdUrlsRef.current.filter((url) => url !== removedUrl);
+        }
+        setMediaFiles((prev) => ({ ...prev, [name]: prev[name].filter((_, i) => i !== index) }));
+        setMediaPreviews((prev) => ({ ...prev, [name]: prev[name].filter((_, i) => i !== index) }));
+    };
+
+    const resetMedia = () => {
+        createdUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+        createdUrlsRef.current = [];
+        setMediaFiles({ images: [], videos: [] });
+        setMediaPreviews({ images: [], videos: [] });
+    };
 
     // 2. Pass the authenticated user's name directly to the timeline query
     const {
@@ -46,9 +81,9 @@ const Feed = () => {
     const visiblePosts = allPosts?.slice(0, visibleCount) || [];
 
     const determinePostType = () => {
-        if (uploadedImages.length > 0 && uploadedVideos.length > 0) return "hybrid";
-        if (uploadedImages.length > 0) return "image";
-        if (uploadedVideos.length > 0) return "video";
+        if (mediaFiles.images.length > 0 && mediaFiles.videos.length > 0) return "hybrid";
+        if (mediaFiles.images.length > 0) return "image";
+        if (mediaFiles.videos.length > 0) return "video";
         return "text";
     };
 
@@ -57,8 +92,8 @@ const Feed = () => {
             header: header.trim(),
             content: content.trim(),
             type: determinePostType(),
-            images: uploadedImages,
-            videos: uploadedVideos
+            images: mediaFiles.images,
+            videos: mediaFiles.videos
         };
 
         const { isValid, errors } = validatePost(payload);
@@ -79,8 +114,7 @@ const Feed = () => {
             await handleAddPost(formData);
             setHeader("");
             setContent("");
-            setUploadedImages([]);
-            setUploadedVideos([]);
+            resetMedia();
             setShowImageUpload(false);
             setShowVideoUpload(false);
         } catch (err) {
@@ -110,7 +144,28 @@ const Feed = () => {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
-                        {/* File preview layouts stay here... */}
+
+                        {/* Media pickers — toggled by the Image/Video buttons below */}
+                        {showImageUpload && (
+                            <MediaManager
+                                label="Images"
+                                name="images"
+                                value={mediaPreviews.images}
+                                onRemove={handleRemoveMedia}
+                                onFileSelect={handleNewFile}
+                                UploadComponent={UploadImageFile}
+                            />
+                        )}
+                        {showVideoUpload && (
+                            <MediaManager
+                                label="Videos"
+                                name="videos"
+                                value={mediaPreviews.videos}
+                                onRemove={handleRemoveMedia}
+                                onFileSelect={handleNewFile}
+                                UploadComponent={UploadVideoFile}
+                            />
+                        )}
                     </div>
 
                     <div className="flex justify-between items-center py-3 px-4 bg-gray-50 border-t border-gray-100">

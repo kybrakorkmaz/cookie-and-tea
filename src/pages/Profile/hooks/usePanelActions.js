@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import apiClient from "../../../api/axios.js"; // Standardized routing client
 
-export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setSelected) => {
+export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setSelected, onImageUpdated) => {
     const { setUserData } = useAuth();
     const [editMode, setEditMode] = useState(null);
     const [error, setError] = useState(null);
@@ -24,18 +24,23 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
             const formData = new FormData();
             formData.append('file', file);
 
-            const endpoint = editMode === 'profile' ? '/api/profile/photo' : '/api/profile/cover';
+            const endpoint = editMode === 'profile' ? '/api/v1/profile/photo' : '/api/v1/profile/cover';
             const response = await apiClient.post(endpoint, formData);
-            const data = response.data;
+            const data = response.data?.data;
 
             if (editMode === 'profile') {
-                setUserData({ profileImage: data.imageUrl });
+                // Sync global session state + the panel currently on screen
+                setUserData({ profileImage: data.profileImage });
+                onImageUpdated?.("profileImage", data.profileImage);
+            } else {
+                setUserData({ backgroundImage: data.backgroundImage });
+                onImageUpdated?.("backgroundImage", data.backgroundImage);
             }
 
             setEditMode(null);
             setError(null);
         } catch (err) {
-            setError("Failed to upload image. Please try again.");
+            setError(err.response?.data?.message || "Failed to upload image. Please try again.");
         } finally {
             setIsUploading(false);
         }
@@ -54,7 +59,7 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
             setIsFollowingState(!isFollowingState);
             setError(null);
         } catch (err) {
-            setError("Failed to modify follow status. Please try again.");
+            setError(err.response?.data?.message || "Failed to modify follow status. Please try again.");
         }
     };
 

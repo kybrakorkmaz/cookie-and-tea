@@ -68,6 +68,7 @@ export const useSignUp = () =>{
     }
 
     const clearServerErrors = () => setErrors(prev => ({ ...prev, server: null }));
+    const clearSuccessMessage = () => setSuccessMessage("");
 
     return{
         formData,
@@ -75,6 +76,7 @@ export const useSignUp = () =>{
         successMessage,
         handleChange,
         handleSubmit,
-        clearServerErrors
+        clearServerErrors,
+        clearSuccessMessage
     }
 }

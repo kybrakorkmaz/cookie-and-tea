@@ -17,7 +17,8 @@ const Profile = () => {
         followers,
         targetPostId,
         setTargetPostId,
-        handleNavigateToPost
+        handleNavigateToPost,
+        updatePanelImage
     } = useProfile();
 
     return (
@@ -36,6 +37,7 @@ const Profile = () => {
                     setSelected={setSelected}
                     isFollowing={userPanel.isFollowing}
                     isOwnProfile={userPanel.isOwnProfile}
+                    onImageUpdated={updatePanelImage}
                 />
                 {/* Tabs: Welcome Tab Intro */}
                 {selected==="gallery" ? (

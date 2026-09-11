@@ -126,6 +126,17 @@ export const useProfile =() => {
         };
     }, [selected, username]);
 
+    // Lets child components (e.g. image upload) patch the panel header in place
+    const updatePanelImage = (field, url) => {
+        setUserPanel(prev => ({
+            ...prev,
+            [field]: url,
+            ...(field === "profileImage"
+                ? { profileAlt: `profile-${username}` }
+                : { backgroundAlt: `background-${username}` })
+        }));
+    };
+
     return {
         username,
         selected,
@@ -136,6 +147,7 @@ export const useProfile =() => {
         followers,
         targetPostId,
         setTargetPostId,
-        handleNavigateToPost
+        handleNavigateToPost,
+        updatePanelImage
     }
 }

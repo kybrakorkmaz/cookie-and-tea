@@ -13,7 +13,8 @@ const Panel = ({
                    selected,
                    setSelected,
                    isFollowing = false,
-                   isOwnProfile = false
+                   isOwnProfile = false,
+                   onImageUpdated
                }) => {
     const strokeStyle = {
         WebkitTextStroke: `0.7px black`,
@@ -32,7 +33,7 @@ const Panel = ({
         isFollowingState,
         handleFollowToggle,
         isFollowToggling // FIXED: Exposing the pending network flag
-    } = usePanelActions(username, isFollowing, isOwnProfile, setSelected);
+    } = usePanelActions(username, isFollowing, isOwnProfile, setSelected, onImageUpdated);
 
     return (
         <div className="w-5/6 mx-auto mt-10 rounded-2xl overflow-hidden border border-primary-dark bg-white shadow-soft">

@@ -18,9 +18,12 @@ const Login = () => {
 
     // Landing state after clicking the email verification link
     // (backend redirects here with ?verified=1 or ?verified=0&reason=...)
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const verified = searchParams.get("verified");
     const verifiedReason = searchParams.get("reason");
+
+    // Dismissing the banner also cleans the query params from the URL
+    const dismissVerifiedBanner = () => setSearchParams({}, { replace: true });
 
     return (
         <div className="bg-cream min-h-screen flex flex-col">
@@ -29,19 +32,6 @@ const Login = () => {
             <main className="grow flex items-center justify-center">
                 <div className="w-full max-w-sm mx-auto px-4 my-20">
                     <h2 className="font-header text-h-2 text-center text-primary-dark mb-4">Login</h2>
-
-                    {verified === "1" && (
-                        <div className="mb-6 rounded-lg border border-green-600/40 bg-green-50 px-4 py-3 text-green-800 font-paragraph text-p" role="status">
-                            Your email has been verified successfully! You can now log in.
-                        </div>
-                    )}
-                    {verified === "0" && (
-                        <div className="mb-6 rounded-lg border border-red-600/40 bg-red-50 px-4 py-3 text-red-800 font-paragraph text-p" role="alert">
-                            {verifiedReason === "invalid-or-expired"
-                                ? "This verification link is invalid or has expired. Please sign up again."
-                                : "Verification failed. Please try signing up again."}
-                        </div>
-                    )}
 
                     <form onSubmit={handleSubmit} className="flex flex-col">
                         <Input
@@ -78,20 +68,50 @@ const Login = () => {
                 </div>
             </main>
 
-            {/* Floating alert notification toast styled exactly like SendEmail layout */}
+            {/* Verification result banner — Panel-style rectangular card, green for info */}
+            {verified === "1" && (
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
+                    <p className="font-paragraph text-p">Your email has been verified successfully! You can now log in.</p>
+                    <button
+                        onClick={dismissVerifiedBanner}
+                        aria-label="Close notification"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 shrink-0 focus:outline-none cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+            {verified === "0" && (
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="alert">
+                    <p className="font-paragraph text-p">
+                        {verifiedReason === "invalid-or-expired"
+                            ? "This verification link is invalid or has expired. Please sign up again."
+                            : "Verification failed. Please try signing up again."}
+                    </p>
+                    <button
+                        onClick={dismissVerifiedBanner}
+                        aria-label="Close notification"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 shrink-0 focus:outline-none cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+
+            {/* Floating alert notification toast — same card, red for errors */}
             {errors.server && errors.server.length > 0 && (
-                <div className="fixed bottom-4 right-4 flex items-center gap-4 py-3 px-6 rounded-lg text-white shadow-lg bg-red-600 transition-all animate-bounce z-50" role="alert">
-                    <div className="font-medium flex flex-col gap-0.5">
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="alert">
+                    <div className="font-paragraph text-p flex flex-col gap-0.5">
                         {errors.server.map((msg, index) => (
-                            <p key={index} className="margin-0">{msg}</p>
+                            <p key={index} className="m-0">{msg}</p>
                         ))}
                     </div>
                     <button
                         onClick={clearServerErrors}
                         aria-label="Close notification"
-                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 focus:outline-none cursor-pointer"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 shrink-0 focus:outline-none cursor-pointer"
                     >
-                        X
+                        ✕
                     </button>
                 </div>
             )}

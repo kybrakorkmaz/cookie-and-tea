@@ -12,18 +12,14 @@ const SignUp = ()=>{
        successMessage,
        handleChange,
        handleSubmit,
-       clearServerErrors
+       clearServerErrors,
+       clearSuccessMessage
    } = useSignUp();
     return(
         <div className="bg-cream min-h-screen">
             <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
             <div className="max-w-sm mx-auto mt-20 mb-30">
                 <h2 className="font-header text-h-2 text-center text-primary-dark">Sign Up</h2>
-                {successMessage && (
-                    <div className="my-4 rounded-lg border border-green-600/40 bg-green-50 px-4 py-3 text-green-800 font-paragraph text-p" role="status">
-                        {successMessage}
-                    </div>
-                )}
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     <Input
                         name="name"
@@ -82,20 +78,34 @@ const SignUp = ()=>{
                 </form>
             </div>
 
-            {/* Floating server-error toast — same pattern as the Login page */}
+            {/* Success toast — Panel-style rectangular card, green for info */}
+            {successMessage && (
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
+                    <p className="font-paragraph text-p">{successMessage}</p>
+                    <button
+                        onClick={clearSuccessMessage}
+                        aria-label="Close notification"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 shrink-0 focus:outline-none cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+
+            {/* Floating server-error toast — same card, red for errors */}
             {errors.server && errors.server.length > 0 && (
-                <div className="fixed bottom-4 right-4 flex items-center gap-4 py-3 px-6 rounded-lg text-white shadow-lg bg-red-600 transition-all animate-bounce z-50" role="alert">
-                    <div className="font-medium flex flex-col gap-0.5">
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="alert">
+                    <div className="font-paragraph text-p flex flex-col gap-0.5">
                         {errors.server.map((msg, index) => (
-                            <p key={index} className="margin-0">{msg}</p>
+                            <p key={index} className="m-0">{msg}</p>
                         ))}
                     </div>
                     <button
                         onClick={clearServerErrors}
                         aria-label="Close notification"
-                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 focus:outline-none cursor-pointer"
+                        className="hover:opacity-75 font-bold border-l border-white/40 pl-3 shrink-0 focus:outline-none cursor-pointer"
                     >
-                        X
+                        ✕
                     </button>
                 </div>
             )}
