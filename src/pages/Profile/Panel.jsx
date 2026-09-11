@@ -49,19 +49,21 @@ const Panel = ({
                 ) : (
                     <div className="absolute inset-0 bg-primary-dark/10" />
                 )}
-                {/* Cover Edit Button */}
-                <div className="absolute top-6 right-6">
-                    <button
-                        onClick={() => setEditMode('cover')}
-                        disabled={isUploading}
-                        className="flex items-center bg-white/90 hover:bg-white border border-primary-dark rounded-xl py-2 px-6 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                        <FaCamera className="w-5 h-auto mr-2 text-primary-dark"/>
-                        <span className="font-paragraph font-bold text-sm">
-                            {isUploading && editMode === 'cover' ? "Uploading..." : "Cover"}
-                        </span>
-                    </button>
-                </div>
+                {/* Cover Edit Button — only on your own profile */}
+                {isOwnProfile && (
+                    <div className="absolute top-6 right-6">
+                        <button
+                            onClick={() => setEditMode('cover')}
+                            disabled={isUploading}
+                            className="flex items-center bg-white/90 hover:bg-white border border-primary-dark rounded-xl py-2 px-6 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            <FaCamera className="w-5 h-auto mr-2 text-primary-dark"/>
+                            <span className="font-paragraph font-bold text-sm">
+                                {isUploading && editMode === 'cover' ? "Uploading..." : "Cover"}
+                            </span>
+                        </button>
+                    </div>
+                )}
                 {/* user profile*/}
                 <div className="absolute bottom-16 left-12 flex items-end gap-6">
                     {/* Profile Image Container */}
@@ -79,21 +81,24 @@ const Panel = ({
                             )}
                         </div>
 
-                        <button
-                            onClick={() => setEditMode('profile')}
-                            disabled={isUploading}
-                            className="absolute top-[8%] right-[8%]
-                                       bg-blue-600/30 backdrop-blur-md
-                                       hover:bg-blue-600/50
-                                       text-white
-                                       p-0.5 md:p-1
-                                       rounded-lg md:rounded-xl
-                                       border border-white/20
-                                       transition-all active:scale-95 cursor-pointer shadow-lg
-                                       disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <MdModeEditOutline className="w-4 h-4 md:w-6 md:h-6" />
-                        </button>
+                        {/* Profile photo edit — only on your own profile */}
+                        {isOwnProfile && (
+                            <button
+                                onClick={() => setEditMode('profile')}
+                                disabled={isUploading}
+                                className="absolute top-[8%] right-[8%]
+                                           bg-blue-600/30 backdrop-blur-md
+                                           hover:bg-blue-600/50
+                                           text-white
+                                           p-0.5 md:p-1
+                                           rounded-lg md:rounded-xl
+                                           border border-white/20
+                                           transition-all active:scale-95 cursor-pointer shadow-lg
+                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <MdModeEditOutline className="w-4 h-4 md:w-6 md:h-6" />
+                            </button>
+                        )}
                     </div>
 
                     {/* user's name and account name*/}

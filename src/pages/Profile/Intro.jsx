@@ -4,15 +4,15 @@ import Earnings from "./Intro/Earnings.jsx";
 import People from "./Intro/People.jsx";
 import MostDonatedPosts from "./Intro/MostDonatedPosts.jsx";
 
-const Intro = ({about, socials, earnings, userTopDonatedPosts,onPostClick, followers}) =>{
+const Intro = ({about, socials, earnings, userTopDonatedPosts, onPostClick, followers, isOwnProfile = false}) =>{
     return(
         <div className="flex flex-col lg:flex-row w-5/6 mx-auto gap-28 mt-16">
             {/* LEFT: About, Socials, Earnings */}
             <div className="w-full lg:w-1/2 space-y-8">
                 {/* About */}
-                <About about={about}/>
+                <About about={about} isOwnProfile={isOwnProfile}/>
                 {/* Socials */}
-                <Socials socials={socials}/>
+                <Socials socials={socials} isOwnProfile={isOwnProfile}/>
                 {/* Earnings Card with Enhanced Animation */}
                 <Earnings earnings={earnings}/>
             </div>

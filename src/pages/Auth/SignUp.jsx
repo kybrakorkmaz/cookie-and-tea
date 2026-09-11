@@ -80,7 +80,7 @@ const SignUp = ()=>{
 
             {/* Success toast — Panel-style rectangular card, green for info */}
             {successMessage && (
-                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-700 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
                     <p className="font-paragraph text-p">{successMessage}</p>
                     <button
                         onClick={clearSuccessMessage}

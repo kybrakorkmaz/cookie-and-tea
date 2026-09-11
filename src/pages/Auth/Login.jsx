@@ -70,7 +70,7 @@ const Login = () => {
 
             {/* Verification result banner — Panel-style rectangular card, green for info */}
             {verified === "1" && (
-                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
+                <div className="fixed bottom-4 right-4 flex items-center gap-3 bg-green-700 text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-md" role="status">
                     <p className="font-paragraph text-p">Your email has been verified successfully! You can now log in.</p>
                     <button
                         onClick={dismissVerifiedBanner}

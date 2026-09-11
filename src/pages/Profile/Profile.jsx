@@ -52,6 +52,7 @@ const Profile = () => {
                             userTopDonatedPosts={userTopDonatedPosts}
                             onPostClick={handleNavigateToPost}
                             followers={followers}
+                            isOwnProfile={userPanel.isOwnProfile}
                         />
                 )}
 
