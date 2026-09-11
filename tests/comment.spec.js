@@ -1,6 +1,6 @@
 // tests/comment.spec.js
 import { test, expect } from "@playwright/test";
-import { registerUserViaApi } from "./auth/register.js";
+import { loginUserViaUI, registerUserViaApi } from "./auth/register.js";
 
 test.describe("Comment CRUD Operation Suit Test", () => {
     test("should log in newly registered user and create a comment", async ({ page, request }) => {
@@ -9,18 +9,15 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         // 1. Setup Auth & Seed Data
         const targetProfile = await registerUserViaApi(request);
 
+        // The API request context retains the httpOnly session cookie automatically
         const loginResponse = await request.post(`${backendUrl}/api/v1/auth/login`, {
             data: { identifier: targetProfile.username, password: targetProfile.password }
         });
-        // Verify login response success and payload integrity
         expect(loginResponse.ok(), `Login failed with status ${loginResponse.status()}`).toBeTruthy();
-        const loginBody = await loginResponse.json();
-        expect(loginBody.token, "Login response must include token").toBeTruthy();
-        const { token } = loginBody;
 
+        // Seed a post as the profile owner (session cookie is attached by the context)
         const postResponse = await request.post(`${backendUrl}/api/v1/feed/${targetProfile.username}`, {
-            data: { header: "Test Post", content: "Testing...", type: "text" },
-            headers: { Authorization: `Bearer ${token}` }
+            data: { header: "Test Post", content: "Testing...", type: "text" }
         });
         // Verify post creation response success and payload integrity
         expect(postResponse.ok(), `Post seed failed with status ${postResponse.status()}`).toBeTruthy();
@@ -28,9 +25,9 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         expect(postBody.data?.id, "Post seed response must include data.id").toBeTruthy();
         const { data: post } = postBody;
 
-        // 2. Auth State Injection
-        await page.goto("/");
-        await page.evaluate((t) => window.localStorage.setItem("token", t), token);
+        // 2. Browser Auth: log in through the UI so the page holds the session cookie
+        await loginUserViaUI(page, targetProfile.username, targetProfile.password);
+        await page.waitForURL(/\/feed\/?$/);
 
         // 3. Navigate directly to the profile tab
         // Use 'domcontentloaded' instead of 'load' to prevent hanging on secondary API calls

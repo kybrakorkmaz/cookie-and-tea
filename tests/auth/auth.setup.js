@@ -27,8 +27,8 @@ setup("authenticate and seed user session context", async ({ page, request }) =>
     const response = await loginResponsePromise;
     expect(response.status()).toBe(200);
 
-    await page.waitForURL(/\/feed\/[^/]+\/?$/);
-    await expect(page).toHaveURL(/\/feed\/[^/]+\/?$/);
+    await page.waitForURL(/\/feed\/?$/);
+    await expect(page).toHaveURL(/\/feed\/?$/);
 
     await page.context().storageState({ path: authFile });
 });
