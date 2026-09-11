@@ -46,8 +46,19 @@ const useLogin = () => {
                 navigate(`/feed`);
             }
         } catch (error) {
+            const status = error.response?.status;
             const backendMessage = error.response?.data?.message || "Something went wrong. Please try again.";
-            setErrors({ server: [backendMessage] });
+            if (status === 403) {
+                // Unverified account — tell the user where the verification link went
+                setErrors({
+                    server: [
+                        backendMessage,
+                        "We sent the verification link to your email when you signed up — please check your inbox (and the spam/junk folder). The link expires 24 hours after registration."
+                    ]
+                });
+            } else {
+                setErrors({ server: [backendMessage] });
+            }
         } finally {
             // Cleanly reset both the engine reference and UI indicator state
             submittingRef.current = false;

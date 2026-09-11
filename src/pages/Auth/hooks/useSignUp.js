@@ -44,7 +44,7 @@ export const useSignUp = () =>{
                 setErrors(prev => ({...prev, server: ["Couldn't register, please try again."]}));
                 return;
             }
-           setSuccessMessage("Account created! We've sent a verification link to your email — please verify your account before logging in.");
+           setSuccessMessage("Account created! We've sent a verification link to your email address. Please check your inbox (and the spam/junk folder just in case) — the link expires in 24 hours. You'll need to verify your account before logging in.");
            // Clean the form
            setFormData({ name: "", username: "", email: "", password: "", confirmPassword: "" });
            setErrors({});
