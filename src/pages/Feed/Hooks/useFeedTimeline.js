@@ -77,7 +77,8 @@ const useFeedTimeline = (username) => {
 
         handleAddPost: createMutation.mutateAsync,
 
-        handleUpdatePost: async (postId, editPosts, updatedFields) => {
+        // 3rd arg is EditPost's pendingFiles: { images: File[], videos: File[] }
+        handleUpdatePost: async (postId, editPosts, pendingFiles) => {
             // Assemble as FormData to handle raw binary File transfers smoothly
             const formData = new FormData();
             formData.append("header", editPosts.header);
@@ -86,9 +87,11 @@ const useFeedTimeline = (username) => {
 
             // Append retained/existing asset URLs so the server knows what to keep
             // (field names must match the backend update schema: existingImages/existingVideos)
+            // CRITICAL: skip blob: URLs — those are local previews of NEW files already
+            // appended below as binary; sending them as "existing" duplicates the media
             if (editPosts?.images && editPosts.images.length > 0) {
                 editPosts.images.forEach((img) => {
-                    if (typeof img === "string") {
+                    if (typeof img === "string" && !img.startsWith("blob:")) {
                         formData.append("existingImages", img);
                     }
                 });
@@ -96,24 +99,24 @@ const useFeedTimeline = (username) => {
 
             if (editPosts?.videos && editPosts.videos.length > 0) {
                 editPosts.videos.forEach((vid) => {
-                    if (typeof vid === "string") {
+                    if (typeof vid === "string" && !vid.startsWith("blob:")) {
                         formData.append("existingVideos", vid);
                     }
                 });
             }
 
-            // Append newly added images if present
-            if (updatedFields?.images && updatedFields.images.length > 0) {
-                updatedFields.images.forEach((file) => {
+            // Append newly selected binary images if present
+            if (pendingFiles?.images && pendingFiles.images.length > 0) {
+                pendingFiles.images.forEach((file) => {
                     if (file instanceof File) {
                         formData.append("images", file);
                     }
                 });
             }
 
-            // Append newly added videos if present
-            if (updatedFields?.videos && updatedFields.videos.length > 0) {
-                updatedFields.videos.forEach((file) => {
+            // Append newly selected binary videos if present
+            if (pendingFiles?.videos && pendingFiles.videos.length > 0) {
+                pendingFiles.videos.forEach((file) => {
                     if (file instanceof File) {
                         formData.append("videos", file);
                     }

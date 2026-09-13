@@ -31,7 +31,7 @@ export const useProfileAbout = (about) => {
 
         try{
             // Send payload inside an JSON request object body
-            const response = await apiClient.put(`/api/v1/profile/${username}/about`, {
+            const response = await apiClient.put(`/api/v1/profile/${username}/intro/about`, {
                 about:updatedAbout
             });
             if (response.data?.about !== undefined) {

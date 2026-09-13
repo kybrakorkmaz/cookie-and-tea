@@ -34,7 +34,7 @@ export const useProfileSocials = (initialSocials) => {
         setCurrentSocials(finalData);
 
         try {
-            await apiClient.put(`/api/v1/profile/${username}/socials`, {
+            await apiClient.put(`/api/v1/profile/${username}/intro/socials`, {
                 socials: finalData
             });
             setIsEditClicked(false);
