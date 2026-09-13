@@ -20,10 +20,14 @@ export const useSendTip = () => {
             const response = await apiClient.post(endpoint, { recipientUsername, postId });
             return response.data?.data;
         },
-        onSuccess: () => {
-            // Refresh the actual timeline caches so donation counters update —
-            // posts live under ["profilePosts", username] / ["feedTimeline", username];
-            // the old ["posts"] key matched nothing
+        onSuccess: (data) => {
+            // The initial response is usually a 3DS challenge (htmlContent) —
+            // the payment is NOT complete yet, so refetching timelines here
+            // would refetch unchanged data. Only a direct SUCCESS (no 3DS)
+            // confirms the donation at this point; the 3DS path invalidates
+            // in IyzicoConfirm's "iyzico-donation-result" message handler.
+            if (data?.status !== "SUCCESS") return;
+
             queryClient.invalidateQueries({ queryKey: ["profilePosts"] });
             queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
             queryClient.invalidateQueries({ queryKey: ["donationHistory"] });
