@@ -25,7 +25,7 @@ export const useProfileEarnings = (time, earnings) => {
             try {
                 setIsLoading(true);
                 const daysParam = TIMELINE_MAPPING[time] || "30";
-                const response = await apiClient.get(`/api/v1/profile/${username}/earnings`, {
+                const response = await apiClient.get(`/api/v1/profile/${username}/intro/earnings`, {
                     params: { earningTimeline: daysParam },
                     signal: controller.signal
                 });

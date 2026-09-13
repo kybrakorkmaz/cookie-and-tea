@@ -13,8 +13,8 @@ const Intro = ({about, socials, earnings, userTopDonatedPosts, onPostClick, foll
                 <About about={about} isOwnProfile={isOwnProfile}/>
                 {/* Socials */}
                 <Socials socials={socials} isOwnProfile={isOwnProfile}/>
-                {/* Earnings Card with Enhanced Animation */}
-                <Earnings earnings={earnings}/>
+                {/* Earnings Card with Enhanced Animation — private financial data, owner only */}
+                {isOwnProfile && <Earnings earnings={earnings}/>}
             </div>
             {/* RIGHT: Latest Posts & People */}
             <div className="w-full lg:w-1/2 space-y-8">
