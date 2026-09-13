@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../api/axios.js";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx"; // 1. Import your auth context
 
 const checkFeedContext = (pathname) => pathname.includes("/feed");
@@ -55,7 +55,6 @@ export const useAllComments = (postId) => {
                 : `/api/v1/profile/${targetUsername}/posts/${postId}/comment`;
 
             const { data } = await apiClient.get(endpoint);
-            console.log("Fetched Full Comments Stack:", data);
             return data;
         },
         // 5. Query triggers securely only when username context is fully resolved

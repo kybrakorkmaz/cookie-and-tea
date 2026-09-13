@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router-dom";
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { FaHome } from "react-icons/fa";

@@ -1,6 +1,6 @@
 import apiClient from "../../../api/axios.js";
 import {useAuth} from "../../../context/AuthContext.jsx";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 
 export const useLogout = () => {
     const { setAuth } = useAuth(); // Grab the global logout clear state function

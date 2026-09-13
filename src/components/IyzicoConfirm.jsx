@@ -37,8 +37,11 @@ const IyzicoConfirm = ({ amount, recipientUsername, postId, onClose, onDonationS
             if (event.data.success) {
                 setResult(event.data.result);
 
-                // 1. Background cache sync
-                queryClient.invalidateQueries({ queryKey: ["posts"] });
+                // 1. Background cache sync — the payment is CONFIRMED at this
+                // point (3DS completed). Invalidate the real timeline keys so
+                // donation counters refresh (the old ["posts"] key matched nothing)
+                queryClient.invalidateQueries({ queryKey: ["profilePosts"] });
+                queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
                 queryClient.invalidateQueries({ queryKey: ["donationHistory"] });
                 queryClient.invalidateQueries({ queryKey: ["actions"] });
 

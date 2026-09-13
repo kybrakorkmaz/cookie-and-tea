@@ -1,4 +1,4 @@
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 import { motion } from "framer-motion";
 const PersonCard = ({ person, isFollowing, onFollow }) => (
     <motion.div

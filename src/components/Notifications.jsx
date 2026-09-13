@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { useActions } from "../pages/Hooks/useActions.js";
 
 const Notifications = ({ onClose }) => {

@@ -1,5 +1,5 @@
 import {motion, AnimatePresence} from "framer-motion";
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 import {IoIosArrowForward} from "react-icons/io";
 import {useProfilePeople} from "../hooks/useProfilePeople.js";
 

@@ -1,4 +1,4 @@
-import {Navigate, useNavigate} from "react-router";
+import {Navigate, useNavigate} from "react-router-dom";
 
 export const PrimaryButton = ({ text, type, onClick, disabled, bgColor, textColor, textPosition }) => {
     return (

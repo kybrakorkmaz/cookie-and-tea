@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import apiClient from "../../../api/axios.js"; // Standardized routing client
+import { useFollowActions } from "../../Hooks/useFollowActions.js";
 
 export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setSelected, onImageUpdated) => {
     const { setUserData } = useAuth();
-    const queryClient = useQueryClient();
+    const { handleFollow } = useFollowActions();
     const [editMode, setEditMode] = useState(null);
     const [error, setError] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -52,17 +52,11 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
         if (isOwnProfile) return; // Hard guard against self-following
 
         try {
-            if (isFollowingState) {
-                await apiClient.delete(`/api/v1/profile/${username}/follow`);
-            } else {
-                await apiClient.post(`/api/v1/profile/${username}/follow`);
-            }
-
+            // Shared mutation handles the request + cache invalidation
+            // (["actions"], ["feedTimeline"]) — see useFollowActions
+            await handleFollow({ username, follow: !isFollowingState });
             setIsFollowingState(!isFollowingState);
             setError(null);
-            // The feed timeline is derived from who you follow — invalidate it
-            // here too (matches useFollowActions) or it stays cached 5 minutes
-            queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
         } catch (err) {
             setError(err.response?.data?.message || "Failed to modify follow status. Please try again.");
         }

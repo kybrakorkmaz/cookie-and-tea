@@ -30,6 +30,11 @@ const EditPost = ({ post, isSaving, onClose, onDelete, onUpdate }) => {
         const removedUrl = editPost[name][index];
 
         if (removedUrl?.startsWith("blob:")) {
+            // Release the object URL immediately — waiting for unmount leaks
+            // memory for every removed preview
+            URL.revokeObjectURL(removedUrl);
+            createdUrlsRef.current = createdUrlsRef.current.filter(url => url !== removedUrl);
+
             const pendingIndex = editPost[name]
                 .slice(0, index)
                 .filter(url => url.startsWith("blob:"))

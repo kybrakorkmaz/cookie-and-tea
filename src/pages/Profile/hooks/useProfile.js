@@ -1,4 +1,4 @@
-import {useParams, useSearchParams} from "react-router";
+import {useParams, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import apiClient from "../../../api/axios.js";
 
