@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../../api/axios.js";
 
+// Single source of truth for follow/unfollow. Callers own their error UX
+// (mutateAsync rethrows) — do NOT alert() here.
 export const useFollowActions = () => {
     const queryClient = useQueryClient();
 
@@ -18,10 +20,6 @@ export const useFollowActions = () => {
             // The feed timeline is derived from who you follow — without this it
             // stays cached (staleTime 5min) and only updates on a full refresh
             queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
-        },
-        onError: (err) => {
-            console.error("Follow action failed:", err);
-            alert(err.response?.data?.message || "Follow action failed.");
         },
     });
 

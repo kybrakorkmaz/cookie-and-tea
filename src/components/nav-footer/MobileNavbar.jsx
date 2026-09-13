@@ -1,5 +1,5 @@
 import SearchBar from "./SearchBar.jsx";
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 
 const MobileNavbar = ({isOpen, signUpStyle, bgColor, textColor, searchBarColor="", links = [], nav = "navbar", onNavigate}) => {
     const handleNavigate = () => {

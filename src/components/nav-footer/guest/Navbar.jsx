@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import Logo from "../Logo.jsx";
 import SearchBar from "../SearchBar.jsx";
 import HamburgerMenu from "../HamburgerMenu.jsx";

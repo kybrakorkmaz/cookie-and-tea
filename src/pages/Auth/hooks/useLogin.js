@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { loginSchema } from "../../../validations/userRegisterLoginValidation.js";
 import apiClient from "../../../api/axios.js";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 
 const useLogin = () => {

@@ -2,6 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../../../api/axios.js";
 import { createPost, updatePost, deletePost } from "./handlePostActions.js";
+import { preparePostFormData } from "../../../helpers/postUtils.js";
 
 const useFeedTimeline = (username) => {
     const queryClient = useQueryClient();
@@ -79,49 +80,8 @@ const useFeedTimeline = (username) => {
 
         // 3rd arg is EditPost's pendingFiles: { images: File[], videos: File[] }
         handleUpdatePost: async (postId, editPosts, pendingFiles) => {
-            // Assemble as FormData to handle raw binary File transfers smoothly
-            const formData = new FormData();
-            formData.append("header", editPosts.header);
-            formData.append("type", editPosts.type);
-            formData.append("content", editPosts.content ?? "");
-
-            // Append retained/existing asset URLs so the server knows what to keep
-            // (field names must match the backend update schema: existingImages/existingVideos)
-            // CRITICAL: skip blob: URLs — those are local previews of NEW files already
-            // appended below as binary; sending them as "existing" duplicates the media
-            if (editPosts?.images && editPosts.images.length > 0) {
-                editPosts.images.forEach((img) => {
-                    if (typeof img === "string" && !img.startsWith("blob:")) {
-                        formData.append("existingImages", img);
-                    }
-                });
-            }
-
-            if (editPosts?.videos && editPosts.videos.length > 0) {
-                editPosts.videos.forEach((vid) => {
-                    if (typeof vid === "string" && !vid.startsWith("blob:")) {
-                        formData.append("existingVideos", vid);
-                    }
-                });
-            }
-
-            // Append newly selected binary images if present
-            if (pendingFiles?.images && pendingFiles.images.length > 0) {
-                pendingFiles.images.forEach((file) => {
-                    if (file instanceof File) {
-                        formData.append("images", file);
-                    }
-                });
-            }
-
-            // Append newly selected binary videos if present
-            if (pendingFiles?.videos && pendingFiles.videos.length > 0) {
-                pendingFiles.videos.forEach((file) => {
-                    if (file instanceof File) {
-                        formData.append("videos", file);
-                    }
-                });
-            }
+            // Shared builder: retained URLs (blob:-filtered) + new binary files
+            const formData = preparePostFormData(editPosts, pendingFiles);
 
             const result = await updateMutation.mutateAsync({
                 postId,

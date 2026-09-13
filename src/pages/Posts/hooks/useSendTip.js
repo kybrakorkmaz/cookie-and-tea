@@ -21,8 +21,11 @@ export const useSendTip = () => {
             return response.data?.data;
         },
         onSuccess: () => {
-            // Bağış başarılı olduğunda sayfadaki sayaçların anında güncellenmesi için
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
+            // Refresh the actual timeline caches so donation counters update —
+            // posts live under ["profilePosts", username] / ["feedTimeline", username];
+            // the old ["posts"] key matched nothing
+            queryClient.invalidateQueries({ queryKey: ["profilePosts"] });
+            queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
             queryClient.invalidateQueries({ queryKey: ["donationHistory"] });
             // Donator's own "sent" activity feed (if viewed) should also reflect the new donation
             queryClient.invalidateQueries({ queryKey: ["actions"] });

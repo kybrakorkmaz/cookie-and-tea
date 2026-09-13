@@ -1,4 +1,4 @@
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 import {FaXTwitter} from "react-icons/fa6";
 import {FaInstagram} from "react-icons/fa";
 

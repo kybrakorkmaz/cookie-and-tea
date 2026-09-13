@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router";
+import {useParams} from "react-router-dom";
 import apiClient from "../../../api/axios.js";
 
 export const useProfileAbout = (about) => {

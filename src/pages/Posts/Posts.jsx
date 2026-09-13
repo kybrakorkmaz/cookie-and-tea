@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 import PostCard from "./PostCard.jsx";
 import PageUpButton from "../../components/PageUpButton.jsx";
