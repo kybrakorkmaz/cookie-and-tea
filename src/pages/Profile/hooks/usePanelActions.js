@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import apiClient from "../../../api/axios.js"; // Standardized routing client
 
 export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setSelected, onImageUpdated) => {
     const { setUserData } = useAuth();
+    const queryClient = useQueryClient();
     const [editMode, setEditMode] = useState(null);
     const [error, setError] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -58,6 +60,9 @@ export const usePanelActions = (username, initialIsFollowing, isOwnProfile, setS
 
             setIsFollowingState(!isFollowingState);
             setError(null);
+            // The feed timeline is derived from who you follow — invalidate it
+            // here too (matches useFollowActions) or it stays cached 5 minutes
+            queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
         } catch (err) {
             setError(err.response?.data?.message || "Failed to modify follow status. Please try again.");
         }
