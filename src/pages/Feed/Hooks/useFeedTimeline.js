@@ -86,9 +86,11 @@ const useFeedTimeline = (username) => {
 
             // Append retained/existing asset URLs so the server knows what to keep
             // (field names must match the backend update schema: existingImages/existingVideos)
+            // CRITICAL: skip blob: URLs — those are local previews of NEW files already
+            // appended below as binary; sending them as "existing" duplicates the media
             if (editPosts?.images && editPosts.images.length > 0) {
                 editPosts.images.forEach((img) => {
-                    if (typeof img === "string") {
+                    if (typeof img === "string" && !img.startsWith("blob:")) {
                         formData.append("existingImages", img);
                     }
                 });
@@ -96,7 +98,7 @@ const useFeedTimeline = (username) => {
 
             if (editPosts?.videos && editPosts.videos.length > 0) {
                 editPosts.videos.forEach((vid) => {
-                    if (typeof vid === "string") {
+                    if (typeof vid === "string" && !vid.startsWith("blob:")) {
                         formData.append("existingVideos", vid);
                     }
                 });

@@ -15,6 +15,9 @@ export const useFollowActions = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["actions"] });
+            // The feed timeline is derived from who you follow — without this it
+            // stays cached (staleTime 5min) and only updates on a full refresh
+            queryClient.invalidateQueries({ queryKey: ["feedTimeline"] });
         },
         onError: (err) => {
             console.error("Follow action failed:", err);
