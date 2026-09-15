@@ -1,7 +1,5 @@
 // Sends browser-side log events to the backend, which re-logs them through
-// winston — making frontend errors visible in the backend's Vercel Runtime Logs.
-//
-// NOTE: reads import.meta.env directly instead of src/validations/envValidation.js
+// winston — making frontend errors visible in the backend'@/utils/envValidation.js
 // on purpose: if env validation itself fails, this logger must still work.
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

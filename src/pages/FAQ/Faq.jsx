@@ -1,13 +1,8 @@
-import Navbar from "../../components/nav-footer/guest/Navbar.jsx";
-import { frequentlyAskedQuestions } from "../../constants/index.js";
+import { frequentlyAskedQuestions } from "@/utils/constants.js";
 import Questions from "./Questions.jsx";
-import Footer from "../../components/nav-footer/guest/Footer.jsx";
 
 const Faq = () => {
     return (
-        <div className="bg-cream min-h-screen">
-            <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65"/>
-
             <div className="flex flex-col items-center justify-center px-4 py-40 mb-10">
                 <div className="text-center mb-12">
                     <h2 className="font-header text-h-2 text-primary-dark">Frequently Asked Questions</h2>
@@ -26,8 +21,6 @@ const Faq = () => {
                     ))}
                 </div>
             </div>
-            <Footer/>
-        </div>
     );
 }
 

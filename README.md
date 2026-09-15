@@ -115,14 +115,15 @@ npm run lint      # ESLint
 
 ```
 src/
-├── api/            # axios instance (base URL, credentials, interceptors)
-├── components/     # reusable UI (navbar, search bar, buttons, inputs...)
-├── constants/      # static content
-├── context/        # AuthContext (session state)
-├── helpers/        # utilities (notifications, etc.)
-├── pages/          # route-level screens (Auth, Feed, Profile, People...)
-├── utils/          # client logger, global error reporting
-├── validations/    # Zod schemas (forms, env)
+├── assets/         # static images/fonts (placeholder)
+├── components/     # shared UI (ui/, media/)
+├── features/       # domain modules (auth, profile, posts, feed, ...)
+├── pages/          # marketing routes (Home, FAQ, About, ...)
+├── layouts/        # GuestLayout, UserLayout, nav chrome
+├── services/       # axios apiClient
+├── store/          # AuthContext (TanStack Query lives in main.jsx)
+├── utils/          # constants, env validation, logger
+├── App.jsx         # router + lazy routes
 ├── setupErrorReporting.js  # global error → backend relay (first import)
 └── main.jsx        # entry point
 ```

@@ -1,4 +1,4 @@
-import { yourPassionReviews, yourPassionSocialPlatforms } from "../../constants/index.js";
+import { yourPassionReviews, yourPassionSocialPlatforms } from "@/utils/constants.js";
 import FromYouReviews from "./FromYouReviews.jsx";
 
 const FromYou = () => {

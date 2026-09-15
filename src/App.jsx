@@ -1,64 +1,69 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import AuthProvider from "./context/AuthContext.jsx";
+import ProtectedRoute from "@/features/auth/ProtectedRoute.jsx";
+import AuthProvider from "@/store/AuthProvider.jsx";
+import RouteFallback from "@/components/ui/RouteFallback.jsx";
+import NavigationProgress from "@/components/ui/NavigationProgress.jsx";
 
-// Route-level code splitting — pages load on demand instead of one eager
-// 1.1MB bundle (Vite chunk-size warning). Heavy deps (MUI, GSAP, framer-motion)
-// now ship only with the routes that actually use them.
-const Home = lazy(() => import("./pages/Home/Home.jsx"));
-const Faq = lazy(() => import("./pages/FAQ/Faq.jsx"));
-const YourPassions = lazy(() => import("./pages/YourPassions/YourPassions.jsx"));
-const About = lazy(() => import("./pages/About.jsx"));
-const SendEmail = lazy(() => import("./pages/SendEmail.jsx"));
-const SignUp = lazy(() => import("./pages/Auth/SignUp.jsx"));
-const Login = lazy(() => import("./pages/Auth/Login.jsx"));
-const Profile = lazy(() => import("./pages/Profile/Profile.jsx"));
-const Posts = lazy(() => import("./pages/Posts/Posts.jsx"));
-const People = lazy(() => import("./pages/People/People.jsx"));
-const Feed = lazy(() => import("./pages/Feed/Feed.jsx"));
-const Settings = lazy(() => import("./pages/Settings/Settings.jsx"));
-const Activity = lazy(() => import("./pages/Activity.jsx"));
+import UserLayout from "@/layouts/UserLayout.jsx";
+import Feed from "@/features/feed/Feed.jsx";
 
-const RouteFallback = () => (
-    <div className="min-h-screen flex items-center justify-center bg-cream">
-        <div
-            className="w-10 h-10 border-4 border-primary-dark border-t-transparent rounded-full animate-spin"
-            role="status"
-            aria-label="Loading page"
-        />
-    </div>
-);
+const GuestLayout = lazy(() => import("@/layouts/GuestLayout.jsx"));
+const Home = lazy(() => import("@/pages/Home/Home.jsx"));
+const Faq = lazy(() => import("@/pages/FAQ/Faq.jsx"));
+const YourPassions = lazy(() => import("@/pages/YourPassions/YourPassions.jsx"));
+const About = lazy(() => import("@/pages/About.jsx"));
+const SendEmail = lazy(() => import("@/pages/SendEmail.jsx"));
+const SignUp = lazy(() => import("@/features/auth/SignUp.jsx"));
+const Login = lazy(() => import("@/features/auth/Login.jsx"));
+const Profile = lazy(() => import("@/features/profile/Profile.jsx"));
+const Posts = lazy(() => import("@/features/posts/Posts.jsx"));
+const People = lazy(() => import("@/features/people/People.jsx"));
+const Settings = lazy(() => import("@/features/settings/Settings.jsx"));
+const Activity = lazy(() => import("@/features/notifications/Activity.jsx"));
+const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
 
 const App = () => {
     return (
         <AuthProvider>
             <BrowserRouter>
-                <Suspense fallback={<RouteFallback />}>
+                <NavigationProgress />
+                <Suspense fallback={<RouteFallback fullScreen />}>
                     <Routes>
-                        {/* Public Routes */}
-                        <Route path={"/"} element={<Home/>}/>
-                        <Route path={"/faq"} element={<Faq/>}/>
-                        <Route path={"/your-passions"} element={<YourPassions/>}/>
-                        <Route path={"/about"} element={<About/>}/>
-                        <Route path={"/send-email"} element={<SendEmail/>}/>
-                        <Route path={"/sign-up"} element={<SignUp/>}/>
-                        <Route path={"/login"} element={<Login/>}/>
+                        {/* Home owns its navbar (Hero). Do not wrap with GuestLayout. */}
+                        <Route path="/" element={<Home />} />
 
-                        {/* User & Profile Routes (Publicly accessible view-only or semi-protected) */}
-                        <Route path="/profile/:username" element={<Profile />} />
-                        <Route path="/people" element={<People />} />
-                        <Route path="/posts/:username?" element={<Posts />} />
+                        <Route element={<GuestLayout />}>
+                            <Route path="/faq" element={<Faq />} />
+                            <Route path="/your-passions" element={<YourPassions />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/send-email" element={<SendEmail />} />
+                            <Route path="/sign-up" element={<SignUp />} />
+                            <Route path="/login" element={<Login />} />
+                        </Route>
 
-                        {/* Protected Routes wrapped individually with <ProtectedRoute> */}
-                        <Route path={"/feed"} element={<ProtectedRoute><Feed/></ProtectedRoute>}/>
-                        <Route path={"/settings"} element={<ProtectedRoute><Settings/></ProtectedRoute>}/>
-                        <Route path={"/activity"} element={<ProtectedRoute><Activity/></ProtectedRoute>}/>
+                        {/* Posts is also embedded inside Profile, so UserLayout lives
+                            on the route — not inside Posts.jsx. */}
+                        <Route element={<UserLayout />}>
+                            <Route path="/profile/:username" element={<Profile />} />
+                            <Route path="/people/:username?" element={<People />} />
+                            <Route path="/posts/:username?" element={<Posts />} />
+
+                            <Route element={<ProtectedRoute />}>
+                                <Route path="/feed" element={<Feed />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/activity" element={<Activity />} />
+                            </Route>
+                        </Route>
+
+                        <Route element={<GuestLayout />}>
+                            <Route path="*" element={<NotFound />} />
+                        </Route>
                     </Routes>
                 </Suspense>
             </BrowserRouter>
         </AuthProvider>
-    )
-}
+    );
+};
 
 export default App;
