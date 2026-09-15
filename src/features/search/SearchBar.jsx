@@ -18,6 +18,8 @@ const SearchBar = ({bgSearchColor}) => {
     // Debounced backend search — fires 300ms after the user stops typing
     useEffect(() => {
         const trimmed = query.trim();
+        const requestId = ++requestIdRef.current;
+
         if (!trimmed) {
             setResults([]);
             setIsOpen(false);
@@ -29,7 +31,6 @@ const SearchBar = ({bgSearchColor}) => {
         setIsOpen(true);
 
         const timer = setTimeout(async () => {
-            const requestId = ++requestIdRef.current;
             try {
                 const response = await apiClient.get("/api/v1/search/users", {
                     params: {q: trimmed}
@@ -111,10 +112,12 @@ const SearchBar = ({bgSearchColor}) => {
                                 <li className="p-3 text-sm text-gray-400">No people found for "{query.trim()}"</li>
                             )}
                             {!isLoading && results.map((user) => (
-                                <li key={user.id}
-                                    className="p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-3"
-                                    onClick={() => handleSelect(user)}
-                                >
+                                <li key={user.id}>
+                                    <button
+                                        type="button"
+                                        className="w-full p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-3 text-left"
+                                        onClick={() => handleSelect(user)}
+                                    >
                                     {user.profileImage ? (
                                         <img src={user.profileImage} alt=""
                                              className="w-8 h-8 rounded-full object-cover shrink-0"/>
@@ -127,6 +130,7 @@ const SearchBar = ({bgSearchColor}) => {
                                         <span className="text-sm font-medium text-heading truncate">{user.name}</span>
                                         <span className="text-xs text-gray-400 truncate">@{user.username}</span>
                                     </div>
+                                    </button>
                                 </li>
                             ))}
                         </ul>

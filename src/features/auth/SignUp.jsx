@@ -9,6 +9,7 @@ const SignUp = ()=>{
        formData,
        errors,
        successMessage,
+       isSubmitting,
        handleChange,
        handleSubmit,
        clearServerErrors,
@@ -26,6 +27,7 @@ const SignUp = ()=>{
                         error={errors.name?.[0]}
                         onChange={handleChange}
                         placeholder="Name"
+                        required
                     />
                     <Input
                         name="username"
@@ -34,6 +36,7 @@ const SignUp = ()=>{
                         error={errors.username?.[0]}
                         onChange={handleChange}
                         placeholder="Username"
+                        required
                     />
                     <Input
                         type="email"
@@ -43,6 +46,7 @@ const SignUp = ()=>{
                         error={errors.email?.[0]}
                         onChange={handleChange}
                         placeholder="email@example.com"
+                        required
                     />
                     <Password
                         type="password"
@@ -52,6 +56,7 @@ const SignUp = ()=>{
                         error={errors.password?.[0]}
                         onChange={handleChange}
                         placeholder={"********"}
+                        required
                     />
                     <Password
                         type="password"
@@ -61,6 +66,7 @@ const SignUp = ()=>{
                         error={errors.confirmPassword?.[0]}
                         onChange={handleChange}
                         placeholder="********"
+                        required
                     />
                     <div className="flex flex-col items-center justify-center mt-10">
                         <PrimaryButton
@@ -69,6 +75,7 @@ const SignUp = ()=>{
                             bgColor="bg-primary-dark"
                             textColor="text-white"
                             textPosition="text-center"
+                            disabled={isSubmitting}
                         />
                         <p className="font-paragraph text-p pt-5">Already have an account? Log in <span className="underline cursor-pointer"><Link to={"/login"}>here.</Link></span></p>
                     </div>

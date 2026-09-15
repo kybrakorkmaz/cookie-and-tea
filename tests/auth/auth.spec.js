@@ -99,10 +99,11 @@ test.describe("Sign Up & Login & Logout Full-Stack Integration", () => {
         await page.goto("/login?verified=1");
         await expect(page.getByRole('heading', { name: /^login$/i })).toBeVisible();
 
-        const banner = page.getByRole('status', { name: /email has been verified successfully/i });
+        const banner = page.getByText("Your email has been verified successfully! You can now log in.", { exact: true });
         await expect(banner).toBeVisible();
 
-        await banner.getByRole('button', { name: /close notification/i }).click();
+        const toast = page.locator('[role="status"]', { has: banner });
+        await toast.getByRole('button', { name: /close notification/i }).click();
         await expect(banner).not.toBeVisible();
         // Dismissal also strips the query params from the URL
         await expect(page).not.toHaveURL(/verified=/);

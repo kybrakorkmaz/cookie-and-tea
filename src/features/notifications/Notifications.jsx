@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useActions } from "@/features/notifications/hooks/useActions.js";
 
 const Notifications = ({ onClose }) => {
-    const { activities, isLoading } = useActions("received", 5);
+    const { activities, isLoading, isError, refetchActions } = useActions("received", 5);
 
     const dropdownBg = "bg-white/50 backdrop-blur-md border border-gray-100/50 shadow-xl rounded-2xl overflow-hidden z-50";
 
@@ -19,6 +19,17 @@ const Notifications = ({ onClose }) => {
                 <div className="max-h-96 overflow-y-auto">
                     {isLoading ? (
                         <p className="p-4 text-sm text-gray-500 text-center">Loading...</p>
+                    ) : isError ? (
+                        <div className="p-4 text-center">
+                            <p className="text-sm text-gray-500">Couldn't load activities.</p>
+                            <button
+                                type="button"
+                                onClick={() => refetchActions()}
+                                className="mt-2 text-xs font-bold text-primary-dark hover:underline"
+                            >
+                                Retry
+                            </button>
+                        </div>
                     ) : activities.length > 0 ? (
                         activities.map(activity => (
                             <div key={activity.id} className="p-3 flex items-center gap-3 hover:bg-white/40 transition-colors border-b border-gray-100/10">

@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState, useRef } from "react";
 import {registerSchema} from "@/features/auth/userRegisterLoginValidation.js";
 import apiClient from "@/services/apiClient.js";
 
@@ -12,6 +12,8 @@ export const useSignUp = () =>{
     });
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const submittingRef = useRef(false);
 
     const handleChange=(e)=>{
         const {value, name}= e.target;
@@ -21,6 +23,8 @@ export const useSignUp = () =>{
 
     const handleSubmit=async (e)=>{
         e.preventDefault();
+        if (submittingRef.current) return;
+
         setSuccessMessage("");
         const result = registerSchema.safeParse(formData);
 
@@ -38,6 +42,9 @@ export const useSignUp = () =>{
             email: result.data.email
         }
 
+        submittingRef.current = true;
+        setIsSubmitting(true);
+
        try{
            const response = await apiClient.post("/api/v1/auth/sign-up", payload);
             if (response.status !== 201) {
@@ -54,9 +61,10 @@ export const useSignUp = () =>{
                // Backend zod validation errors: [{field: "body.email", message: "..."}]
                // Map them onto the same per-field error shape the inputs already read.
                const fieldErrors = {};
-               for (const {field, message} of data.errors) {
-                   const key = field.replace(/^body\./, "");
-                   (fieldErrors[key] ??= []).push(message);
+               for (const entry of data.errors) {
+                   if (entry == null || typeof entry.field !== "string") continue;
+                   const key = entry.field.replace(/^body\./, "");
+                   (fieldErrors[key] ??= []).push(entry.message);
                }
                setErrors(prev => ({...prev, ...fieldErrors}));
            } else {
@@ -64,6 +72,9 @@ export const useSignUp = () =>{
                const backendMessage = data?.message || "Something went wrong. Please try again.";
                setErrors(prev => ({...prev, server: [backendMessage]}));
            }
+       } finally {
+           submittingRef.current = false;
+           setIsSubmitting(false);
        }
     }
 
@@ -74,6 +85,7 @@ export const useSignUp = () =>{
         formData,
         errors,
         successMessage,
+        isSubmitting,
         handleChange,
         handleSubmit,
         clearServerErrors,

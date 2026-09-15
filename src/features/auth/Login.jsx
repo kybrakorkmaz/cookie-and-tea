@@ -39,6 +39,7 @@ const Login = () => {
                             onChange={handleChange}
                             placeholder="Username/Email"
                             error={errors.identifier?.[0]}
+                            required
                         />
                         <Password
                             type="password"
@@ -48,6 +49,7 @@ const Login = () => {
                             onChange={handleChange}
                             placeholder="********"
                             error={errors.password?.[0]}
+                            required
                         />
                         <div className="flex flex-col items-center justify-center mt-10">
                             <PrimaryButton

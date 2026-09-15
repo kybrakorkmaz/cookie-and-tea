@@ -4,17 +4,20 @@ import apiClient from "@/services/apiClient.js";
 import { AuthContext } from "@/store/auth-context.js";
 import { prefetchFeedTimeline } from "@/features/feed/hooks/feedTimelineQuery.js";
 
+const readCachedUser = () => {
+    try {
+        const savedUser = localStorage.getItem("cat_user_metadata");
+        return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+        console.error("Failed to parse user metadata from localStorage:", error);
+        return null;
+    }
+};
+
 const AuthProvider = ({ children }) => {
     const queryClient = useQueryClient();
-    const [user, setUser] = useState(() => {
-        try {
-            const savedUser = localStorage.getItem("cat_user_metadata");
-            return savedUser ? JSON.parse(savedUser) : null;
-        } catch (error) {
-            console.error("Failed to parse user metadata from localStorage:", error);
-            return null;
-        }
-    });
+    const [user, setUser] = useState(readCachedUser);
+    const [sessionReady, setSessionReady] = useState(() => !readCachedUser());
 
     const didVerifySession = useRef(false);
 
@@ -23,6 +26,7 @@ const AuthProvider = ({ children }) => {
             didVerifySession.current = false;
         }
         setUser(authUser);
+        setSessionReady(true);
         if (authUser) {
             localStorage.setItem("cat_user_metadata", JSON.stringify(authUser));
         } else {
@@ -39,10 +43,13 @@ const AuthProvider = ({ children }) => {
         });
     }, []);
 
-    // Ping /me once per login session. `user` is in the dep list so a later
-    // login still verifies, but the ref stops setUserData from retriggering it.
+    // Cached metadata is not treated as authenticated until /me succeeds.
     useEffect(() => {
-        if (!user || didVerifySession.current) return;
+        if (!user) {
+            setSessionReady(true);
+            return;
+        }
+        if (didVerifySession.current) return;
         didVerifySession.current = true;
 
         const verifyActiveSession = async () => {
@@ -50,24 +57,26 @@ const AuthProvider = ({ children }) => {
                 const response = await apiClient.get("/api/v1/auth/me");
                 if (response.status === 200 && response.data.user) {
                     setUserData(response.data.user);
-                }
-            } catch (err) {
-                if (err.response?.status === 401 || err.response?.status === 403) {
+                } else {
                     setAuth(null);
                 }
+            } catch {
+                setAuth(null);
+            } finally {
+                setSessionReady(true);
             }
         };
         verifyActiveSession();
     }, [user, setAuth, setUserData]);
 
     useEffect(() => {
-        if (!user?.username) return;
+        if (!sessionReady || !user?.username) return;
         prefetchFeedTimeline(queryClient, user.username);
-    }, [user?.username, queryClient]);
+    }, [sessionReady, user?.username, queryClient]);
 
     const value = useMemo(
-        () => ({ user, setAuth, setUserData }),
-        [user, setAuth, setUserData]
+        () => ({ user, sessionReady, setAuth, setUserData }),
+        [user, sessionReady, setAuth, setUserData]
     );
 
     return (
