@@ -18,16 +18,14 @@ export const useLogout = () => {
 
                     // Clear your React app's global state memory
                     setAuth(null);
-
-                    // Kick the user out to a safe public layout route
-                    navigate("/login");
+                    navigate("/login", { replace: true });
                 }
 
             }catch (err){
                 console.error("Logout request failed:", err.message);
                 // Fallback safety measure: even if network fails, wipe state to protect device privacy
                 setAuth(null);
-                navigate("/login");
+                navigate("/login", { replace: true });
             }
         }
 
