@@ -25,5 +25,10 @@ export default defineConfig([
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
+    settings: {
+      'import/resolver': {
+        alias: { map: [['@', './src']], extensions: ['.js', '.jsx'] },
+      },
+    },
   },
 ])
