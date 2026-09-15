@@ -18,8 +18,7 @@ const NavigationProgress = () => {
     return (
         <div
             className="fixed top-0 left-0 right-0 z-[200] h-1 bg-primary-dark/20 overflow-hidden"
-            role="status"
-            aria-live="polite"
+            role="progressbar"
             aria-label="Navigating"
         >
             <div className="h-full w-1/3 bg-primary-dark animate-pulse" />
