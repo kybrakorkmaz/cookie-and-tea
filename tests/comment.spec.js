@@ -38,8 +38,8 @@ test.describe("Comment CRUD Operation Suit Test", () => {
         const postLocator = page.getByText("Test Post");
         await postLocator.waitFor({ state: "visible", timeout: 15000 });
 
-        const commentInput = page.locator('textarea[id="comment"]');
-        const sendButton = page.getByRole('button', { name: "Send comment" });
+        const commentInput = page.getByRole("textbox", { name: "Your Message" });
+        const sendButton = page.getByRole("button", { name: "Send comment" });
 
         // Ensure the input exists before we trigger the action
         await expect(commentInput).toBeVisible();
