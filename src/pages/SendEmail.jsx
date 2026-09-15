@@ -1,11 +1,10 @@
 import { useState } from "react";
-import Navbar from "../components/nav-footer/guest/Navbar.jsx";
-import Input from "../components/Input.jsx";
-import { PrimaryButton } from "../components/Buttons.jsx";
-import Footer from "../components/nav-footer/guest/Footer.jsx";
-import sendEmailSchema from "../validations/sendEmailValidation.js";
+import Input from "@/components/ui/Input.jsx";
+import { PrimaryButton } from "@/components/ui/Buttons.jsx";
+import Toast from "@/components/ui/Toast.jsx";
+import sendEmailSchema from "@/utils/sendEmailValidation.js";
 import emailjs from "@emailjs/browser";
-import {ENV} from "../validations/envValidation.js";
+import {ENV} from "@/utils/envValidation.js";
 
 const SendEmail = () => {
     const [formData, setFormData] = useState({
@@ -72,9 +71,7 @@ const SendEmail = () => {
     }
 
     return (
-        <div className="bg-cream min-h-screen flex flex-col">
-            <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
-
+        <>
             <main className="grow container mx-auto px-4 py-20 md:py-32">
                 <div className="max-w-2xl mx-auto">
                     <h2 className="font-header text-h-2 text-primary-dark mb-8">What do you want to say us?</h2>
@@ -109,10 +106,9 @@ const SendEmail = () => {
                         </div>
 
                         {informUser && (
-                            <div className={`fixed bottom-4 right-4 flex gap-4 py-3 px-6 rounded-lg text-white shadow-lg transition-all animate-bounce ${messageState ? 'bg-green-600' : 'bg-red-600'}`}>
-                                <p className="font-medium">{informUser}</p>
-                                <button onClick={closeNotification} className="hover:opacity-75 font-bold border-l pl-3">X</button>
-                            </div>
+                            <Toast tone={messageState ? "success" : "error"} onClose={closeNotification}>
+                                {informUser}
+                            </Toast>
                         )}
 
                         <div className="flex justify-end mt-10">
@@ -129,8 +125,7 @@ const SendEmail = () => {
                 </div>
             </main>
 
-            <Footer />
-        </div>
+        </>
     )
 }
 export default SendEmail;

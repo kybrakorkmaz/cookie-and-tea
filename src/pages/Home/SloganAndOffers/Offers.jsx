@@ -1,4 +1,4 @@
-import {offerImages, offers} from "../../../constants/index.js";
+import {offerImages, offers} from "@/utils/constants.js";
 import CardOffer from "./CardOffer.jsx";
 import ImgOffer from "./ImgOffer.jsx";
 import {useEffect} from "react";

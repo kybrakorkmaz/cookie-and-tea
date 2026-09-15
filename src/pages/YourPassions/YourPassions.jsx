@@ -1,15 +1,5 @@
-import Navbar from "../../components/nav-footer/guest/Navbar.jsx";
 import FromYou from "./FromYou.jsx";
-import Footer from "../../components/nav-footer/guest/Footer.jsx";
 
-const YourPassions=()=>{
-    return(
-        <div className="bg-cream min-h-screen">
-            <Navbar textColor="text-primary-dark" bgColor="bg-primary-dark" searchBarColor="bg-white/65" />
-            <FromYou/>
-            <Footer/>
-        </div>
-    )
-}
+const YourPassions = () => <FromYou />;
 
 export default YourPassions;

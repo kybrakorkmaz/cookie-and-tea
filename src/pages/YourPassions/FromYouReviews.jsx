@@ -1,4 +1,4 @@
-import RoundedImage from "../../components/RoundedImage.jsx";
+import RoundedImage from "@/components/ui/RoundedImage.jsx";
 
 const FromYouReviews = ({ name, username, accountUrl, image, review }) => {
     return (
