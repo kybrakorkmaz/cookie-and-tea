@@ -50,6 +50,12 @@ const Profile = () => {
             patchPayload.confirmPassword = formData.Confirm;
         }
 
+        for (const field of ["username", "name", "email"]) {
+            if (typeof patchPayload[field] === "string" && patchPayload[field].trim() === "") {
+                delete patchPayload[field];
+            }
+        }
+
         if (Object.keys(patchPayload).length === 0) {
             alert("No changes detected.");
             return;
