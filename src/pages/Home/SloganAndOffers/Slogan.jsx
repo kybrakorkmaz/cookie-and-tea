@@ -1,4 +1,4 @@
-import {SecondaryButton} from "../../../components/Buttons.jsx";
+import {SecondaryButton} from "@/components/ui/Buttons.jsx";
 
 const Slogan=()=>{
     return(
