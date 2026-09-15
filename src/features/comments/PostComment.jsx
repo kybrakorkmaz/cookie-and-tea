@@ -1,9 +1,13 @@
 import { GrSend } from "react-icons/gr";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useId } from "react";
 import { commentSchema, MAX_CHARS } from "@/features/comments/commentValidation.js";
 import {useCreateComment} from "@/features/comments/hooks/useCommentActions.js";
 
 const PostComment = ({ oldComment = "", onSend, update, postId }) => {
+    const instanceId = useId();
+    const commentInputId = postId
+        ? `comment-input-${postId}-${instanceId}`
+        : `comment-input-${instanceId}`;
     const [newComment, setNewComment] = useState(oldComment);
     const [status, setStatus] = useState({ message: "", type: "" });
     const {handleWriteComment, isSubmittingComment } = useCreateComment(); // Added isSubmittingComment to prevent double submissions
@@ -63,7 +67,7 @@ const PostComment = ({ oldComment = "", onSend, update, postId }) => {
         <div className="flex flex-col w-full items-start py-4 mt-4">
             <div className="group relative w-full">
                 <textarea
-                    id={postId ? `comment-input-${postId}` : "comment-input"}
+                    id={commentInputId}
                     placeholder=" "
                     rows="1"
                     value={newComment}
@@ -84,7 +88,7 @@ const PostComment = ({ oldComment = "", onSend, update, postId }) => {
                 />
 
                 <label
-                    htmlFor={postId ? `comment-input-${postId}` : "comment-input"}
+                    htmlFor={commentInputId}
                     className={`absolute left-4 top-4 origin-left -translate-y-8 scale-85 transform bg-white px-2 text-sm font-medium duration-200
                                peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
                                peer-focus:-translate-y-8 peer-focus:scale-85
